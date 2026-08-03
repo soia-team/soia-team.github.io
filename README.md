@@ -1,73 +1,57 @@
-# SOIA Homepage
+# SOIA public website
 
-Canonical public source for the
-[SOIA website](https://soia-team.github.io/).
+This repository is the deployment mirror for [soia-team.github.io](https://soia-team.github.io/).
+The React/Vite source lives in [`soia-site/`](./soia-site/); the generated
+GitHub Pages files are kept at the repository root.
 
-The repository name describes the product. The organization-root GitHub Pages
-repository, `soia-team/soia-team.github.io`, is kept as the deployment mirror so
-the public URL remains `https://soia-team.github.io/`.
-
-SOIA turns repeatable work into open Skills, multi-Skill workflows, installable
-plugins, and role-based experts for Codex, Claude Code, and WorkBuddy.
-
-## Routes
-
-- `/` — brand and product overview
-- `/open/` — eight public capability domains
-- `/open/<domain>/` — level-3 capability-domain page
-- `/open/<domain>/<skill>/` — level-4 Skill detail page
-- `/products/` — six product shapes: Skill, Workflow, Plugin, WorkBuddy Expert, custom Expert, and private registry roadmap
-- `/course/` — SOIA Agent workflow course
-- `/services/` — workflow and private expert delivery
-- `/about/` — principles, boundaries, and public evidence
-- `/en/...` — complete English route family with reciprocal language links
-
-The level-3 and level-4 catalog is generated from the public
-`soia-open-skills/docs/skills/README.md` source, rather than being maintained by
-hand in multiple pages. Top-level Chinese and English pages remain curated so a
-catalog refresh cannot erase their editorial narrative.
-
-## Run locally
+## Local development
 
 ```bash
+cd soia-site
+pnpm install
 pnpm dev
 ```
 
-Then open `http://127.0.0.1:4173/`.
+Open <http://127.0.0.1:4174/>.
 
-The latest shareable design and information-architecture receipt is in
-[`docs/open-design-review-2026-08-02.md`](docs/open-design-review-2026-08-02.md).
-
-## Validate
+## Build and validate
 
 ```bash
+pnpm --dir soia-site install
+pnpm validate
+pnpm build
 pnpm test
 ```
 
-To refresh the bilingual capability catalog from a local checkout of the public
-source repository:
+`pnpm build` generates the root Pages output and a `404.html` SPA fallback.
+`pnpm test` checks the generated shell, assets, route manifest, sitemap,
+public-only copy, and required governance files.
 
-```bash
-python3 scripts/generate_capability_pages.py --source-root <path-to-soia-open-skills>
-```
+## Public information architecture
 
-The site has no runtime package dependency and uses shared HTML, CSS, and
-JavaScript. It does not process payments or collect credentials. Latin webfonts
-are self-hosted with OFL-1.1 license and provenance files under `assets/fonts/`.
+- `/` — SOIA capability overview
+- `/products/` — Skill, Workflow, Plugin, and Expert product shapes
+- `/open/` — 80 public Skills across 8 capability domains
+- `/open/<domain>/` — capability-domain pages
+- `/open/<domain>/<skill>/` — individual Skill detail pages
+- `/open/experts/` — 8 role-based Experts
+- `/course/` — AI Content System practical course
+- `/services/` — scoped private workflow delivery
+- `/pricing/`, `/docs/`, `/blog/`, `/showcase/`, `/spec/`, `/about/`
+- `/en/...` — English route family
 
-## Repository roles
+Public capability is free to inspect and install. Private delivery is scoped,
+authorized, and kept separate from the public repository. No payments,
+credentials, private customer material, or internal operating plans are
+processed by this site.
 
-- `soia-team/soia-homepage` — canonical website source and review history.
-- `soia-team/soia-team.github.io` — root-domain GitHub Pages deployment mirror.
+## Source and attribution
+
+The implementation was built from the local Open Design project while keeping
+SOIA copy, taxonomy, application code, and capability data original. Selected
+neutral visual assets and the design direction are documented in
+[`soia-site/THIRD_PARTY_NOTICES.md`](./soia-site/THIRD_PARTY_NOTICES.md).
 
 ## License
 
 MIT. See [LICENSE](./LICENSE).
-
-## Reference boundary
-
-The conversion path was informed by
-[Kanvis Homepage](https://github.com/Kanvis-chen/kanvis-homepage), but the SOIA
-site has original information architecture, copy, design, and code. Kanvis does
-not declare a repository license as of 2026-08-01; see
-[docs/kanvis-reference.md](./docs/kanvis-reference.md).
