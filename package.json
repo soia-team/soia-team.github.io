@@ -1,9 +1,13 @@
 {
-  "name": "soia-homepage",
-  "version": "0.3.0",
+  "name": "soia-team-github-pages",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "python3 -m http.server 4173",
-    "test": "python3 scripts/validate_site.py"
+    "dev": "pnpm --dir soia-site dev",
+    "build": "pnpm --dir soia-site build:pages && pnpm publish:pages && pnpm generate:sitemap",
+    "publish:pages": "node scripts/publish_pages.mjs",
+    "generate:sitemap": "node scripts/generate_sitemap.mjs",
+    "test": "python3 scripts/validate_site.py",
+    "validate": "pnpm --dir soia-site validate"
   }
 }

@@ -1,0 +1,1481 @@
+{
+  "generatedAt": "2026-08-03T10:38:48.687Z",
+  "source": "soia-open-skills/docs/skills",
+  "total": 80,
+  "domains": [
+    {
+      "slug": "pkm-vault",
+      "label": "知识库与个人知识系统",
+      "labelEn": "Knowledge & PKM",
+      "description": "采集、整理、检索、提炼与转换长期知识。",
+      "descriptionEn": "Capture, organize, retrieve, distill, and transform durable knowledge.",
+      "count": 31,
+      "plugin": "soia-pkm-vault"
+    },
+    {
+      "slug": "environment",
+      "label": "环境安装与支持",
+      "labelEn": "Environment & Setup",
+      "description": "安装、诊断和维护 AI CLI 与本地工作环境。",
+      "descriptionEn": "Install, diagnose, and maintain AI CLIs and local work environments.",
+      "count": 16,
+      "plugin": "soia-env"
+    },
+    {
+      "slug": "development",
+      "label": "软件开发与交付",
+      "labelEn": "Development & Delivery",
+      "description": "从需求、实现、测试到发版的可检查工程闭环。",
+      "descriptionEn": "An inspectable engineering loop from requirements to release.",
+      "count": 12,
+      "plugin": "soia-dev"
+    },
+    {
+      "slug": "development-design",
+      "label": "产品设计与技术表达",
+      "labelEn": "Product Design & Technical Communication",
+      "description": "PRD、原型、架构图、Office 文档和设计探索。",
+      "descriptionEn": "PRDs, prototypes, diagrams, Office documents, and design exploration.",
+      "count": 6,
+      "plugin": "soia-dev-design"
+    },
+    {
+      "slug": "media-content",
+      "label": "内容生产与分发",
+      "labelEn": "Content Production & Distribution",
+      "description": "从用户观点到文章、视觉和多平台发布草稿。",
+      "descriptionEn": "From owned viewpoints to articles, visuals, and channel-ready drafts.",
+      "count": 6,
+      "plugin": "soia-media-content"
+    },
+    {
+      "slug": "meta",
+      "label": "技能生态管理",
+      "labelEn": "Skill Ecosystem Management",
+      "description": "检索、同步、发布和维护整个 SOIA 能力生态。",
+      "descriptionEn": "Find, sync, release, and maintain the SOIA capability ecosystem.",
+      "count": 4,
+      "plugin": "soia-meta"
+    },
+    {
+      "slug": "collaborative-office",
+      "label": "办公协作与文档",
+      "labelEn": "Workplace Collaboration",
+      "description": "飞书、ProcessOn 与可复核的办公资料同步。",
+      "descriptionEn": "Reviewable workplace research and sync across Feishu and ProcessOn.",
+      "count": 3,
+      "plugin": "soia-cwork-office"
+    },
+    {
+      "slug": "education-course",
+      "label": "课程与教学设计",
+      "labelEn": "Course & Learning Design",
+      "description": "从学习目标到课程大纲、教案和课堂活动。",
+      "descriptionEn": "From learning outcomes to outlines, lesson plans, and activities.",
+      "count": 2,
+      "plugin": "soia-edu-course"
+    }
+  ],
+  "skills": [
+    {
+      "slug": "soia-pkm-alipan-curator",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-alipan-curator",
+      "summary": "规划并整理阿里云盘资源，产出可复核的馆藏索引与学习规划",
+      "detail": "阿里云盘资源顾问，在 soia-pkm-alipan-drive-ops 原子操作上提供 inventory/organize/catalog/plan 四类工作流：盘点云盘、整理资源、生成 Obsidian 馆藏、增量 Excel 总索引与家庭课程导航、基于本次用户提供的学情生成学习计划",
+      "triggers": [
+        "整理阿里云盘资源",
+        "更新阿里云盘索引",
+        "用网盘资源做学习计划"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-alipan-curator -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-alipan-curator"
+    },
+    {
+      "slug": "soia-pkm-alipan-drive-ops",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-alipan-drive-ops",
+      "summary": "执行阿里云盘登录、浏览与文件操作，并为资源整理提供底层能力",
+      "detail": "阿里云盘原子操作层：安装/登录 aliyunpan、显式 driveId 双盘操作、目录浏览、移动/重命名/删除、下载上传、容量查询、全盘 JSONL 扫描。作为 curator 的底层依赖",
+      "triggers": [
+        "登录阿里云盘",
+        "下载阿里云盘文件",
+        "全盘扫描阿里云盘"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-alipan-drive-ops -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-alipan-drive-ops"
+    },
+    {
+      "slug": "soia-pkm-baidu-netdisk-ops",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-baidu-netdisk-ops",
+      "summary": "百度网盘原子操作与只读 JSONL 扫描适配",
+      "detail": "百度网盘原子操作与只读 JSONL 扫描适配",
+      "triggers": [
+        "看下百度网盘",
+        "登录百度网盘",
+        "扫描百度网盘"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-baidu-netdisk-ops -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-baidu-netdisk-ops"
+    },
+    {
+      "slug": "soia-pkm-bootstrap-vault-base",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-bootstrap-vault-base",
+      "summary": "以 plan-first、create-only、可检查的方式初始化平台中立的 AI-native Markdown vault 基座，包含分区下钻规则、工作台生命周期、模板与多 AI 适配层",
+      "detail": "- 创建 00/10/20/30/40/50/60/90 分区、下钻 AGENTS.md、工作台 Schema v2、长期知识 Schema 与对应模板；20 区精选目录固定为 10_主题知识、20_规范与手册、30_学习指南，历史导入使用 90_历史导入。 - 建立 AGENTS.md 唯一规则源及 Claude/Gemini/opencode/workbuddy 适配层。 - 支持 JSON/YAML 自定义、默认 plan、显式 --apply、create-only 幂等和 --check。 - 不创建 .obsidian、不安装插件、不配置 hook、不删除或覆盖现有文件。",
+      "triggers": [
+        "初始化知识库",
+        "新建 Markdown vault",
+        "搭建 AI-native PKM"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-bootstrap-vault-base -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-bootstrap-vault-base"
+    },
+    {
+      "slug": "soia-pkm-bootstrap-vault-ima",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-bootstrap-vault-ima",
+      "summary": "把已有本地 Markdown vault 接入腾讯 ima 知识库消费端：安装客户端、建立目录映射、用 ima 官方 Skills 配置本地文件夹监控同步并验证检索",
+      "detail": "把已有本地 Markdown vault 接入腾讯 ima 知识库消费端：安装客户端、建立目录映射、用 ima 官方 Skills 配置本地文件夹监控同步并验证检索",
+      "triggers": [
+        "接入 ima",
+        "同步到 ima 知识库",
+        "配置 ima",
+        "让 ima 监控 vault"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-bootstrap-vault-ima -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-bootstrap-vault-ima"
+    },
+    {
+      "slug": "soia-pkm-bootstrap-vault-obsidian",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-bootstrap-vault-obsidian",
+      "summary": "以 dry-run 和保留未知配置的结构化合并方式，把已有 Markdown vault 配置为 Obsidian 消费端，启用 Bases 与可选宽页 CSS",
+      "detail": "- 检查 Obsidian 客户端是否可用；版本信息需以本机或官方当前信息为准。 - dry-run 预览并结构化合并 core-plugins.json、appearance.json 与可选 app.json，兼容新版对象和旧版列表两种核心插件格式。 - 保留未知核心插件、主题、snippet 和 JSON 键；启用 Bases 与宽页 CSS 时不覆盖客户现有配置。 - 为工作台、精选长期知识和工作台历史补充三个 create-only .base 视图；已有视图始终保留。 - apply 前备份将修改的现有文件；支持 --check 验收。 本 skill 不创建 PARA 骨架、不替代 base，也不把 Obsidian 数据反向写回其他云端知识库。",
+      "triggers": [
+        "配置 Obsidian vault",
+        "启用 Obsidian Bases",
+        "接入 Obsidian 消费端"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-bootstrap-vault-obsidian -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-bootstrap-vault-obsidian"
+    },
+    {
+      "slug": "soia-pkm-clip-douyin",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-douyin",
+      "summary": "归档单条抖音视频到 Obsidian vault，并保留本地媒体索引",
+      "detail": "归档单条抖音视频到 Obsidian vault，并保留本地媒体索引",
+      "triggers": [
+        "归档这条抖音",
+        "clip 这个抖音视频",
+        "只要抖音文案"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-douyin -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-douyin"
+    },
+    {
+      "slug": "soia-pkm-clip-drive",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-drive",
+      "summary": "把云盘/本地的存量资料（PDF/Word/表格/演示文稿/文档）批量导入 Obsidian vault。提取文本、生成资料笔记，归入资料库或文章摘抄，再交给 organize 整理；图片正文需显式 OCR",
+      "detail": "把云盘/本地的存量资料（PDF/Word/表格/演示文稿/文档）批量导入 Obsidian vault。提取文本、生成资料笔记，归入资料库或文章摘抄，再交给 organize 整理。图片不能仅凭文件名当作正文，需用户明确要求并具备 OCR 后端。",
+      "triggers": [
+        "导入云盘资料",
+        "把这批 PDF 导进来",
+        "clip 这个文档",
+        "整理云盘",
+        "OCR 这批图片"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-drive -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-drive"
+    },
+    {
+      "slug": "soia-pkm-clip-github-repo",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-github-repo",
+      "summary": "将 GitHub 开源仓库归档为 Obsidian vault 的项目卡和调研笔记",
+      "detail": "把 GitHub 开源项目仓库一键归档到 Obsidian vault 的「开源项目图书馆」——clone 上游代码（不进 vault）+ 生成/更新项目卡（分类/语言/访问链接/最近提交自动填，用途/状态/stars/我的笔记留人工）+ 起调研笔记骨架 + 双向链接；也支持批量重跑刷新全部项目卡的自动字段。当用户说「归档这个项目 URL」「归档下这个仓库」...",
+      "triggers": [
+        "归档这个项目 URL",
+        "clip 这个 repo",
+        "刷新项目卡"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-github-repo -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-github-repo"
+    },
+    {
+      "slug": "soia-pkm-clip-rednote",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-rednote",
+      "summary": "将单篇小红书图文或视频笔记归档到 Obsidian vault",
+      "detail": "归档小红书单篇笔记（图文或视频）到 Obsidian vault：抓取标题、正文、作者、发布时间、互动数据、话题标签，并把视频/图片下载到本地；vault 内生成一份轻量 Markdown 笔记。",
+      "triggers": [
+        "归档这条小红书",
+        "clip 小红书笔记",
+        "存这篇 rednote"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-rednote -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-rednote"
+    },
+    {
+      "slug": "soia-pkm-clip-web",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-web",
+      "summary": "归档网页或博客文章到 Obsidian vault，并按统一规范落地",
+      "detail": "把任意网页/博客文章一键归档到 Obsidian vault。用正文抽取（readability/trafilatura）提取标题/正文/作者，按 clip 家族统一规范落地。当用户说「归档并转 PDF」「归档并导出 PDF」「archive and export PDF」时，归档后在 Obsidian vault 内优先调用 Obsidian 自带 PDF...",
+      "triggers": [
+        "归档这个网页",
+        "clip 这个链接",
+        "存这篇博客"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-web -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-web"
+    },
+    {
+      "slug": "soia-pkm-clip-wechat-account",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-wechat-account",
+      "summary": "批量归档用户自己管理的微信公众号已发文章到 Obsidian vault。支持官方 API、公众号后台接口、登录态 Cookie 三条路线，并按 url 去重",
+      "detail": "批量归档用户自己管理的微信公众号已发文章到 Obsidian vault。支持官方 API、公众号后台接口、登录态 Cookie 三条路线，并按 url 去重",
+      "triggers": [
+        "同步我的公众号",
+        "批量拉取我公众号历史文章",
+        "批量归档我的公众号",
+        "导入公众号已发文章",
+        "clip 我的公众号"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-wechat-account -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-wechat-account"
+    },
+    {
+      "slug": "soia-pkm-clip-wechat-article",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-wechat-article",
+      "summary": "归档单篇微信公众号文章到 Obsidian vault：抓取静态 HTML，提取标题、作者、正文、发布时间和配图，按 clip 家族规范落地；需要 PDF 时优先用 Obsidian 导出",
+      "detail": "归档单篇微信公众号文章到 Obsidian vault：抓取静态 HTML，提取标题、作者、正文、发布时间和配图，按 clip 家族规范落地；需要 PDF 时优先用 Obsidian 导出",
+      "triggers": [
+        "归档这篇公众号",
+        "clip 这个公众号文章",
+        "存这篇微信文章"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-wechat-article -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-wechat-article"
+    },
+    {
+      "slug": "soia-pkm-clip-x",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-x",
+      "summary": "将单条 X/Twitter 推文、thread 或 Article 归档到 Obsidian vault",
+      "detail": "归档 X/Twitter 推文、thread、Article 到 Obsidian vault。基于 fxtwitter API，单条零配置；可选同步 Telegram 收藏。需要 PDF 时优先用 Obsidian 导出",
+      "triggers": [
+        "归档这条 X",
+        "clip 这条推文",
+        "整理这条 thread"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-x -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-x"
+    },
+    {
+      "slug": "soia-pkm-clip-x-profile",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-clip-x-profile",
+      "summary": "面向公开 X 账号的有限范围检索与研究：采集帖子窗口，按时间、关键词、主题、媒体、模型线索和内容条件筛选，输出账号概览、时间段总结、主题分析与可审计结果，并支持将明确选定的结果交给下游技能继续处理",
+      "detail": "研究公开 X 账号的有限帖子窗口：先采集，再按范围和条件检索，最后输出摘要、分类清单或下游处理输入。已知账号用脚本；未知账号先做候选发现，再进入账号研究。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-clip-x-profile -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-clip-x-profile"
+    },
+    {
+      "slug": "soia-pkm-distill-article-opinion",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-distill-article-opinion",
+      "summary": "通过苏格拉底式逐问，把用户对 vault 文章的回答整理成其本人观点，并写入「我的看法」或主题综述",
+      "detail": "把 Obsidian vault 里收藏的文章「炼」成你自己的观点。读原文 → 苏格拉底式一次抛一个问题 → 你口述回答 → AI 把你的回答整理成「我的看法」段（内容是你的，AI 只帮落文字，绝不替你想、替你写），写完给你回执。也支持主题聚合：把一个 MOC 下多篇文章的观点提炼成一篇综述",
+      "triggers": [
+        "补我的看法",
+        "炼成观点",
+        "主题观点综述"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-distill-article-opinion -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-distill-article-opinion"
+    },
+    {
+      "slug": "soia-pkm-extract-vault-knowledge",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-extract-vault-knowledge",
+      "summary": "从整个 Markdown/Obsidian 知识库或指定模块的工作台、冻结证据、文章、项目研究与历史语料中，提炼去状态、可复用且带来源的长期知识，同时保留原始证据并隔离敏感信息",
+      "detail": "- 先查重，再从一个或多个来源提炼概念、指南、参考、检查表或通用模式。 - 删除当前进度、责任人、下一步和一次性环境值，保留适用边界、反例、时效说明与来源 wikilink。 - 在写入前识别账号、密码、token、cookie、个人路径、客户数据等敏感内容；知识笔记只保留抽象方法，不复制秘密值。 - 盘点 20 区时区分“精选长期知识”和“历史导入/来源语料”，不把旧语料的目录位置当成可信度。 - 处理 PDF、Word、表格或图片来源时，先标记原始附件类型和提取/OCR 状态；没有正文提取证据时只能引用文件名/路径，不能把附件标题当成结论。",
+      "triggers": [
+        "从知识库提炼长期知识",
+        "把这份材料沉淀为知识",
+        "从指定模块提炼",
+        "从这份报告抽方法"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-extract-vault-knowledge -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-extract-vault-knowledge"
+    },
+    {
+      "slug": "soia-pkm-interpret-article-analysis",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-interpret-article-analysis",
+      "summary": "为 vault 长文或论文生成独立 AI 解读，帮助判断是否值得深挖，且不改原文或代写用户观点",
+      "detail": "对 vault 里 clip 进来的长文/论文，AI 直接给出解读：内容总览/核心要点/关键启发/批判视角/延伸阅读五段式。默认快读（各段 2-3 句），说\"精读/深度解读\"升级为逐节展开 + 论证链核查。产出独立 <原文件名>-AI解读.md，落原文件同目录并双链回原文，绝不碰原文、绝不写入原文的 ## 我的看法 段。",
+      "triggers": [
+        "解读这篇",
+        "精读这篇",
+        "值得细读吗"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-interpret-article-analysis -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-interpret-article-analysis"
+    },
+    {
+      "slug": "soia-pkm-library-book-catalog",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-library-book-catalog",
+      "summary": "纯本地、幂等、可重复运行地维护 Obsidian 书库：补建待读记录并重新生成图书馆、阅读记录和按类型总览，不依赖微信读书",
+      "detail": "这个技能适合在已有书卡或阅读记录的基础上整理本地书库。它会按书卡的分类字段生成图书馆总览和阅读记录总览，也可以把“有书卡但没有阅读记录”的书幂等地补成“待读”记录，并生成按类型分组的视图。",
+      "triggers": [
+        "重新生成图书馆总览",
+        "更新阅读记录总览",
+        "补建待读记录",
+        "书库整理"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-library-book-catalog -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-library-book-catalog"
+    },
+    {
+      "slug": "soia-pkm-library-weread-sync",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-library-weread-sync",
+      "summary": "同步微信读书已读书目与划线到 Obsidian 书库，并调用微信读书 API 补单本书详情",
+      "detail": "这个技能负责所有需要访问微信读书的动作：同步已读书目、同步划线/想法，以及为指定书卡补充简介、章节、相似书和阅读进度。它会读取用户提供的 vault 路径和私有配置，把结果幂等地落到书卡与阅读记录中。",
+      "triggers": [
+        "同步微信读书",
+        "同步划线",
+        "同步已读书目",
+        "补一下这本书的详情",
+        "补书详情"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-library-weread-sync -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-library-weread-sync"
+    },
+    {
+      "slug": "soia-pkm-log-agent-sessions",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-log-agent-sessions",
+      "summary": "为 Claude Code、Codex 等本地 AI 接入最小化 vault 会话改动快照，支持去重、dry-run、既有 notify 合并和安全卸载",
+      "detail": "- 为 Claude Code SessionEnd 或 Codex notify 生成轻量日志。 - 用 git 状态、tracked diff 和 untracked 内容哈希去重，连续编辑同一文件仍会产生新快照。 - 保留客户已有 Codex notify 命令，并提供 dry-run、安装检查和卸载步骤。 - 报告旧日志数量/体量；默认不自动删除或轮转。",
+      "triggers": [
+        "接入 AI 会话日志",
+        "记录 Codex 改动",
+        "配置 SessionEnd 日志"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-log-agent-sessions -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-log-agent-sessions"
+    },
+    {
+      "slug": "soia-pkm-maintain-vault-health",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-maintain-vault-health",
+      "summary": "只读检查整个 Markdown/Obsidian 知识库或指定模块的健康状态，审计死链、歧义文件名、标签策略与过期内容，并按授权重建地图或健康简报",
+      "detail": "只读检查整个 Markdown/Obsidian 知识库或指定模块的健康状态，审计死链、歧义文件名、标签策略与过期内容，并按授权重建地图或健康简报",
+      "triggers": [
+        "检查知识库健康",
+        "检查知识库某个模块",
+        "维护知识库",
+        "重建知识库地图",
+        "vault 周维护"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-maintain-vault-health -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-maintain-vault-health"
+    },
+    {
+      "slug": "soia-pkm-manage-vault-lifecycle",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-manage-vault-lifecycle",
+      "summary": "规划并安全执行整个 Markdown/Obsidian 知识库，或知识库中指定模块的盘点、整理、改名、迁移、归档与清理",
+      "detail": "- 盘点整个知识库或指定模块，识别当前源、被取代材料、冻结证据、稳定知识与可归档内容。 - 生成含 source/target/SHA-256/入链/冲突/阻断/回滚信息的迁移 manifest。 - 用户确认后执行无覆盖移动，并验证数量与哈希；结构整理另有独立的目录编号/空对象 manifest，支持在目标未漂移时 rollback。",
+      "triggers": [
+        "整理知识库",
+        "整理知识库的某个模块",
+        "治理资料库",
+        "整理工作台/资料库/日志/归档"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-manage-vault-lifecycle -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-manage-vault-lifecycle"
+    },
+    {
+      "slug": "soia-pkm-organize-article-moc",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-organize-article-moc",
+      "summary": "将 Obsidian 文章库按元数据、主题双链、月份和两级 MOC 规范化整理",
+      "detail": "整理 Obsidian 文章库——补 frontmatter（topics/captured_at/author）、按主题双链归类、建/更新两级 MOC、按月份归位、补双链。底层调 rebuild_moc.py / backfill 等脚本，上层用 LLM 判断分类。用于激活存量收藏、规整新归档",
+      "triggers": [
+        "整理文章库",
+        "重建 MOC",
+        "收藏归类"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-organize-article-moc -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-organize-article-moc"
+    },
+    {
+      "slug": "soia-pkm-query-vault",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-query-vault",
+      "summary": "以只读方式搜索整个 Markdown/Obsidian 知识库或指定模块，检索文件名、正文、frontmatter、标签、反向链接、代码与附件，并按来源层级返回可核验结果",
+      "detail": "- 按文件名、正文、frontmatter 字段或标签搜索 Markdown、Bases、需求和常见 UTF-8 代码文件。 - 对 PDF、DOC/DOCX、PPT/PPTX、XLS/XLSX、图片和音视频做文件名、路径、扩展名与入链检索；附件正文优先通过已验证的 Omnisearch/Text Extractor 或 obsidian-mcp-server 检索，无法连接时才走显式 OCR/转换流程。 - 查某个笔记的 wikilink 入链。 - 统计分区和文件类型，帮助 AI 先缩小范围再读取正文。 - 以 10 当前 → 20 精选长期知识 → 30 证据 → 40/50/60 专项 → 20 历史导入 → 90 历史 为默认排序，并明确标记来源层；20 区只有 10_主题知识/、20_规范与手册/、30_学习指南/ 标为 stable，90_历史导入/ 标为 imported，不因路径自动获得可信度。",
+      "triggers": [
+        "搜索知识库",
+        "搜索知识库某个模块",
+        "在知识库里找",
+        "从知识库回答",
+        "查需求/代码/PDF/Word/图片",
+        "查反向链接"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-query-vault -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-query-vault"
+    },
+    {
+      "slug": "soia-pkm-reading-plan",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-reading-plan",
+      "summary": "把书单、主题或观点映射组织成按字数排期的可执行阅读计划，并落为 Obsidian 笔记",
+      "detail": "场景化阅读计划生成器。把一批书（来自文章书单、观点映射或主题）组织成带表格、按真实字数排期的可执行阅读计划，落地成 Obsidian 笔记。可选用 weread-skills 增强字数/评分/书架核实，缺少时降级估算；可选参考 huashu-weread-advisor 方法论但不依赖它。当用户说「做个读书计划」「按 XX 场景排个计划」「把这篇文章的书单排...",
+      "triggers": [
+        "做读书计划",
+        "书单排期",
+        "规划下半年阅读"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-reading-plan -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-reading-plan"
+    },
+    {
+      "slug": "soia-pkm-transform-article-notebooklm",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-transform-article-notebooklm",
+      "summary": "用 NotebookLM 将文章转换为学习材料",
+      "detail": "把 Markdown / vault 文章或 URL 转换为学习产物： - 试卷（quiz）：选择题 + 简答题 + 答案解析 - 闪卡（flashcards）：Anki 兼容双面卡片 - 脑图（mindmap）：Mermaid / Markdown 层级结构 - 播客脚本（podcast）：对话式音频脚本 - 学习笔记：NotebookLM 综合摘要",
+      "triggers": [
+        "NotebookLM 生成试卷",
+        "NotebookLM 做闪卡",
+        "NotebookLM 生成播客"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-transform-article-notebooklm -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-transform-article-notebooklm"
+    },
+    {
+      "slug": "soia-pkm-transform-article-ppt",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-transform-article-ppt",
+      "summary": "把文章、提纲或主题转换为以可编辑 PPTX 为正式母版的演示媒体包，并支持外置固定模板与机密内容本地隔离",
+      "detail": "把文章、提纲或主题转换为以可编辑 PPTX 为正式母版的演示媒体包，并支持外置固定模板与机密内容本地隔离",
+      "triggers": [
+        "做 PPT",
+        "生成 PPTX",
+        "转成课件",
+        "按公司模板做周报"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-transform-article-ppt -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-transform-article-ppt"
+    },
+    {
+      "slug": "soia-pkm-transform-article-visual",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-transform-article-visual",
+      "summary": "把文章转换为长图、信息图、海报、封面、插画等视觉产物。HTML/CSS 截图为本地默认方案，可选 Open Design 或 Codex 图生成",
+      "detail": "把 Markdown / vault 文章或 URL 渲染为图片产物： - 长图：完整文章内容纵向展开为单张 PNG/JPEG - 信息图：核心概念可视化，节点 + 连接 + 标注 - 术语地图 / 路线图：左侧认知路径 + 右侧视觉隐喻 + 底部结论 - 海报 / 封面：单张设计稿，强排版重视觉 - 插画 / 封面图：可选 Codex imagegen 生成配图",
+      "triggers": [
+        "生成长图",
+        "做成信息图",
+        "转成海报",
+        "生成封面",
+        "做成图片",
+        "export visual",
+        "make infographic"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-transform-article-visual -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-transform-article-visual"
+    },
+    {
+      "slug": "soia-pkm-transform-obsidian-pdf",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-transform-obsidian-pdf",
+      "summary": "用 Obsidian 原生导出把 vault 内 Markdown 笔记导出为 PDF。vault 外文章降级 pandoc/weasyprint",
+      "detail": "把 Markdown 文章或已归档 vault 笔记导出为 PDF，使用 Obsidian 原生导出（Creator: Chromium / Producer: Skia/PDF）保证中文正确渲染。",
+      "triggers": [
+        "转成PDF",
+        "导出PDF",
+        "归档并转PDF",
+        "生成PDF",
+        "export PDF"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-transform-obsidian-pdf -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-transform-obsidian-pdf"
+    },
+    {
+      "slug": "soia-pkm-translate-article-zh",
+      "domain": "pkm-vault",
+      "title": "soia-pkm-translate-article-zh",
+      "summary": "将外文文章按 quick、normal 或 refined 模式翻译成独立中文稿，保持术语一致且不覆盖原文",
+      "detail": "三种模式覆盖从\"先看看大概意思\"到\"要发布级质量\"的完整翻译需求；长文自动分块并跨块保持术语一致；产出永远是原文旁边的一个新文件，不覆盖、不污染原文。",
+      "triggers": [
+        "翻译这篇",
+        "精翻",
+        "继续润色"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-pkm-vault@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-pkm-vault@soia",
+        "npx skills add soia-team/soia-open-pkm-vault-skills -g -a '*' -s soia-pkm-translate-article-zh -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-pkm-vault-skills/tree/main/skills/soia-pkm-translate-article-zh"
+    },
+    {
+      "slug": "soia-env-ai-cli-upgrade",
+      "domain": "environment",
+      "title": "soia-env-ai-cli-upgrade",
+      "summary": "审计并按授权升级多款 AI CLI，先预演并核验结果",
+      "detail": "Audit and upgrade AI/developer CLIs (codex, claude, Antigravity/agy, Gemini's supported non-consumer lanes, kimi, qwen, opencode, cursor, deepcode, pi, etc.) with dry-run reports and logs. 进阶维护工具：面向已装多套 AI CLI 的用户，与本仓其他面向小白的单工具安装技能定位不同。",
+      "triggers": [
+        "升级 AI CLI",
+        "更新 Claude/Kimi",
+        "检查 CLI 版本"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-ai-cli-upgrade -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-ai-cli-upgrade"
+    },
+    {
+      "slug": "soia-env-antigravity-cli-install",
+      "domain": "environment",
+      "title": "soia-env-antigravity-cli-install",
+      "summary": "为新手安装、登录、迁移或按授权更新 Google Antigravity CLI（agy）",
+      "detail": "为新手安装、登录、迁移或按授权更新 Google Antigravity CLI（agy）",
+      "triggers": [
+        "安装 agy",
+        "Gemini CLI 迁移",
+        "agy 登录"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-antigravity-cli-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-antigravity-cli-install"
+    },
+    {
+      "slug": "soia-env-claude-cli-install",
+      "domain": "environment",
+      "title": "soia-env-claude-cli-install",
+      "summary": "为小白安装、登录与授权更新 Anthropic Claude Code CLI",
+      "detail": "为小白安装、登录与授权更新 Anthropic Claude Code CLI",
+      "triggers": [
+        "安装 Claude CLI",
+        "Claude 命令不存在",
+        "Claude 登录"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-claude-cli-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-claude-cli-install"
+    },
+    {
+      "slug": "soia-env-codex-install",
+      "domain": "environment",
+      "title": "soia-env-codex-install",
+      "summary": "为新手安装、验证或按授权更新 OpenAI Codex CLI",
+      "detail": "为新手安装、验证或按授权更新 OpenAI Codex CLI",
+      "triggers": [
+        "安装 Codex CLI",
+        "更新 Codex CLI",
+        "Codex 命令不存在"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-codex-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-codex-install"
+    },
+    {
+      "slug": "soia-env-codex-setup-support",
+      "domain": "environment",
+      "title": "soia-env-codex-setup-support",
+      "summary": "诊断并支持 Codex 桌面版与 CLI 的安装、登录、性能和存储问题",
+      "detail": "诊断并支持 Codex 桌面版与 CLI 的安装、登录、性能和存储问题",
+      "triggers": [
+        "Codex 打不开",
+        "Codex 变慢",
+        "检查 logs_2.sqlite"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-codex-setup-support -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-codex-setup-support"
+    },
+    {
+      "slug": "soia-env-deepcode-cli-install",
+      "domain": "environment",
+      "title": "soia-env-deepcode-cli-install",
+      "summary": "为小白安装、配置与授权更新开源 Deep Code Agent CLI（lessweb/deepcode-cli）",
+      "detail": "为小白安装、配置与授权更新开源 Deep Code Agent CLI（lessweb/deepcode-cli）",
+      "triggers": [
+        "安装 DeepCode",
+        "deepcode 不存在",
+        "配置 DeepSeek Agent"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-deepcode-cli-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-deepcode-cli-install"
+    },
+    {
+      "slug": "soia-env-environment-setup",
+      "domain": "environment",
+      "title": "soia-env-environment-setup",
+      "summary": "从零规划并验证面向新手的开发环境，协调所需安装技能",
+      "detail": "从零规划并验证面向新手的开发环境，协调所需安装技能",
+      "triggers": [
+        "从零配置开发环境",
+        "准备 AI CLI 环境",
+        "新电脑开发环境搭建"
+      ],
+      "install": [],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-environment-setup"
+    },
+    {
+      "slug": "soia-env-kimi-cli-install",
+      "domain": "environment",
+      "title": "soia-env-kimi-cli-install",
+      "summary": "面向小白检查、安装、登录和按明确授权更新 Moonshot AI Kimi Code CLI；识别官方独立安装与 npm 来源，默认只报告版本和产品自动更新状态",
+      "detail": "面向小白检查、安装、登录和按明确授权更新 Moonshot AI Kimi Code CLI；识别官方独立安装与 npm 来源，默认只报告版本和产品自动更新状态",
+      "triggers": [
+        "安装 Kimi CLI",
+        "安装 Kimi Code",
+        "kimi 不存在",
+        "Kimi 登录",
+        "更新 Kimi 到最新"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-kimi-cli-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-kimi-cli-install"
+    },
+    {
+      "slug": "soia-env-network-diagnose",
+      "domain": "environment",
+      "title": "soia-env-network-diagnose",
+      "summary": "只读诊断小白安装工具时的网络问题：检查 DNS、HTTPS、代理、证书、官方源和超时，区分故障来源，并用固定七列列表汇报网络状态与处理结果",
+      "detail": "只读诊断小白安装工具时的网络问题：检查 DNS、HTTPS、代理、证书、官方源和超时，区分故障来源，并用固定七列列表汇报网络状态与处理结果",
+      "triggers": [
+        "网络不通",
+        "下载失败",
+        "npm/pip 超时",
+        "证书错误",
+        "安装卡住"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-network-diagnose -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-network-diagnose"
+    },
+    {
+      "slug": "soia-env-node-install",
+      "domain": "environment",
+      "title": "soia-env-node-install",
+      "summary": "为新手安装、验证或按授权更新 Node.js 与 npm",
+      "detail": "为新手安装、验证或按授权更新 Node.js 与 npm",
+      "triggers": [
+        "安装 Node.js",
+        "更新 Node.js",
+        "node 命令不存在"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-node-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-node-install"
+    },
+    {
+      "slug": "soia-env-open-skills-install",
+      "domain": "environment",
+      "title": "soia-env-open-skills-install",
+      "summary": "在 Claude Code、Codex、WorkBuddy 上安装或更新 SOIA 开源技能，支持全部/单插件/单技能粒度与指定宿主",
+      "detail": "在 Claude Code、Codex、WorkBuddy 上安装或更新 SOIA 开源技能，支持全部/单插件/单技能粒度与指定宿主",
+      "triggers": [
+        "装好所有 SOIA 插件",
+        "在 Codex 下装 SOIA",
+        "更新 soia-dev 插件"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-open-skills-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-open-skills-install"
+    },
+    {
+      "slug": "soia-env-opencode-cli-install",
+      "domain": "environment",
+      "title": "soia-env-opencode-cli-install",
+      "summary": "为新手安装、登录、配置或按授权更新 OpenCode CLI",
+      "detail": "为新手安装、登录、配置或按授权更新 OpenCode CLI",
+      "triggers": [
+        "安装 OpenCode",
+        "配置 OpenCode CLI",
+        "OpenCode 登录"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-opencode-cli-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-opencode-cli-install"
+    },
+    {
+      "slug": "soia-env-python-install",
+      "domain": "environment",
+      "title": "soia-env-python-install",
+      "summary": "为新手安装、验证或按授权更新 Python 与 pip",
+      "detail": "为新手安装、验证或按授权更新 Python 与 pip",
+      "triggers": [
+        "安装 Python",
+        "更新 Python",
+        "python 命令不存在"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-python-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-python-install"
+    },
+    {
+      "slug": "soia-env-qoder-cli-install",
+      "domain": "environment",
+      "title": "soia-env-qoder-cli-install",
+      "summary": "面向小白检查、安装、登录和按明确授权更新 Qoder CLI；识别官方独立安装、Homebrew 与 npm 来源，默认只报告版本和自动更新设置",
+      "detail": "面向小白检查、安装、登录和按明确授权更新 Qoder CLI；识别官方独立安装、Homebrew 与 npm 来源，默认只报告版本和自动更新设置",
+      "triggers": [
+        "安装 Qoder CLI",
+        "qodercli 不存在",
+        "Qoder 登录",
+        "检查 Qoder 更新",
+        "更新 Qoder 到最新"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-qoder-cli-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-qoder-cli-install"
+    },
+    {
+      "slug": "soia-env-storage-cleanup",
+      "domain": "environment",
+      "title": "soia-env-storage-cleanup",
+      "summary": "面向小白统计 SOIA 受管配置、状态、缓存和临时目录的空间占用，生成可清理清单并提醒删除风险；只有客户看过最新清单并明确授权后才执行删除，随后复核实际释放空间",
+      "detail": "面向小白统计 SOIA 受管配置、状态、缓存和临时目录的空间占用，生成可清理清单并提醒删除风险；只有客户看过最新清单并明确授权后才执行删除，随后复核实际释放空间",
+      "triggers": [
+        "检查 SOIA 占用",
+        "统计缓存大小",
+        "清理临时文件",
+        "清理过期状态",
+        "释放磁盘空间"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-storage-cleanup -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-storage-cleanup"
+    },
+    {
+      "slug": "soia-env-workbuddy-install",
+      "domain": "environment",
+      "title": "soia-env-workbuddy-install",
+      "summary": "为新手安装、验证或按授权更新 WorkBuddy 桌面客户端",
+      "detail": "为新手安装、验证或按授权更新 WorkBuddy 桌面客户端",
+      "triggers": [
+        "安装 WorkBuddy",
+        "更新 WorkBuddy",
+        "WorkBuddy 下载"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-env@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-env@soia",
+        "npx skills add soia-team/soia-open-env-skills -g -a '*' -s soia-env-workbuddy-install -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-env-skills/tree/main/skills/soia-env-workbuddy-install"
+    },
+    {
+      "slug": "soia-dev-agent-cli-dispatch",
+      "domain": "development",
+      "title": "soia-dev-agent-cli-dispatch",
+      "summary": "外部 AI CLI 调度与模型路由，支持受控派活与用量回执",
+      "detail": "调度外部 AI 模型/CLI（codex/claude/agy/gemini/kimi/opencode/qwen/pi，非宿主内置子代理，qodercli 也有命令模板但未纳入下方精简清单）进行受控派发，覆盖编码、审查、分析、研究、文档和内容任务：任务边界拆分、独立 workdir、防注入 prompt 写法、模型分级矩阵、Worktree 审批门、Anti-Fake-Fix 三步验证。在此之上，可显式指定执行器 + 模型 + 推理深度，或只给执行器家族由任务难度自动选型（见「自动路由」）；每次调用后输出 Token/费用汇总（见「调用总结回执」）、模型完整性检测（见「Model Integrity Gate」）、额度预检（见「额度预检」）与断点续跑（见「可恢复执行」）。各执行器详细命令模板在 references/ 子目录下按需加载。",
+      "triggers": [
+        "派活给外部 AI",
+        "调用 agy",
+        "多 CLI 派发"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-agent-cli-dispatch -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-agent-cli-dispatch"
+    },
+    {
+      "slug": "soia-dev-agent-md-advisor",
+      "domain": "development",
+      "title": "soia-dev-agent-md-advisor",
+      "summary": "AI 项目指令与配置设计顾问，提供诊断、起草和改写建议",
+      "detail": "覆盖 AGENTS.md/CLAUDE.md/GEMINI.md 与 .claude/ 配置的三种工作模式：诊断已有配置的设计质量、为新项目起草配置骨架、回答最佳实践问题。本技能不调用外部 API、不读取账号或凭据、审查模式默认不写文件——纯文本诊断与产出。",
+      "triggers": [
+        "审查我的 AGENTS.md",
+        "CLAUDE.md 怎么写",
+        "多个 AI 入口怎么管"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-agent-md-advisor -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-agent-md-advisor"
+    },
+    {
+      "slug": "soia-dev-coding-protocol",
+      "domain": "development",
+      "title": "soia-dev-coding-protocol",
+      "summary": "为普通工程代码改动建立最小范围、验证前置、anti-fake-fix 与写后复核契约；适用于修复、重构、实现和评审",
+      "detail": "为代码实现、bug fix、重构和评审建立可验证的工作契约：改什么、为何改、如何证明改变正确，以及哪些风险尚未覆盖。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-coding-protocol -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-coding-protocol"
+    },
+    {
+      "slug": "soia-dev-doc-sync",
+      "domain": "development",
+      "title": "soia-dev-doc-sync",
+      "summary": "审计并修复任意代码仓的 docs、README、CHANGELOG、VERSION 与明确真源之间的事实漂移；先建立真源优先级与证据，再按依赖顺序同步派生文档",
+      "detail": "把代码、版本元数据、发布记录等明确真源与 docs/、README、CHANGELOG、VERSION 等派生文档逐项对账，报告事实漂移并在授权范围内修复。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-doc-sync -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-doc-sync"
+    },
+    {
+      "slug": "soia-dev-fix-loop",
+      "domain": "development",
+      "title": "soia-dev-fix-loop",
+      "summary": "用五步闭环处理代码审查或测试发现：复现、决策、修复、回归复核与回执，防止遗漏、假修复和无证据收口",
+      "detail": "用五步闭环处理代码审查或测试发现：复现、决策、修复、回归复核与回执，防止遗漏、假修复和无证据收口",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-fix-loop -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-fix-loop"
+    },
+    {
+      "slug": "soia-dev-github-ops",
+      "domain": "development",
+      "title": "soia-dev-github-ops",
+      "summary": "GitHub gh CLI 运维、PR 合规审查与修复",
+      "detail": "Use gh CLI for GitHub issue, PR, checks, review, workflow run, release, and collaborator-permission operations, plus a pre-merge rule-review procedure and an author-side \"address a review and fix it\" procedure, with structured JSON output and safety gates",
+      "triggers": [
+        "查 CI 挂了",
+        "发 release",
+        "加协作者权限"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-github-ops -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-github-ops"
+    },
+    {
+      "slug": "soia-dev-project-scaffold",
+      "domain": "development",
+      "title": "soia-dev-project-scaffold",
+      "summary": "为任意新 Git 项目生成最小 AI 协作基线：可编辑的 AGENTS.md 和 docs 导航目录；在写入前确认目标路径",
+      "detail": "为一个新建或空白的 Git 项目创建一套最小、可编辑的 AI 协作基线：AGENTS.md、文档导航、项目概览、变更记录和 AI 工作记录目录。它不生成应用框架、云服务模块或组织内部治理结构。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-project-scaffold -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-project-scaffold"
+    },
+    {
+      "slug": "soia-dev-release-plan-checklist",
+      "domain": "development",
+      "title": "soia-dev-release-plan-checklist",
+      "summary": "为互联网软件发版生成发布清单、预检门、灰度验证与发布后核对；适用于上线、部署、回滚规划",
+      "detail": "提供发布目标、版本/分支、环境、变更和服务依赖；信息不全时也可先产出带待确认项的草案。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-release-plan-checklist -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-release-plan-checklist"
+    },
+    {
+      "slug": "soia-dev-review-panel",
+      "domain": "development",
+      "title": "soia-dev-review-panel",
+      "summary": "从多视角对代码 diff 或技能包进行对抗式复核，只读且不编辑、合并或发布",
+      "detail": "从多视角对代码 diff 或技能包进行对抗式复核，只读且不编辑、合并或发布",
+      "triggers": [
+        "多角度审改动",
+        "对抗式复核",
+        "审技能包"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-review-panel -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-review-panel"
+    },
+    {
+      "slug": "soia-dev-task-execute",
+      "domain": "development",
+      "title": "soia-dev-task-execute",
+      "summary": "执行任意工程任务的通用闭环：定义边界、实施最小改动、验证、独立复核与回执。适用于代码、配置、文档和维护任务",
+      "detail": "执行任意工程任务的通用闭环：定义边界、实施最小改动、验证、独立复核与回执。适用于代码、配置、文档和维护任务",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-task-execute -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-task-execute"
+    },
+    {
+      "slug": "soia-dev-terminal-ops",
+      "domain": "development",
+      "title": "soia-dev-terminal-ops",
+      "summary": "管理 POSIX/macOS/Linux 上的长任务、tmux 后台会话、日志抓取、停滞诊断与安全恢复；在终止进程前用日志、CPU、网络等多信号交叉判断，并执行 TERM→复查→KILL 确认门",
+      "detail": "管理 POSIX/macOS/Linux 上的长任务、tmux 后台会话、日志抓取、停滞诊断与安全恢复；在终止进程前用日志、CPU、网络等多信号交叉判断，并执行 TERM→复查→KILL 确认门",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-terminal-ops -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-terminal-ops"
+    },
+    {
+      "slug": "soia-dev-test-draft-doc",
+      "domain": "development",
+      "title": "soia-dev-test-draft-doc",
+      "summary": "从需求、PRD 或变更说明生成测试计划、测试用例与验收对照；适用于测试设计、回归清单和质量评审",
+      "detail": "提供需求材料、目标平台和已知约束；材料可以是粘贴文本、用户明确提供的文件或公开链接。技能先识别可验证行为与未决问题，再产出可执行、可追溯的测试设计。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev@soia",
+        "npx skills add soia-team/soia-open-dev-skills -g -a '*' -s soia-dev-test-draft-doc -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-skills/tree/main/skills/soia-dev-test-draft-doc"
+    },
+    {
+      "slug": "soia-dev-archify-diagrams",
+      "domain": "development-design",
+      "title": "soia-dev-archify-diagrams",
+      "summary": "用 Archify 将架构、数据流和流程说明生成可维护 JSON 图表及 PNG 预览",
+      "detail": "Draw, improve, validate, or publish Archify architecture / data-flow / sequence / lifecycle diagrams with JSON IR and PNG previews",
+      "triggers": [
+        "用 Archify 画",
+        "Archify 架构图",
+        "Archify 时序图"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev-design@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev-design@soia",
+        "npx skills add soia-team/soia-open-dev-design-skills -g -a '*' -s soia-dev-archify-diagrams -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-design-skills/tree/main/skills/soia-dev-archify-diagrams"
+    },
+    {
+      "slug": "soia-dev-design-draft-prd",
+      "domain": "development-design",
+      "title": "soia-dev-design-draft-prd",
+      "summary": "起草互联网通用 PRD、产品需求文档与用户故事；适用于一句话需求补全、功能范围和验收标准梳理",
+      "detail": "起草互联网通用 PRD、产品需求文档与用户故事；适用于一句话需求补全、功能范围和验收标准梳理",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev-design@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev-design@soia",
+        "npx skills add soia-team/soia-open-dev-design-skills -g -a '*' -s soia-dev-design-draft-prd -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-design-skills/tree/main/skills/soia-dev-design-draft-prd"
+    },
+    {
+      "slug": "soia-dev-design-explorer",
+      "domain": "development-design",
+      "title": "soia-dev-design-explorer",
+      "summary": "基于 Open Design（经 soia-dev-open-design-ops）做高保真 HTML 原型、设计变体、幻灯片、动画探索与设计评审；要求用户品牌输入、五分类输出落点与可复现验证",
+      "detail": "基于 Open Design（经 soia-dev-open-design-ops）做高保真 HTML 原型、设计变体、幻灯片、动画探索与设计评审；要求用户品牌输入、五分类输出落点与可复现验证",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev-design@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev-design@soia",
+        "npx skills add soia-team/soia-open-dev-design-skills -g -a '*' -s soia-dev-design-explorer -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-design-skills/tree/main/skills/soia-dev-design-explorer"
+    },
+    {
+      "slug": "soia-dev-drawio-visio-diagrams",
+      "domain": "development-design",
+      "title": "soia-dev-drawio-visio-diagrams",
+      "summary": "将 Visio VSDX 安全转换、盘点和受控升级为可编辑 draw.io 图表",
+      "detail": "将 Visio VSDX 安全转换、盘点和受控升级为可编辑 draw.io 图表",
+      "triggers": [
+        "VSDX 转 draw.io",
+        "Visio 图表升级",
+        "draw.io 图表盘点"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev-design@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev-design@soia",
+        "npx skills add soia-team/soia-open-dev-design-skills -g -a '*' -s soia-dev-drawio-visio-diagrams -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-design-skills/tree/main/skills/soia-dev-drawio-visio-diagrams"
+    },
+    {
+      "slug": "soia-dev-officecli-ops",
+      "domain": "development-design",
+      "title": "soia-dev-officecli-ops",
+      "summary": "以 OfficeCLI 安全读取、复制后修改并验证 DOCX、XLSX、PPTX",
+      "detail": "以 OfficeCLI 安全读取、复制后修改并验证 DOCX、XLSX、PPTX",
+      "triggers": [
+        "OfficeCLI",
+        "OpenXML 验证",
+        "Office 文件原子修改"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev-design@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev-design@soia",
+        "npx skills add soia-team/soia-open-dev-design-skills -g -a '*' -s soia-dev-officecli-ops -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-design-skills/tree/main/skills/soia-dev-officecli-ops"
+    },
+    {
+      "slug": "soia-dev-open-design-ops",
+      "domain": "development-design",
+      "title": "soia-dev-open-design-ops",
+      "summary": "提供供上层设计流程调用的 Open Design 原子操作与运行保障",
+      "detail": "提供供上层设计流程调用的 Open Design 原子操作与运行保障",
+      "triggers": [
+        "检查 Open Design",
+        "接入 DESIGN.md",
+        "恢复设计会话"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-dev-design@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-dev-design@soia",
+        "npx skills add soia-team/soia-open-dev-design-skills -g -a '*' -s soia-dev-open-design-ops -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-dev-design-skills/tree/main/skills/soia-dev-open-design-ops"
+    },
+    {
+      "slug": "soia-media-compose-article-draft",
+      "domain": "media-content",
+      "title": "soia-media-compose-article-draft",
+      "summary": "把 distill 提炼出的观点写成成文草稿。以用户观点为骨、vault 摘抄为料，生成可继续交给 publish 的文章。可指定公众号/知乎/随笔风格",
+      "detail": "把 distill 提炼出的观点写成成文草稿。以用户观点为骨、vault 摘抄为料，生成可继续交给 publish 的文章。可指定公众号/知乎/随笔风格",
+      "triggers": [
+        "把这些观点写成一篇",
+        "把 X 主题写成文章",
+        "compose 这篇",
+        "写成草稿",
+        "起草这篇"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-media-content@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-media-content@soia",
+        "npx skills add soia-team/soia-open-media-content-skills -g -a '*' -s soia-media-compose-article-draft -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-media-content-skills/tree/main/skills/soia-media-compose-article-draft"
+    },
+    {
+      "slug": "soia-media-generate-article-image",
+      "domain": "media-content",
+      "title": "soia-media-generate-article-image",
+      "summary": "将文章、开源项目、品牌 Logo 或公开 X Prompt Deck 编译为可验收的图片与矢量资产，按组合轴生成 Prompt 并完成事实、文字和视觉验收",
+      "detail": "支持六类交付：文章封面/小结卡、康奈尔笔记、视觉隐喻海报、技能库宣传单图/轮播、插件图标、品牌 Logo 系统。客户只需提供来源、用途、平台、比例和必须逐字出现的文字；有参考图时说明它是风格参考、构图参考还是编辑目标。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-media-content@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-media-content@soia",
+        "npx skills add soia-team/soia-open-media-content-skills -g -a '*' -s soia-media-generate-article-image -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-media-content-skills/tree/main/skills/soia-media-generate-article-image"
+    },
+    {
+      "slug": "soia-media-publish-rednote-card",
+      "domain": "media-content",
+      "title": "soia-media-publish-rednote-card",
+      "summary": "把成文草稿改写成 rednote（小红书）笔记：生成吸睛标题（可带 emoji）、3–5 段短文、话题标签和配图建议。只产出文本并由客户人工发布，不接平台 API",
+      "detail": "从文章中提炼一个明确的分享角度，组织成适合移动端快速阅读的笔记：一个有信息承诺的标题、3–5 段短文、相关话题标签，以及与内容匹配的配图建议。",
+      "triggers": [
+        "发成小红书",
+        "小红书笔记",
+        "改成 rednote",
+        "rednote 这篇"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-media-content@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-media-content@soia",
+        "npx skills add soia-team/soia-open-media-content-skills -g -a '*' -s soia-media-publish-rednote-card -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-media-content-skills/tree/main/skills/soia-media-publish-rednote-card"
+    },
+    {
+      "slug": "soia-media-publish-wechat-draft",
+      "domain": "media-content",
+      "title": "soia-media-publish-wechat-draft",
+      "summary": "把成文草稿排版成符合微信公众号限制的内联样式 HTML，机械校验通过后推入微信公众号草稿箱；只建草稿，绝不自动群发",
+      "detail": "把写好的文章草稿排版成遵守微信公众号限制的内联样式 HTML，机械校验通过后调用微信 draft/add API 推到草稿箱。这个技能只建草稿，绝不自动群发。",
+      "triggers": [
+        "把这篇发成公众号",
+        "排版这篇公众号",
+        "推到公众号草稿箱",
+        "公众号 draft"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-media-content@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-media-content@soia",
+        "npx skills add soia-team/soia-open-media-content-skills -g -a '*' -s soia-media-publish-wechat-draft -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-media-content-skills/tree/main/skills/soia-media-publish-wechat-draft"
+    },
+    {
+      "slug": "soia-media-publish-x-article",
+      "domain": "media-content",
+      "title": "soia-media-publish-x-article",
+      "summary": "将 Markdown 成文上传到 X Articles 草稿箱并校验格式，只保存草稿",
+      "detail": "将 Markdown 成文上传到 X Articles 草稿箱并校验格式，只保存草稿",
+      "triggers": [
+        "发成 X Article",
+        "推到 X 文章草稿箱"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-media-content@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-media-content@soia",
+        "npx skills add soia-team/soia-open-media-content-skills -g -a '*' -s soia-media-publish-x-article -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-media-content-skills/tree/main/skills/soia-media-publish-x-article"
+    },
+    {
+      "slug": "soia-media-publish-x-thread",
+      "domain": "media-content",
+      "title": "soia-media-publish-x-thread",
+      "summary": "将成文草稿改写为带编号、符合字数限制的 X thread，并可按授权存草稿",
+      "detail": "读取客户提供的成文草稿，保留核心观点和必要证据，重组为有连续阅读节奏的 X thread：首条负责让人继续读，中间条目各自完成一个逻辑动作，末条给出自然的 CTA。",
+      "triggers": [
+        "发成 X thread",
+        "拆成推文串",
+        "thread 这篇"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-media-content@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-media-content@soia",
+        "npx skills add soia-team/soia-open-media-content-skills -g -a '*' -s soia-media-publish-x-thread -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-media-content-skills/tree/main/skills/soia-media-publish-x-thread"
+    },
+    {
+      "slug": "soia-meta-find-skill",
+      "domain": "meta",
+      "title": "soia-meta-find-skill",
+      "summary": "按需检索 SOIA 全生态技能并加载——剪藏网盘/知识提炼/新媒发布/编码审查与终端操作/设计图表/产品PRD/软件测试/软件发版/办公协作/教育课程/环境安装/生态管理。说出需求即可检索、定位并按需读入对应技能",
+      "detail": "- 优先查找本机已经安装、可以立即加载的 SOIA 技能。 - 本机没有匹配项时，从随技能发布的全生态目录定位未安装技能并给出精确安装命令。 - 候选超过一个时列出相关性最高的 3 个，由当前模型结合客户原始需求选择。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-meta@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-meta@soia",
+        "npx skills add soia-team/soia-open-skills -g -a '*' -s soia-meta-find-skill -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-skills/tree/main/skills/soia-meta-find-skill"
+    },
+    {
+      "slug": "soia-meta-prompt-clarity",
+      "domain": "meta",
+      "title": "soia-meta-prompt-clarity",
+      "summary": "起草、诊断并规格化中英文提示词，保留用户意图、语言与安全边界",
+      "detail": "起草、诊断并规格化中英文提示词，保留用户意图、语言与安全边界",
+      "triggers": [
+        "写提示词 / write a prompt",
+        "优化 prompt / improve this prompt",
+        "扩展成可验证规格"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-meta@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-meta@soia",
+        "npx skills add soia-team/soia-open-skills -g -a '*' -s soia-meta-prompt-clarity -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-skills/tree/main/skills/soia-meta-prompt-clarity"
+    },
+    {
+      "slug": "soia-meta-skill-release",
+      "domain": "meta",
+      "title": "soia-meta-skill-release",
+      "summary": "域仓正式发版（dev→main、tag、Release、notes、CHANGELOG）与发布收尾：市场 pin 刷新、客户端更新、旧名清理、WorkBuddy 专家安装、dev 快照试装",
+      "detail": "域仓正式发版（dev→main、tag、Release、notes、CHANGELOG）与发布收尾：市场 pin 刷新、客户端更新、旧名清理、WorkBuddy 专家安装、dev 快照试装",
+      "triggers": [
+        "正式发版",
+        "发布技能",
+        "更新插件",
+        "技能发布收尾",
+        "装到 WorkBuddy",
+        "试装 dev"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-meta@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-meta@soia",
+        "npx skills add soia-team/soia-open-skills -g -a '*' -s soia-meta-skill-release -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-skills/tree/main/skills/soia-meta-skill-release"
+    },
+    {
+      "slug": "soia-meta-sync-skills",
+      "domain": "meta",
+      "title": "soia-meta-sync-skills",
+      "summary": "将一个共享技能源以软链接同步到用户明确选择的 AI 工具目录；支持预览、单项同步、硬依赖闭包和受限清理",
+      "detail": "将一个已安装或本地的共享技能目录同步到用户选择的 AI 工具目录。它只创建或替换同名的软链接；先用 --dry-run 展示影响，再在已有明确授权时写入。",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-meta@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-meta@soia",
+        "npx skills add soia-team/soia-open-skills -g -a '*' -s soia-meta-sync-skills -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-skills/tree/main/skills/soia-meta-sync-skills"
+    },
+    {
+      "slug": "soia-cwork-feishu-cli",
+      "domain": "collaborative-office",
+      "title": "soia-cwork-feishu-cli",
+      "summary": "通过飞书官方 lark-cli 以最小权限只读调研 Wiki、Drive 与文档",
+      "detail": "通过飞书官方 lark-cli 以最小权限只读调研 Wiki、Drive 与文档",
+      "triggers": [
+        "调研飞书知识库",
+        "读取飞书云盘",
+        "配置飞书 CLI"
+      ],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-cwork-office@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-cwork-office@soia",
+        "npx skills add soia-team/soia-open-cwork-office-skills -g -a '*' -s soia-cwork-feishu-cli -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-cwork-office-skills/tree/main/skills/soia-cwork-feishu-cli"
+    },
+    {
+      "slug": "soia-cwork-feishu-doc-git-sync",
+      "domain": "collaborative-office",
+      "title": "soia-cwork-feishu-doc-git-sync",
+      "summary": "将飞书知识库或云文档以应用身份只读同步为本地 Markdown，保留目录、来源和同步元数据，并可接入 Git、Obsidian 与 VitePress；当用户要求同步飞书知识库、备份到 Git、在本地查看或规划双向同步时使用",
+      "detail": "将飞书知识库或云文档以应用身份只读同步为本地 Markdown，保留目录、来源和同步元数据，并可接入 Git、Obsidian 与 VitePress；当用户要求同步飞书知识库、备份到 Git、在本地查看或规划双向同步时使用",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-cwork-office@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-cwork-office@soia",
+        "npx skills add soia-team/soia-open-cwork-office-skills -g -a '*' -s soia-cwork-feishu-doc-git-sync -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-cwork-office-skills/tree/main/skills/soia-cwork-feishu-doc-git-sync"
+    },
+    {
+      "slug": "soia-cwork-processon-diagrams",
+      "domain": "collaborative-office",
+      "title": "soia-cwork-processon-diagrams",
+      "summary": "安全盘点并按授权导出、校验和归档 ProcessOn 图表",
+      "detail": "安全盘点并按授权导出、校验和归档 ProcessOn 图表",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-cwork-office@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-cwork-office@soia",
+        "npx skills add soia-team/soia-open-cwork-office-skills -g -a '*' -s soia-cwork-processon-diagrams -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-cwork-office-skills/tree/main/skills/soia-cwork-processon-diagrams"
+    },
+    {
+      "slug": "soia-edu-compose-lesson-plan",
+      "domain": "education-course",
+      "title": "soia-edu-compose-lesson-plan",
+      "summary": "按课程大纲编写可执行教案与讲义结构；适用于“教案”“讲义”“课堂活动”等请求",
+      "detail": "按课程大纲编写可执行教案与讲义结构；适用于“教案”“讲义”“课堂活动”等请求",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-edu-course@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-edu-course@soia",
+        "npx skills add soia-team/soia-open-edu-course-skills -g -a '*' -s soia-edu-compose-lesson-plan -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-edu-course-skills/tree/main/skills/soia-edu-compose-lesson-plan"
+    },
+    {
+      "slug": "soia-edu-design-course-outline",
+      "domain": "education-course",
+      "title": "soia-edu-design-course-outline",
+      "summary": "从主题、受众和课时约束设计课程大纲；适用于“课程大纲”“教学目标”“课时规划”等请求",
+      "detail": "从主题、受众和课时约束设计课程大纲；适用于“课程大纲”“教学目标”“课时规划”等请求",
+      "triggers": [],
+      "install": [
+        "claude plugin marketplace add soia-team/soia-open-skills && claude plugin install soia-edu-course@soia",
+        "codex plugin marketplace add soia-team/soia-open-skills && codex plugin add soia-edu-course@soia",
+        "npx skills add soia-team/soia-open-edu-course-skills -g -a '*' -s soia-edu-design-course-outline -y"
+      ],
+      "sourceUrl": "https://github.com/soia-team/soia-open-edu-course-skills/tree/main/skills/soia-edu-design-course-outline"
+    }
+  ]
+}

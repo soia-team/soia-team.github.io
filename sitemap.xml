@@ -3,7 +3,7 @@
   <url>
     <loc>https://soia-team.github.io/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
@@ -32,48 +32,6 @@
   </url>
   <url>
     <loc>https://soia-team.github.io/en/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/pricing/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/products/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/services/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/showcase/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/spec/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/blog/codex-open-design/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -106,7 +64,589 @@
     <loc>https://soia-team.github.io/en/open/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/collaborative-office/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/collaborative-office/soia-cwork-feishu-cli/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/collaborative-office/soia-cwork-feishu-doc-git-sync/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/collaborative-office/soia-cwork-processon-diagrams/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development-design/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-archify-diagrams/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-design-draft-prd/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-design-explorer/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-drawio-visio-diagrams/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-officecli-ops/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-open-design-ops/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-agent-cli-dispatch/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-agent-md-advisor/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-coding-protocol/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-doc-sync/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-fix-loop/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-github-ops/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-project-scaffold/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-release-plan-checklist/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-review-panel/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-task-execute/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-terminal-ops/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/development/soia-dev-test-draft-doc/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/education-course/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/education-course/soia-edu-compose-lesson-plan/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/education-course/soia-edu-design-course-outline/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-ai-cli-upgrade/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-antigravity-cli-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-claude-cli-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-codex-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-codex-setup-support/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-deepcode-cli-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-environment-setup/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-kimi-cli-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-network-diagnose/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-node-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-open-skills-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-opencode-cli-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-python-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-qoder-cli-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-storage-cleanup/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/environment/soia-env-workbuddy-install/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/collaborative-office/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/development-design/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/development/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/education-course/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/environment/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/media-content/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/meta/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/experts/pkm-vault/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/media-content/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/media-content/soia-media-compose-article-draft/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/media-content/soia-media-generate-article-image/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/media-content/soia-media-publish-rednote-card/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/media-content/soia-media-publish-wechat-draft/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/media-content/soia-media-publish-x-article/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/media-content/soia-media-publish-x-thread/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/meta/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/meta/soia-meta-find-skill/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/meta/soia-meta-prompt-clarity/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/meta/soia-meta-skill-release/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/meta/soia-meta-sync-skills/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-alipan-curator/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-alipan-drive-ops/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-baidu-netdisk-ops/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-bootstrap-vault-base/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-bootstrap-vault-ima/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-bootstrap-vault-obsidian/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-douyin/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-drive/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-github-repo/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-rednote/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-web/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-wechat-account/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-wechat-article/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-x-profile/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-x/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-distill-article-opinion/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-extract-vault-knowledge/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-interpret-article-analysis/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-library-book-catalog/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-library-weread-sync/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-log-agent-sessions/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-maintain-vault-health/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-manage-vault-lifecycle/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-organize-article-moc/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-query-vault/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-reading-plan/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-transform-article-notebooklm/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-transform-article-ppt/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-transform-article-visual/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-transform-obsidian-pdf/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-translate-article-zh/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/en/pricing/</loc>
@@ -133,1191 +673,663 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://soia-team.github.io/en/solutions/content/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/solutions/delivery/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/en/solutions/knowledge/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://soia-team.github.io/en/spec/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://soia-team.github.io/open/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://soia-team.github.io/open/collaborative-office/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/development-design/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/development/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/education-course/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/environment/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/experts/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/media-content/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/meta/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/pkm-vault/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/blog/codex-open-design/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/collaborative-office/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development-design/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/education-course/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/media-content/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/meta/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/collaborative-office/soia-cwork-feishu-cli/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/collaborative-office/soia-cwork-feishu-doc-git-sync/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/collaborative-office/soia-cwork-processon-diagrams/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/open/development-design/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development-design/soia-dev-archify-diagrams/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development-design/soia-dev-design-draft-prd/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development-design/soia-dev-design-explorer/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development-design/soia-dev-drawio-visio-diagrams/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development-design/soia-dev-officecli-ops/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development-design/soia-dev-open-design-ops/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/open/development/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-agent-cli-dispatch/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-agent-md-advisor/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-coding-protocol/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-doc-sync/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-fix-loop/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-github-ops/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-project-scaffold/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-release-plan-checklist/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-review-panel/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-task-execute/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-terminal-ops/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/development/soia-dev-test-draft-doc/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/open/education-course/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/education-course/soia-edu-compose-lesson-plan/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/education-course/soia-edu-design-course-outline/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/open/environment/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-ai-cli-upgrade/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-antigravity-cli-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-claude-cli-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-codex-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-codex-setup-support/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-deepcode-cli-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-environment-setup/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-kimi-cli-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-network-diagnose/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-node-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-open-skills-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-opencode-cli-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-python-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-qoder-cli-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-storage-cleanup/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/environment/soia-env-workbuddy-install/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/open/experts/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/experts/collaborative-office/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/experts/development-design/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/experts/development/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/experts/education-course/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/experts/environment/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/experts/media-content/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/experts/meta/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/experts/pkm-vault/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/open/media-content/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/media-content/soia-media-compose-article-draft/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/media-content/soia-media-generate-article-image/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/media-content/soia-media-publish-rednote-card/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/media-content/soia-media-publish-wechat-draft/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/media-content/soia-media-publish-x-article/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/media-content/soia-media-publish-x-thread/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/open/meta/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/meta/soia-meta-find-skill/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/meta/soia-meta-prompt-clarity/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/meta/soia-meta-skill-release/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/meta/soia-meta-sync-skills/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://soia-team.github.io/open/pkm-vault/</loc>
+    <lastmod>2026-08-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-alipan-curator/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-alipan-drive-ops/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-baidu-netdisk-ops/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-bootstrap-vault-base/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-bootstrap-vault-ima/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-bootstrap-vault-obsidian/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-douyin/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-drive/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-github-repo/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-rednote/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-web/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-wechat-account/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-wechat-article/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-x-profile/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-clip-x/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-distill-article-opinion/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-extract-vault-knowledge/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-interpret-article-analysis/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-library-book-catalog/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-library-weread-sync/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-log-agent-sessions/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-maintain-vault-health/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-maintain/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-manage-vault-lifecycle/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-organize-article-moc/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-query-vault/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-reading-plan/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-transform-article-notebooklm/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-transform-article-ppt/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-transform-article-visual/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-transform-obsidian-pdf/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://soia-team.github.io/open/pkm-vault/soia-pkm-translate-article-zh/</loc>
     <lastmod>2026-08-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/collaborative-office/soia-cwork-feishu-cli/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/collaborative-office/soia-cwork-feishu-doc-git-sync/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/collaborative-office/soia-cwork-processon-diagrams/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-archify-diagrams/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-design-draft-prd/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-design-explorer/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-drawio-visio-diagrams/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-officecli-ops/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development-design/soia-dev-open-design-ops/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-agent-cli-dispatch/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-agent-md-advisor/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-coding-protocol/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-doc-sync/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-fix-loop/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-github-ops/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-project-scaffold/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-release-plan-checklist/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-review-panel/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-task-execute/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-terminal-ops/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/development/soia-dev-test-draft-doc/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/education-course/soia-edu-compose-lesson-plan/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/education-course/soia-edu-design-course-outline/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-ai-cli-upgrade/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-antigravity-cli-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-claude-cli-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-codex-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-codex-setup-support/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-deepcode-cli-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-environment-setup/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-kimi-cli-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-network-diagnose/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-node-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-open-skills-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-opencode-cli-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-python-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-qoder-cli-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-storage-cleanup/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/environment/soia-env-workbuddy-install/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/collaborative-office/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/development-design/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/development/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/education-course/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/environment/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/media-content/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/meta/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/experts/pkm-vault/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/media-content/soia-media-compose-article-draft/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/media-content/soia-media-generate-article-image/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/media-content/soia-media-publish-rednote-card/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/media-content/soia-media-publish-wechat-draft/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/media-content/soia-media-publish-x-article/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/media-content/soia-media-publish-x-thread/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/meta/soia-meta-find-skill/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/meta/soia-meta-prompt-clarity/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/meta/soia-meta-skill-release/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/meta/soia-meta-sync-skills/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-alipan-curator/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-alipan-drive-ops/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-baidu-netdisk-ops/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-bootstrap-vault-base/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-bootstrap-vault-ima/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-bootstrap-vault-obsidian/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-douyin/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-drive/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-github-repo/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-rednote/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-web/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-wechat-account/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-wechat-article/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-x-profile/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-clip-x/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-distill-article-opinion/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-extract-vault-knowledge/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-interpret-article-analysis/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-library-book-catalog/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-library-weread-sync/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-log-agent-sessions/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-maintain-vault-health/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-maintain/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-manage-vault-lifecycle/</loc>
-    <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-organize-article-moc/</loc>
+    <loc>https://soia-team.github.io/pricing/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-query-vault/</loc>
+    <loc>https://soia-team.github.io/products/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-reading-plan/</loc>
+    <loc>https://soia-team.github.io/services/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-transform-article-notebooklm/</loc>
+    <loc>https://soia-team.github.io/showcase/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-transform-article-ppt/</loc>
+    <loc>https://soia-team.github.io/solutions/content/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-transform-article-visual/</loc>
+    <loc>https://soia-team.github.io/solutions/delivery/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-transform-obsidian-pdf/</loc>
+    <loc>https://soia-team.github.io/solutions/knowledge/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://soia-team.github.io/en/open/pkm-vault/soia-pkm-translate-article-zh/</loc>
+    <loc>https://soia-team.github.io/spec/</loc>
     <lastmod>2026-08-03</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 </urlset>
