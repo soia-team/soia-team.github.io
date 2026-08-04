@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/open-design-mark.svg",
+  "entry": "source/apps/landing-page/public/open-design-mark.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.573Z",
+  "updatedAt": "2026-08-03T10:07:53.573Z",
+  "metadata": {
+    "inferred": true
+  }
+}

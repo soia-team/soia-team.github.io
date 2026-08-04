@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "markdown-document",
+  "title": "source/apps/landing-page/public/pricing.md",
+  "entry": "source/apps/landing-page/public/pricing.md",
+  "renderer": "markdown",
+  "status": "complete",
+  "exports": [
+    "md",
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.535Z",
+  "updatedAt": "2026-08-03T10:07:53.535Z",
+  "metadata": {
+    "inferred": true
+  }
+}

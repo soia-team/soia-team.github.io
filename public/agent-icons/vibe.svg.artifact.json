@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/agent-icons/vibe.svg",
+  "entry": "source/apps/landing-page/public/agent-icons/vibe.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.771Z",
+  "updatedAt": "2026-08-03T10:07:53.771Z",
+  "metadata": {
+    "inferred": true
+  }
+}

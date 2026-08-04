@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/agent-icons/deepseek.svg",
+  "entry": "source/apps/landing-page/public/agent-icons/deepseek.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.781Z",
+  "updatedAt": "2026-08-03T10:07:53.781Z",
+  "metadata": {
+    "inferred": true
+  }
+}

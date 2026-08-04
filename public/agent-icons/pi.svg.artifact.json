@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/agent-icons/pi.svg",
+  "entry": "source/apps/landing-page/public/agent-icons/pi.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.775Z",
+  "updatedAt": "2026-08-03T10:07:53.775Z",
+  "metadata": {
+    "inferred": true
+  }
+}

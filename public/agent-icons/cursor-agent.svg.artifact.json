@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/agent-icons/cursor-agent.svg",
+  "entry": "source/apps/landing-page/public/agent-icons/cursor-agent.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.782Z",
+  "updatedAt": "2026-08-03T10:07:53.782Z",
+  "metadata": {
+    "inferred": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/open-design-logo-new.svg",
+  "entry": "source/apps/landing-page/public/open-design-logo-new.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.574Z",
+  "updatedAt": "2026-08-03T10:07:53.574Z",
+  "metadata": {
+    "inferred": true
+  }
+}

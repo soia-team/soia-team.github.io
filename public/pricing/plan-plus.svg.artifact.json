@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/pricing/plan-plus.svg",
+  "entry": "source/apps/landing-page/public/pricing/plan-plus.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.533Z",
+  "updatedAt": "2026-08-03T10:07:53.533Z",
+  "metadata": {
+    "inferred": true
+  }
+}

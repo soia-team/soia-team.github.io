@@ -1,10 +1,4 @@
-.DS_Store
-*.log
-.env
-.env.*
-!.env.example
 node_modules/
 dist/
-soia-site/dist-pages/
-__pycache__/
-*.py[cod]
+.vite/
+.DS_Store

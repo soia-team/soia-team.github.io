@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/agents/xai.svg",
+  "entry": "source/apps/landing-page/public/agents/xai.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.718Z",
+  "updatedAt": "2026-08-03T10:07:53.718Z",
+  "metadata": {
+    "inferred": true
+  }
+}

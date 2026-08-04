@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "kind": "svg",
+  "title": "source/apps/landing-page/public/agents/codex.svg",
+  "entry": "source/apps/landing-page/public/agents/codex.svg",
+  "renderer": "svg",
+  "status": "complete",
+  "exports": [
+    "svg",
+    "zip"
+  ],
+  "createdAt": "2026-08-03T10:07:53.759Z",
+  "updatedAt": "2026-08-03T10:07:53.759Z",
+  "metadata": {
+    "inferred": true
+  }
+}
