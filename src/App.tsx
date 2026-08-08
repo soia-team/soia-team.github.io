@@ -31,6 +31,7 @@ import { OpenDesignPluginPage, QuickstartPage } from './action-pages';
 import { CommunityPage, FaqPage, LegalPage, AboutPage, CareersPage, OfficialPage } from './info-pages';
 import { AmbassadorsPage, ContributorsPage, EventsPage, ModeratorsPage } from './community-pages';
 import { IkigaiOnePage, SeungkiKimPage, StoriesIndexPage, StuartGardollPage } from './stories-pages';
+import { CraftDetailPage, CraftPage, EnterprisePage, ShowcasePage, TutorialDetailPage, TutorialsPage } from './missing-pages';
 import { COUNTS, GITHUB, hrefFor, REPO, SubpageLayout } from './shell';
 
 const ZH = 'zh' as LandingLocaleCode;
@@ -630,6 +631,12 @@ export default function App() {
   const isOfficial = path === '/official';
   const isPrivacy = path === '/privacy';
   const isTerms = path === '/terms';
+  const isTutorials = path === '/tutorials';
+  const tutorialSlug = path.startsWith('/tutorials/') ? path.slice('/tutorials/'.length).replace(/\/+$/, '') : undefined;
+  const isShowcase = path === '/showcase';
+  const isCraft = path === '/craft';
+  const craftSlug = path.startsWith('/craft/') ? path.slice('/craft/'.length).replace(/\/+$/, '') : undefined;
+  const isEnterprise = path === '/enterprise';
   const isCompare = path === '/compare';
   const alternativeSlug = path.startsWith('/alternatives/')
     ? path.slice('/alternatives/'.length).replace(/\/+$/, '')
@@ -663,6 +670,12 @@ export default function App() {
     : isOfficial ? '官方资源 — Open Design'
     : isPrivacy ? '隐私政策 — Open Design'
     : isTerms ? '服务条款 — Open Design'
+    : isTutorials ? '教程 — Open Design'
+    : tutorialSlug ? '教程详情 — Open Design'
+    : isShowcase ? '展示 — Open Design'
+    : isCraft ? '方法目录 — Open Design'
+    : craftSlug ? '方法详情 — Open Design'
+    : isEnterprise ? 'Workspace 团队版 — Open Design'
     : isCompare ? getInfoPageCopy(locale).compare.title
     : alternativeSlug && (ALTERNATIVE_SLUGS as readonly string[]).includes(alternativeSlug)
       ? (getInfoCopy(locale).alternatives?.[alternativeSlug]?.title ?? `Open Design vs ${alternativeSlug}`)
@@ -698,6 +711,12 @@ export default function App() {
   if (isStoryIkigai) return <IkigaiOnePage locale={locale} />;
   if (isStoryStuart) return <StuartGardollPage locale={locale} />;
   if (isStorySeungki) return <SeungkiKimPage locale={locale} />;
+  if (isTutorials) return <TutorialsPage locale={locale} />;
+  if (tutorialSlug) return <TutorialDetailPage locale={locale} slug={tutorialSlug} />;
+  if (isShowcase) return <ShowcasePage locale={locale} />;
+  if (isCraft) return <CraftPage locale={locale} />;
+  if (craftSlug) return <CraftDetailPage locale={locale} slug={craftSlug} />;
+  if (isEnterprise) return <EnterprisePage locale={locale} />;
   if (isFaq) return <FaqPage locale={locale} />;
   if (isAbout) return <AboutPage locale={locale} />;
   if (isCareers) return <CareersPage locale={locale} />;

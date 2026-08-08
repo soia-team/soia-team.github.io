@@ -5,6 +5,7 @@ import './open-design.css';
 import './sub-pages.css';
 import './react-app.css';
 import './upstream/app/community.css';
+import './missing-pages.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
