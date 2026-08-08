@@ -82,6 +82,7 @@ export function CompactFooter({ locale }: { locale: LandingLocaleCode }) {
             <li><a href={href('/download/')}>下载</a></li>
             <li><a href={href('/community/')}>社区</a></li>
             <li><a href={href('/faq/')}>FAQ</a></li>
+            <li><a href={href('/enterprise/')}>团队版</a></li>
           </ul></div>
           <div className="sub-footer-col"><h5>Open source</h5><ul>
             <li><a href={REPO} target="_blank" rel="noreferrer noopener">GitHub</a></li>

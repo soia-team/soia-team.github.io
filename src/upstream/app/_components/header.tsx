@@ -402,6 +402,11 @@ export function Header({
                     </span>
                   </a>
                 </li>
+                <li>
+                  <a href={href('/craft/')}>
+                    <span className='dropdown-name'>方法 Craft</span>
+                  </a>
+                </li>
               </ul>
             </li>
 
@@ -466,6 +471,11 @@ export function Header({
                     <span className='dropdown-name'>
                       {productMenuCopy.resourceItems.compare}
                     </span>
+                  </a>
+                </li>
+                <li>
+                  <a href={href('/showcase/')}>
+                    <span className='dropdown-name'>展示 Showcase</span>
                   </a>
                 </li>
                 {/* Weekly Newsletter is intentionally not listed — upstream
