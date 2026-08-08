@@ -25,7 +25,12 @@ import {
   PluginsPage,
   PricingPage,
 } from './catalog-pages';
-import { SolutionsIndexPage, ScreenshotToCodePage, DownloadPage } from './solution-pages';
+import { SolutionsIndexPage, SolutionDetailPage, SOLUTION_ROUTES, DownloadPage } from './solution-pages';
+import { ALTERNATIVE_SLUGS, AlternativeDetailPage, ComparePage } from './comparison-pages';
+import { OpenDesignPluginPage, QuickstartPage } from './action-pages';
+import { CommunityPage, FaqPage, LegalPage, AboutPage, CareersPage, OfficialPage } from './info-pages';
+import { AmbassadorsPage, ContributorsPage, EventsPage, ModeratorsPage } from './community-pages';
+import { IkigaiOnePage, SeungkiKimPage, StoriesIndexPage, StuartGardollPage } from './stories-pages';
 import { COUNTS, GITHUB, hrefFor, REPO, SubpageLayout } from './shell';
 
 const ZH = 'zh' as LandingLocaleCode;
@@ -605,8 +610,30 @@ export default function App() {
   const agentSlug = path.startsWith('/agents/') ? AGENT_ROUTE_TO_SLUG[path.slice('/agents/'.length)] : undefined;
   const isHome = path === '/';
   const isSolutionsIndex = path === '/solutions';
-  const isScreenshotToCode = path === '/solutions/screenshot-to-code';
+  const solutionSlug = path.startsWith('/solutions/') ? path.slice('/solutions/'.length).replace(/\/+$/, '') : undefined;
   const isDownload = path === '/download';
+  const isQuickstart = path === '/quickstart';
+  const isOpenDesignPlugin = path === '/open-design-pugin';
+  const isCommunity = path === '/community';
+  const isCommunityAmbassadors = path === '/community/ambassadors';
+  const isCommunityContributors = path === '/community/contributors';
+  const isCommunityModerators = path === '/community/moderators';
+  const isCommunityEvents = path === '/community/events';
+  const isStories = path === '/stories';
+  const storySlug = path.startsWith('/stories/') ? path.slice('/stories/'.length).replace(/\/+$/, '') : undefined;
+  const isStoryIkigai = storySlug === 'ikigai-one';
+  const isStoryStuart = storySlug === 'stuart-gardoll';
+  const isStorySeungki = storySlug === 'seungki-kim';
+  const isFaq = path === '/faq';
+  const isAbout = path === '/about';
+  const isCareers = path === '/careers';
+  const isOfficial = path === '/official';
+  const isPrivacy = path === '/privacy';
+  const isTerms = path === '/terms';
+  const isCompare = path === '/compare';
+  const alternativeSlug = path.startsWith('/alternatives/')
+    ? path.slice('/alternatives/'.length).replace(/\/+$/, '')
+    : undefined;
   const pluginCollection = path === '/plugins/templates' || path === '/plugins/skills' || path === '/plugins/systems'
     ? path.slice('/plugins/'.length) as 'templates' | 'skills' | 'systems'
     : undefined;
@@ -619,8 +646,26 @@ export default function App() {
   const pageTitle =
     isHome ? 'Open Design —— 最佳 Claude Design 开源替代'
     : isSolutionsIndex ? getSolutionsIndexCopy(locale).heading
-    : isScreenshotToCode ? getSolutionPageCopy(locale, 'screenshotToCode').title
+    : solutionSlug && SOLUTION_ROUTES[solutionSlug] ? getSolutionPageCopy(locale, SOLUTION_ROUTES[solutionSlug].key).title
     : isDownload ? getInfoPageCopy(locale).download.title
+    : isQuickstart ? getInfoPageCopy(locale).quickstart.title
+    : isOpenDesignPlugin ? 'Open Design for Codex/ChatGPT | 安装 Open Design Cloud 插件'
+    : isCommunity ? '社区 — Open Design'
+    : isCommunityAmbassadors ? '社区大使 — Open Design'
+    : isCommunityContributors ? '贡献者 — Open Design'
+    : isCommunityModerators ? '社区版主 — Open Design'
+    : isCommunityEvents ? '社区活动 — Open Design'
+    : isStories ? '客户故事 — Open Design'
+    : isStoryIkigai || isStoryStuart || isStorySeungki ? '客户故事 — Open Design'
+    : isFaq ? '常见问题 — Open Design'
+    : isAbout ? '关于 — Open Design'
+    : isCareers ? '加入我们 — Open Design'
+    : isOfficial ? '官方资源 — Open Design'
+    : isPrivacy ? '隐私政策 — Open Design'
+    : isTerms ? '服务条款 — Open Design'
+    : isCompare ? getInfoPageCopy(locale).compare.title
+    : alternativeSlug && (ALTERNATIVE_SLUGS as readonly string[]).includes(alternativeSlug)
+      ? (getInfoCopy(locale).alternatives?.[alternativeSlug]?.title ?? `Open Design vs ${alternativeSlug}`)
     : (product?.title ?? getCatalogTitle(path) ?? 'Open Design');
 
   useEffect(() => {
@@ -640,8 +685,27 @@ export default function App() {
 
   if (isHome) return <HomeRoute locale={locale} />;
   if (isSolutionsIndex) return <SolutionsIndexPage locale={locale} />;
-  if (isScreenshotToCode) return <ScreenshotToCodePage locale={locale} />;
+  if (solutionSlug && SOLUTION_ROUTES[solutionSlug]) return <SolutionDetailPage slug={solutionSlug} locale={locale} />;
   if (isDownload) return <DownloadPage locale={locale} />;
+  if (isQuickstart) return <QuickstartPage locale={locale} />;
+  if (isOpenDesignPlugin) return <OpenDesignPluginPage locale={locale} />;
+  if (isCommunity) return <CommunityPage locale={locale} />;
+  if (isCommunityAmbassadors) return <AmbassadorsPage locale={locale} />;
+  if (isCommunityContributors) return <ContributorsPage locale={locale} />;
+  if (isCommunityModerators) return <ModeratorsPage locale={locale} />;
+  if (isCommunityEvents) return <EventsPage locale={locale} />;
+  if (isStories) return <StoriesIndexPage locale={locale} />;
+  if (isStoryIkigai) return <IkigaiOnePage locale={locale} />;
+  if (isStoryStuart) return <StuartGardollPage locale={locale} />;
+  if (isStorySeungki) return <SeungkiKimPage locale={locale} />;
+  if (isFaq) return <FaqPage locale={locale} />;
+  if (isAbout) return <AboutPage locale={locale} />;
+  if (isCareers) return <CareersPage locale={locale} />;
+  if (isOfficial) return <OfficialPage locale={locale} />;
+  if (isPrivacy) return <LegalPage locale={locale} kind="privacy" />;
+  if (isTerms) return <LegalPage locale={locale} kind="terms" />;
+  if (isCompare) return <ComparePage locale={locale} />;
+  if (alternativeSlug && (ALTERNATIVE_SLUGS as readonly string[]).includes(alternativeSlug)) return <AlternativeDetailPage slug={alternativeSlug} locale={locale} />;
   if (product) return <ProductPage spec={product} locale={locale} />;
   if (path === '/plugins') return <PluginsPage locale={locale} />;
   if (pluginCollection) return <PluginCollectionPage locale={locale} kind={pluginCollection} />;

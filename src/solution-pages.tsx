@@ -9,15 +9,22 @@
  * links to the neutral GitHub releases page; a client-side enhancer refetches
  * releases/latest and patches real asset hrefs + the recommended card.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { getCommonCopy, getHeaderProductMenuCopy, type LandingLocaleCode } from './upstream/app/i18n';
 import { getInfoPageCopy } from './upstream/app/info-page-i18n';
 import { getSolutionsIndexCopy } from './upstream/app/solutions-index-i18n';
 import { getSolutionPageCopy, type SolutionPageKey } from './upstream/app/solution-pages-i18n';
+import { DESIGN_SYSTEM_CARDS, SOLUTION_PLUGIN_CARDS, type DesignSystemCard, type SolutionCard } from './solution-featured';
+import { SOLUTION_CARD_MEDIA } from './solution-card-media';
 import { hrefFor, REPO, SubpageLayout } from './shell';
 
+// Pages whose hero image doubles as a live-proof link to the template
+// library (the ↗ arrow CTA the live original renders via
+// .solution-proof-media) — mirrors the four pages that use
+// solution-proof-media in the upstream Astro source.
+const PROOF_MEDIA_SLUGS = new Set(['ai-landing-page-generator', 'prototype', 'slides', 'product-managers']);
+
 const REPO_RELEASES = `${REPO}/releases`;
-const RELEASES_LATEST = `${REPO}/releases/latest`;
 const REPO_API = 'https://api.github.com/repos/nexu-io/open-design';
 
 /* ------------------------------------------------------------------ *
@@ -115,44 +122,167 @@ export function SolutionsIndexPage({ locale }: { locale: LandingLocaleCode }) {
 }
 
 /* ------------------------------------------------------------------ *
- * /solutions/screenshot-to-code/ — tool detail page
+ * /solutions/<slug>/ — solution detail pages (tool / use-case / role / ds)
  * ------------------------------------------------------------------ */
 
-export function ScreenshotToCodePage({ locale }: { locale: LandingLocaleCode }) {
-  const page = getSolutionPageCopy(locale, 'screenshotToCode');
+export type SolutionPageKind = 'tool' | 'usecase' | 'role' | 'design-system' | 'html-ppt';
+
+export type SolutionRouteSpec = {
+  key: SolutionPageKey;
+  kind: SolutionPageKind;
+  hero: string;
+};
+
+// One entry per solution detail route. Keys mirror the header dropdown and
+// the hub card order; hero paths match the live original page (lab-cards for
+// prototype/slides/product-managers/landing-page, /solutions/<slug>-hero.*
+// for the rest).
+export const SOLUTION_ROUTES: Record<string, SolutionRouteSpec> = {
+  'ai-wireframe-generator': { key: 'aiWireframeGenerator', kind: 'tool', hero: '/solutions/ai-wireframe-generator-hero.webp' },
+  'ai-ui-generator': { key: 'aiUiGenerator', kind: 'tool', hero: '/solutions/ai-ui-generator-hero.webp' },
+  'ai-prototype-generator': { key: 'aiPrototypeGenerator', kind: 'tool', hero: '/solutions/ai-prototype-generator-hero.webp' },
+  'ai-landing-page-generator': { key: 'aiLandingPageGenerator', kind: 'tool', hero: '/lab-cards/prototype.webp' },
+  'design-to-code': { key: 'designToCode', kind: 'tool', hero: '/solutions/design-to-code-hero.webp' },
+  'figma-to-code': { key: 'figmaToCode', kind: 'tool', hero: '/solutions/figma-to-code-hero.webp' },
+  'html-to-ppt': { key: 'htmlToPpt', kind: 'html-ppt', hero: '/solutions/html-to-ppt-hero.webp' },
+  'screenshot-to-code': { key: 'screenshotToCode', kind: 'tool', hero: '/solutions/screenshot-to-code-hero.webp' },
+  prototype: { key: 'prototype', kind: 'usecase', hero: '/lab-cards/prototype.webp' },
+  dashboard: { key: 'dashboard', kind: 'usecase', hero: '/solutions/dashboard-hero.jpg' },
+  slides: { key: 'slides', kind: 'usecase', hero: '/lab-cards/slides.webp' },
+  image: { key: 'image', kind: 'usecase', hero: '/solutions/image-hero.jpg' },
+  video: { key: 'video', kind: 'usecase', hero: '/solutions/video-hero.jpg' },
+  'design-system': { key: 'designSystem', kind: 'design-system', hero: '/solutions/design-system-hero.jpg' },
+  'solo-builder': { key: 'roleSoloBuilder', kind: 'role', hero: '/solutions/solo-builder-hero.jpg' },
+  designer: { key: 'roleDesigner', kind: 'role', hero: '/solutions/designer-hero.jpg' },
+  engineering: { key: 'roleEngineering', kind: 'role', hero: '/solutions/engineering-hero.jpg' },
+  'product-managers': { key: 'roleProductManagers', kind: 'role', hero: '/lab-cards/live-artifact.webp' },
+  marketing: { key: 'roleMarketing', kind: 'role', hero: '/solutions/marketing-hero.jpg' },
+};
+
+function SolutionPluginCard({ card, locale }: { card: SolutionCard; locale: LandingLocaleCode }) {
+  const href = (path: string) => hrefFor(path, locale);
+  // Real poster + kind chip from the template-card.astro resolution chain
+  // (manifest poster → baked R2 preview → local screenshot). A card with no
+  // known poster keeps the placeholder rather than rendering a broken image.
+  const media = SOLUTION_CARD_MEDIA[card.href];
+  return (
+    <li className="tpl-card">
+      <span className="tpl-band" aria-hidden="true" />
+      <a className="tpl-media" href={href(card.href)} aria-label={card.title}>
+        {media?.poster ? (
+          <img
+            className="tpl-media-poster"
+            src={media.poster}
+            alt={card.title}
+            loading="lazy"
+            decoding="async"
+          />
+        ) : (
+          <span className="tpl-media-empty" aria-hidden="true" />
+        )}
+        {media?.kind && <span className="tpl-media-kind">{media.kind}</span>}
+      </a>
+      <div className="tpl-meta">
+        <span className="tpl-author">@open-design</span>
+        <span className="tpl-meta-date">Open Design</span>
+      </div>
+      <a className="tpl-excerpt" href={href(card.href)}>
+        <span className="tpl-excerpt-head">查看完整提示词 →</span>
+        <h3 className="tpl-excerpt-title">{card.title}</h3>
+        <p className="tpl-excerpt-body">{card.desc}</p>
+      </a>
+      <div className="tpl-actions">
+        <a className="tpl-cta" href={href(card.href)}>使用此模板</a>
+      </div>
+    </li>
+  );
+}
+
+function SolutionSystemCard({ card, locale }: { card: DesignSystemCard; locale: LandingLocaleCode }) {
+  const href = (path: string) => hrefFor(path, locale);
+  return (
+    <li className="system-card">
+      <a href={href(card.href)}>
+        <div className="system-swatches" aria-hidden="true">
+          {(card.palette ?? []).map((color, index) => (
+            <span className="swatch" key={`${color}-${index}`} style={{ backgroundColor: color }} />
+          ))}
+        </div>
+        <span className="system-name">{card.name}</span>
+        <span className="system-cat">{card.category}</span>
+        <p className="system-tagline">{card.tagline}</p>
+        <span className="system-cta">查看设计系统 →</span>
+      </a>
+    </li>
+  );
+}
+
+export function SolutionDetailPage({ slug, locale }: { slug: string; locale: LandingLocaleCode }) {
+  const spec = SOLUTION_ROUTES[slug];
+  const page = getSolutionPageCopy(locale, spec.key);
   const common = getInfoPageCopy(locale).common;
   const nav = getCommonCopy(locale).header.nav;
   const href = (path: string) => hrefFor(path, locale);
+  const platform = useDetectedPlatform();
+  const release = useLatestRelease();
+  // Direct installer for the detected platform (versioned asset rule, same as
+  // the live site). Unknown/linux platforms fall back to the in-site download
+  // page which exposes the full platform matrix — never a bare releases page.
+  const downloadHref = assetDownloadUrl(platform, release.version) ?? href('/download/');
+  const downloadIsExternal = downloadHref.startsWith('http');
   const faq = page.faq;
   const relatedTools = page.related ?? [];
+  const pluginCards = SOLUTION_PLUGIN_CARDS[slug];
+  const systemCards = spec.kind === 'design-system' ? DESIGN_SYSTEM_CARDS : [];
+  // Tool pages lead with the download CTA; use-case/role/design-system lead
+  // with the GitHub star CTA (mirrors each page's hero on the live site).
+  const isStarLead = spec.kind === 'usecase' || spec.kind === 'role' || spec.kind === 'design-system';
+  const showBreadcrumbHub = spec.kind === 'tool' || spec.kind === 'html-ppt';
   return (
     <SubpageLayout active="solution" locale={locale}>
       <nav className="breadcrumb" aria-label={common.breadcrumbAria}>
         <a href={href('/')}>Open Design</a>
         <span>/</span>
-        <a href={href('/solutions/')}>{nav.solution}</a>
-        <span>/</span>
+        {showBreadcrumbHub ? (
+          <><a href={href('/solutions/')}>{nav.solution}</a><span>/</span></>
+        ) : null}
         <span aria-current="page">{page.breadcrumb}</span>
       </nav>
-      <article className="info-page solution-page" data-od-id="route-solutions-screenshot-to-code">
+      <article className="info-page solution-page" data-od-id={`route-solutions-${slug}`}>
         <div className="solution-hero-band">
           <header className="catalog-head">
             <span className="label">{page.label}</span>
             <h1 className="display">{page.heading}</h1>
             <p className="lead">{page.lead}</p>
             <div className="solution-hero-cta">
-              <a className="btn btn-primary" href={href('/download/')}>{common.downloadDesktop}</a>
-              <a className="btn btn-ghost" href={REPO} target="_blank" rel="noreferrer noopener">{common.starOnGithub}</a>
+              {isStarLead ? (
+                <><a className="btn btn-primary" href={REPO} target="_blank" rel="noreferrer noopener">{common.starOnGithub}</a><a className="btn btn-ghost" href={downloadHref} target={downloadIsExternal ? '_blank' : undefined} rel={downloadIsExternal ? 'noreferrer noopener' : undefined}>{common.downloadDesktop}</a></>
+              ) : (
+                <><a className="btn btn-primary" href={downloadHref} target={downloadIsExternal ? '_blank' : undefined} rel={downloadIsExternal ? 'noreferrer noopener' : undefined}>{common.downloadDesktop}</a><a className="btn btn-ghost" href={REPO} target="_blank" rel="noreferrer noopener">{common.starOnGithub}</a></>
+              )}
             </div>
           </header>
-          <figure className="solution-hero">
-            <img
-              src="/solutions/screenshot-to-code-hero.webp"
-              alt={page.heroImageAlt}
-              loading="eager"
-              width={1280}
-              height={853}
-            />
+          <figure className={PROOF_MEDIA_SLUGS.has(slug) ? 'solution-hero solution-proof-media' : 'solution-hero'}>
+            {PROOF_MEDIA_SLUGS.has(slug) ? (
+              <a href={href(page.exampleHref)} aria-label={page.exampleLinkLabel}>
+                <img
+                  src={spec.hero}
+                  alt={page.heroImageAlt}
+                  loading="eager"
+                  width={1280}
+                  height={853}
+                />
+                <span className="solution-proof-open" aria-hidden="true">↗</span>
+              </a>
+            ) : (
+              <img
+                src={spec.hero}
+                alt={page.heroImageAlt}
+                loading="eager"
+                width={1280}
+                height={853}
+              />
+            )}
           </figure>
         </div>
 
@@ -178,14 +308,24 @@ export function ScreenshotToCodePage({ locale }: { locale: LandingLocaleCode }) 
 
         <section className="info-section" id="features">
           <h2>{page.featuresTitle}</h2>
-          <ul className="tool-feature-grid">
-            {page.features.map((f) => (
-              <li className="tool-feature-card" key={f.title}>
-                <h3>{f.title}</h3>
-                <p>{f.body}</p>
-              </li>
-            ))}
-          </ul>
+          {spec.kind === 'design-system' ? (
+            <ul className="solution-system-grid">
+              {systemCards.map((card) => <SolutionSystemCard card={card} locale={locale} key={card.href} />)}
+            </ul>
+          ) : (spec.kind === 'usecase' || spec.kind === 'role') && pluginCards ? (
+            <ul className="tpl-grid solution-tpl-grid">
+              {pluginCards.map((card) => <SolutionPluginCard card={card} locale={locale} key={card.href} />)}
+            </ul>
+          ) : (
+            <ul className="tool-feature-grid">
+              {page.features.map((f) => (
+                <li className="tool-feature-card" key={f.title}>
+                  <h3>{f.title}</h3>
+                  <p>{f.body}</p>
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
 
         <section className="info-section" id="compare">
@@ -213,7 +353,16 @@ export function ScreenshotToCodePage({ locale }: { locale: LandingLocaleCode }) 
         </section>
 
         <section className="info-section" id="browse">
-          <p>{page.galleryLead}</p>
+          {spec.kind === 'html-ppt' ? (
+            <>
+              <h2>{page.galleryTitle}</h2>
+              <ul className="tpl-grid solution-tpl-grid">
+                {(pluginCards ?? []).map((card) => <SolutionPluginCard card={card} locale={locale} key={card.href} />)}
+              </ul>
+            </>
+          ) : (
+            <p>{page.galleryLead}</p>
+          )}
           <p>
             <a className="inline-link" href={href(page.exampleHref)}>{page.exampleLinkLabel} →</a>
           </p>
@@ -255,7 +404,7 @@ export function ScreenshotToCodePage({ locale }: { locale: LandingLocaleCode }) 
           </div>
           <div className="info-cta-actions">
             <a className="btn btn-primary" href={REPO} target="_blank" rel="noreferrer noopener">{common.starOnGithub}</a>
-            <a className="btn btn-ghost" href={REPO_RELEASES} target="_blank" rel="noreferrer noopener">{common.downloadDesktop}</a>
+            <a className="btn btn-ghost" href={downloadHref} target={downloadIsExternal ? '_blank' : undefined} rel={downloadIsExternal ? 'noreferrer noopener' : undefined}>{common.downloadDesktop}</a>
           </div>
           <div className="info-cta-meta">
             <span className="stamp">● {common.apache}</span>
@@ -274,8 +423,11 @@ export function ScreenshotToCodePage({ locale }: { locale: LandingLocaleCode }) 
 
 interface ReleaseAsset { name: string; url: string; size: number; sha256Url: string | null; }
 interface LatestRelease {
+  /** Pure version, e.g. '0.17.0' (no leading v). */
+  version: string;
   versionLabel: string;
   publishedAt: string | null;
+  /** Version-info link (GitHub tag/release page) — NOT a download button href. */
   releaseUrl: string;
   assets: {
     macArm64Dmg: ReleaseAsset | null;
@@ -285,11 +437,46 @@ interface LatestRelease {
   };
 }
 
+// Versioned asset rule identical to the live original site (and the OD
+// project's landing-page/_lib/github.ts): every direct download AND checksum
+// href is `https://releases.open-design.ai/stable/versions/<version>/<file>`.
+// GitHub /releases/latest still supplies the version + asset list; the CDN
+// serves the actual bytes. Verified reachable (HTTP 200) on 2026-08-05.
+const RELEASES_CDN = 'https://releases.open-design.ai';
+const PLATFORM_ASSET_FILE: Record<PlatformKey, ((version: string) => string) | null> = {
+  'mac-arm64': (v) => `open-design-${v}-mac-arm64.dmg`,
+  'mac-x64': (v) => `open-design-${v}-mac-x64.dmg`,
+  win: (v) => `open-design-${v}-win-x64-setup.exe`,
+  // No AppImage asset ships in the release; the original site keeps Linux on
+  // the release page, and so do we.
+  linux: null,
+};
+
+const cdnAssetUrl = (version: string, name: string): string =>
+  `${RELEASES_CDN}/stable/versions/${version}/${name}`;
+
+function assetDownloadUrl(platform: PlatformKey | null, version: string): string | null {
+  if (!platform) return null;
+  const file = PLATFORM_ASSET_FILE[platform];
+  if (!file) return null;
+  return cdnAssetUrl(version, file(version));
+}
+
+const FALLBACK_VERSION = '0.17.0';
+
+// API-failure fallback: still a real, verified direct-asset URL built from the
+// versioned rule above (never a bare /releases page) — see assetDownloadUrl.
 const FALLBACK_RELEASE: LatestRelease = {
-  versionLabel: 'v0.16.1',
+  version: FALLBACK_VERSION,
+  versionLabel: `v${FALLBACK_VERSION}`,
   publishedAt: null,
-  releaseUrl: RELEASES_LATEST,
-  assets: { macArm64Dmg: null, macX64Dmg: null, winSetup: null, linux: null },
+  releaseUrl: `${REPO}/releases/tag/open-design-v${FALLBACK_VERSION}`,
+  assets: {
+    macArm64Dmg: { name: `open-design-${FALLBACK_VERSION}-mac-arm64.dmg`, url: assetDownloadUrl('mac-arm64', FALLBACK_VERSION)!, size: 0, sha256Url: cdnAssetUrl(FALLBACK_VERSION, `open-design-${FALLBACK_VERSION}-mac-arm64.dmg.sha256`) },
+    macX64Dmg: { name: `open-design-${FALLBACK_VERSION}-mac-x64.dmg`, url: assetDownloadUrl('mac-x64', FALLBACK_VERSION)!, size: 0, sha256Url: cdnAssetUrl(FALLBACK_VERSION, `open-design-${FALLBACK_VERSION}-mac-x64.dmg.sha256`) },
+    winSetup: { name: `open-design-${FALLBACK_VERSION}-win-x64-setup.exe`, url: assetDownloadUrl('win', FALLBACK_VERSION)!, size: 0, sha256Url: cdnAssetUrl(FALLBACK_VERSION, `open-design-${FALLBACK_VERSION}-win-x64-setup.exe.sha256`) },
+    linux: null,
+  },
 };
 
 function fmtSize(bytes: number): string | null {
@@ -310,14 +497,14 @@ async function fetchLatestRelease(): Promise<LatestRelease | null> {
       !!a && typeof a.name === 'string' && typeof a.browser_download_url === 'string');
     const shaFor = (name: string): string | null => {
       const sib = assets.find((a) => a.name === `${name}.sha256`);
-      return sib ? sib.browser_download_url : null;
+      return sib ? cdnAssetUrl(version, `${name}.sha256`) : null;
     };
     const pick = (match: (name: string) => boolean): ReleaseAsset | null => {
       const a = assets.find((x) => !x.name.endsWith('.sha256') && match(x.name));
       if (!a) return null;
       return {
         name: a.name,
-        url: a.browser_download_url,
+        url: cdnAssetUrl(version, a.name),
         size: typeof a.size === 'number' && Number.isFinite(a.size) ? a.size : 0,
         sha256Url: shaFor(a.name),
       };
@@ -333,10 +520,12 @@ async function fetchLatestRelease(): Promise<LatestRelease | null> {
       return cleaned ? `v${cleaned.replace(/^v/, '')}` : null;
     };
     const versionLabel = fromName(release.name) ?? fromTag(release.tag_name) ?? FALLBACK_RELEASE.versionLabel;
+    const version = versionLabel.replace(/^v/, '');
     return {
+      version,
       versionLabel,
       publishedAt: typeof release.published_at === 'string' ? release.published_at.slice(0, 10) : null,
-      releaseUrl: typeof release.html_url === 'string' ? release.html_url : RELEASES_LATEST,
+      releaseUrl: typeof release.html_url === 'string' ? release.html_url : FALLBACK_RELEASE.releaseUrl,
       assets: {
         macArm64Dmg: pick((n) => n.endsWith('mac-arm64.dmg')),
         macX64Dmg: pick((n) => n.endsWith('mac-x64.dmg')),
@@ -373,6 +562,25 @@ function detectPlatform(): PlatformKey | null {
   return null;
 }
 
+function useDetectedPlatform(): PlatformKey | null {
+  const [platform, setPlatform] = useState<PlatformKey | null>(null);
+  useEffect(() => { setPlatform(detectPlatform()); }, []);
+  return platform;
+}
+
+function useLatestRelease(): LatestRelease {
+  const [release, setRelease] = useState<LatestRelease>(FALLBACK_RELEASE);
+  useEffect(() => {
+    let cancelled = false;
+    fetchLatestRelease().then((latest) => {
+      if (cancelled || !latest) return;
+      setRelease(latest);
+    }).catch(() => undefined);
+    return () => { cancelled = true; };
+  }, []);
+  return release;
+}
+
 const ICON_APPLE =
   <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M16.36 12.78c.02 2.5 2.19 3.33 2.22 3.34-.02.06-.35 1.2-1.15 2.37-.69 1.01-1.41 2.02-2.54 2.04-1.11.02-1.47-.66-2.74-.66s-1.66.64-2.71.68c-1.09.04-1.92-1.09-2.62-2.1-1.42-2.06-2.51-5.83-1.05-8.37.72-1.27 2.01-2.07 3.41-2.09 1.07-.02 2.08.72 2.74.72.65 0 1.88-.89 3.17-.76.54.02 2.06.22 3.03 1.64-.08.05-1.81 1.06-1.79 3.15M14.28 5.6c.58-.7.97-1.68.86-2.65-.83.03-1.84.55-2.44 1.25-.54.62-1.01 1.61-.88 2.56.93.07 1.87-.47 2.46-1.16"/></svg>;
 const ICON_WINDOWS =
@@ -385,18 +593,31 @@ export function DownloadPage({ locale }: { locale: LandingLocaleCode }) {
   const page = copy.download;
   const common = copy.common;
   const href = (path: string) => hrefFor(path, locale);
-  const [release, setRelease] = useState<LatestRelease>(FALLBACK_RELEASE);
-  const [platform, setPlatform] = useState<PlatformKey | null>(null);
+  const release = useLatestRelease();
+  const platform = useDetectedPlatform();
 
   useEffect(() => {
-    let cancelled = false;
-    fetchLatestRelease().then((latest) => {
-      if (cancelled || !latest) return;
-      setRelease(latest);
-    }).catch(() => undefined);
-    setPlatform(detectPlatform());
-    return () => { cancelled = true; };
+    // Mirror upstream download-enhancer: show the mobile notice on narrow
+    // viewports or mobile devices.
+    const narrow = window.matchMedia('(max-width: 767px)');
+    const isMobileUA = /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
+    const syncNotice = () => {
+      const notice = document.querySelector<HTMLElement>('[data-dl-mobile-notice]');
+      if (notice) notice.hidden = !(isMobileUA || narrow.matches);
+    };
+    syncNotice();
+    narrow.addEventListener('change', syncNotice);
+    return () => {
+      narrow.removeEventListener('change', syncNotice);
+    };
   }, []);
+
+  const platformLabel: Record<PlatformKey, string> = {
+    'mac-arm64': 'macOS (Apple Silicon)',
+    'mac-x64': 'macOS (Intel)',
+    win: 'Windows',
+    linux: 'Linux',
+  };
 
   const m = release.assets;
   const versionLabel = release.versionLabel;
@@ -404,7 +625,7 @@ export function DownloadPage({ locale }: { locale: LandingLocaleCode }) {
   const isRecommended = (key: PlatformKey) => platform === key;
 
   const cards: Array<{
-    key: PlatformKey; osLabel: string; arch?: string; icon: React.ReactNode;
+    key: PlatformKey; osLabel: string; arch?: string; icon: ReactNode;
     rows: Array<{ variant: string; asset: ReleaseAsset | null }>; note?: string;
   }> = [
     {
@@ -434,31 +655,52 @@ export function DownloadPage({ locale }: { locale: LandingLocaleCode }) {
       </nav>
       <article className="info-page dl-page" data-download-root>
         <header className="dl-hero">
-          <div className="dl-hero-mark" aria-hidden="true">
-            <img src="/favicon.svg" alt="" width="48" height="48" />
+          <div className="dl-hero-copy">
+            <div className="dl-hero-brand">
+              <span className="dl-hero-mark" aria-hidden="true">
+                <img src="/favicon.svg" alt="" width="34" height="34" />
+              </span>
+              <span>Vibe Design Workspace</span>
+            </div>
+            <h1 className="dl-hero-heading">{page.heading}</h1>
+            <p className="dl-hero-lead">{page.lead}</p>
+            <p className="dl-mobile-notice" data-dl-mobile-notice hidden>
+              {page.mobileDesktopNotice}
+            </p>
+            <div className="dl-hero-actions">
+              <a
+                className="btn btn-primary dl-hero-cta"
+                href={assetDownloadUrl(platform, release.version) ?? release.releaseUrl}
+                target="_blank"
+                rel="noreferrer noopener"
+                data-dl-auto
+              >
+                <span className="dl-hero-cta-icon" aria-hidden="true">↓</span>
+                <span>{page.autoCtaFallback}</span>
+                {platform && <span className="dl-auto-os"> {platformLabel[platform]}</span>}
+              </a>
+              <a className="dl-hero-release-link" href={release.releaseUrl} target="_blank" rel="noreferrer noopener">
+                {page.releaseNotes} ↗
+              </a>
+            </div>
+            <p className="dl-hero-meta">
+              <a className="inline-link" href={release.releaseUrl} target="_blank" rel="noreferrer noopener">
+                {versionLabel}
+              </a>
+              {publishedLabel && <span className="dl-version-date"> · {page.publishedPrefix} {publishedLabel}</span>}
+            </p>
           </div>
-          <h1 className="dl-hero-heading">{page.heading}</h1>
-          <p className="dl-hero-lead">{page.lead}</p>
-          <p className="dl-mobile-notice" hidden>
-            {page.mobileDesktopNotice}
-          </p>
-          <a
-            className="btn btn-primary dl-hero-cta"
-            href={release.releaseUrl}
-            target="_blank"
-            rel="noreferrer noopener"
-            data-dl-auto
-          >
-            <span>{page.autoCtaFallback}</span>
-          </a>
-          <p className="dl-hero-meta">
-            <a className="inline-link" href={release.releaseUrl} target="_blank" rel="noreferrer noopener">
-              {versionLabel}
-            </a>
-            {publishedLabel && <span className="dl-version-date"> · {page.publishedPrefix} {publishedLabel}</span>}
-            <span> · </span>
-            <a className="inline-link" href={release.releaseUrl} target="_blank" rel="noreferrer noopener">{page.releaseNotes}</a>
-          </p>
+          <figure className="dl-hero-visual">
+            <div className="dl-hero-visual-shell">
+              <img
+                src="/hero-product-1280.webp"
+                alt="Open Design 桌面工作区使用本地 Agent 和精选设计系统创建网站。"
+                width="1280"
+                height="741"
+                loading="eager"
+              />
+            </div>
+          </figure>
         </header>
 
         <section className="dl-platforms" id="platforms" aria-label={page.platformsTitle}>

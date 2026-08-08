@@ -149,14 +149,12 @@
 }
 
 @media (max-width: 720px) {
-  .od-route-actions,
-  .solution-hero-cta {
+  .od-route-actions {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .od-route-actions .btn,
-  .solution-hero-cta .btn {
+  .od-route-actions .btn {
     width: 100%;
     justify-content: center;
   }
