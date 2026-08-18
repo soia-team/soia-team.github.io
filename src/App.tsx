@@ -27,6 +27,7 @@ import {
 } from './catalog-pages';
 import { SolutionsIndexPage, SolutionDetailPage, SOLUTION_ROUTES, DownloadPage } from './solution-pages';
 import { ALTERNATIVE_SLUGS, AlternativeDetailPage, ComparePage } from './comparison-pages';
+import { MISSING_ALTERNATIVE_COPY } from './missing-alternatives';
 import { OpenDesignPluginPage, QuickstartPage } from './action-pages';
 import { CommunityPage, FaqPage, LegalPage, AboutPage, CareersPage, OfficialPage } from './info-pages';
 import { AmbassadorsPage, ContributorsPage, EventsPage, ModeratorsPage } from './community-pages';
@@ -678,7 +679,7 @@ export default function App() {
     : isEnterprise ? 'Workspace 团队版 — Open Design'
     : isCompare ? getInfoPageCopy(locale).compare.title
     : alternativeSlug && (ALTERNATIVE_SLUGS as readonly string[]).includes(alternativeSlug)
-      ? (getInfoCopy(locale).alternatives?.[alternativeSlug]?.title ?? `Open Design vs ${alternativeSlug}`)
+      ? (getInfoCopy(locale).alternatives?.[alternativeSlug]?.title ?? MISSING_ALTERNATIVE_COPY[alternativeSlug]?.title ?? `Open Design vs ${alternativeSlug}`)
     : (product?.title ?? getCatalogTitle(path) ?? 'Open Design');
 
   useEffect(() => {

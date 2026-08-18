@@ -8,6 +8,7 @@ import {
 } from './upstream/app/info-page-i18n';
 import type { LandingLocaleCode } from './upstream/app/i18n';
 import { hrefFor, REPO, SubpageLayout } from './shell';
+import { MISSING_ALTERNATIVE_COPY } from './missing-alternatives';
 
 const getCommonCopy = (locale: LandingLocaleCode) => getInfoPageCopy(locale).common;
 
@@ -17,7 +18,7 @@ const getCommonCopy = (locale: LandingLocaleCode) => getInfoPageCopy(locale).com
  * the upstream i18n snapshot; this module is the React renderer for that
  * contract, including the long-form rich sections and visible FAQ.
  */
-export const ALTERNATIVE_SLUGS = ['bolt', 'claude-design', 'figma', 'framer', 'lovable', 'v0'] as const;
+export const ALTERNATIVE_SLUGS = ['bolt', 'claude-design', 'figma', 'framer', 'lovable', 'v0', 'figma-make', 'genspark', 'pencil-dev', 'qoder', 'stitch', 'trae'] as const;
 export type AlternativeSlug = (typeof ALTERNATIVE_SLUGS)[number];
 
 const COMPETITOR_NAMES: Record<AlternativeSlug, string> = {
@@ -27,6 +28,12 @@ const COMPETITOR_NAMES: Record<AlternativeSlug, string> = {
   framer: 'Framer',
   lovable: 'Lovable',
   v0: 'v0',
+  'figma-make': 'Figma Make',
+  genspark: 'Genspark AI Designer',
+  'pencil-dev': 'Pencil.dev',
+  qoder: 'QoderWork Design',
+  stitch: 'Google Stitch',
+  trae: 'Trae',
 };
 
 function HtmlText({ text }: { text: string }) {
@@ -133,13 +140,13 @@ function FlatAlternativePage({ page, competitorName, locale }: { page: Alternati
 }
 
 export function AlternativeDetailPage({ slug, locale }: { slug: string; locale: LandingLocaleCode }) {
-  const page = getAlternativeCopy(locale, slug);
+  const page = getAlternativeCopy(locale, slug) ?? MISSING_ALTERNATIVE_COPY[slug];
   if (!page) return null;
   const typedSlug = (ALTERNATIVE_SLUGS as readonly string[]).includes(slug) ? slug as AlternativeSlug : 'claude-design';
   return page.rich ? <RichAlternativePage page={page} slug={typedSlug} locale={locale} /> : <FlatAlternativePage page={page} competitorName={COMPETITOR_NAMES[typedSlug]} locale={locale} />;
 }
 
-const COMPARE_ORDER: AlternativeSlug[] = ['claude-design', 'figma', 'lovable', 'bolt', 'v0', 'framer'];
+const COMPARE_ORDER: AlternativeSlug[] = ['claude-design', 'figma', 'lovable', 'bolt', 'v0', 'framer', 'stitch', 'genspark', 'figma-make', 'qoder', 'trae', 'pencil-dev'];
 
 export function ComparePage({ locale }: { locale: LandingLocaleCode }) {
   const copy = getInfoPageCopy(locale);
@@ -148,7 +155,7 @@ export function ComparePage({ locale }: { locale: LandingLocaleCode }) {
   return (
     <SubpageLayout active="resources" locale={locale}>
       <nav className="breadcrumb" aria-label={copy.common.breadcrumbAria}><a href={href('/')}>Open Design</a><span>/</span><span aria-current="page">{page.breadcrumb}</span></nav>
-      <article className="info-page info-page-centered compare-hub"><header className="catalog-head compare-head"><span className="label">{page.label}</span><h1 className="display">{page.heading}</h1><p className="lead">{page.lead}</p></header><nav className="info-toc" aria-label={copy.common.onThisPage}><span>{copy.common.onThisPage}</span>{COMPARE_ORDER.map((slug) => <a href={`#${slug}`} key={slug}>vs {COMPETITOR_NAMES[slug]}</a>)}<a href="#limits">{page.limitsTitle}</a></nav><section className="info-section"><ul className="compare-grid">{COMPARE_ORDER.map((slug, index) => { const alt = getAlternativeCopy(locale, slug); const summary = page.comparisons[index]?.summary ?? alt?.tldrBody ?? ''; return <li className="compare-card" id={slug} key={slug}><h3>Open Design vs <em>{COMPETITOR_NAMES[slug]}</em></h3><p>{summary}</p><a href={href(`/alternatives/${slug}/`)}>{page.comparisons[index]?.cta ?? '查看完整对比 →'}</a></li>; })}</ul></section><section className="info-section" id="limits"><h2>{page.limitsTitle}</h2><p>{page.limitsBody}</p><ol className="faq-list">{page.limitsFaq.map((faq, index) => <li className="faq-item" key={faq.name}><details><summary><span className="faq-index">{String(index + 1).padStart(2, '0')}</span><span className="faq-q">{faq.name}</span><span className="faq-toggle" aria-hidden="true">+</span></summary><p className="faq-a">{faq.text}</p></details></li>)}</ol></section></article>
+          <article className="info-page info-page-centered compare-hub"><header className="catalog-head compare-head"><span className="label">{page.label}</span><h1 className="display">{page.heading}</h1><p className="lead">{page.lead}</p></header><nav className="info-toc" aria-label={copy.common.onThisPage}><span>{copy.common.onThisPage}</span>{COMPARE_ORDER.map((slug) => <a href={`#${slug}`} key={slug}>vs {COMPETITOR_NAMES[slug]}</a>)}<a href="#limits">{page.limitsTitle}</a></nav><section className="info-section"><ul className="compare-grid">{COMPARE_ORDER.map((slug, index) => { const alt = getAlternativeCopy(locale, slug) ?? MISSING_ALTERNATIVE_COPY[slug]; const summary = page.comparisons[index]?.summary ?? alt?.tldrBody ?? ''; return <li className="compare-card" id={slug} key={slug}><h3>Open Design vs <em>{COMPETITOR_NAMES[slug]}</em></h3><p>{summary}</p><a href={href(`/alternatives/${slug}/`)}>{page.comparisons[index]?.cta ?? '查看完整对比 →'}</a></li>; })}</ul></section><section className="info-section" id="limits"><h2>{page.limitsTitle}</h2><p>{page.limitsBody}</p><ol className="faq-list">{page.limitsFaq.map((faq, index) => <li className="faq-item" key={faq.name}><details><summary><span className="faq-index">{String(index + 1).padStart(2, '0')}</span><span className="faq-q">{faq.name}</span><span className="faq-toggle" aria-hidden="true">+</span></summary><p className="faq-a">{faq.text}</p></details></li>)}</ol></section></article>
     </SubpageLayout>
   );
 }
