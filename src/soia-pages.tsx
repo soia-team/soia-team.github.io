@@ -155,16 +155,22 @@ export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; s
           <h1 className="display">{pick(locale, domain.name)}</h1>
           <p className="lead">{pick(locale, domain.blurb)}</p>
         </header>
-        <section className="craft-list">
+        <section className="tutorial-grid">
           {skills.map((skill, index) => (
-            <a className="craft-row" href={href(`/skills/${slug}/${skill.name}/`)} key={skill.name}>
-              <span className="craft-index">{String(index + 1).padStart(2, '0')}</span>
-              <span>
-                <strong>{skill.name}</strong>
-                <small>{skill.tagline}</small>
-              </span>
-              <span className="craft-arrow">→</span>
-            </a>
+            <article className="tutorial-card" key={skill.name}>
+              <a href={href(`/skills/${slug}/${skill.name}/`)}>
+                <img src={`/soia/skills/${skill.name}.png`} alt={skill.name} loading="lazy" />
+                <div className="tutorial-card-body">
+                  <span className="label">{String(index + 1).padStart(2, '0')} · {domain.plugin}</span>
+                  <h2>{skill.name}</h2>
+                  <p>{skill.tagline}</p>
+                  <div className="tutorial-meta">
+                    <span>{zh ? '查看详情' : 'Details'}</span>
+                    <span>{zh ? '进入 →' : 'Open →'}</span>
+                  </div>
+                </div>
+              </a>
+            </article>
           ))}
         </section>
         <div className="missing-cta">
@@ -201,7 +207,7 @@ export function SkillDetailPage({ locale, slug, skill }: { locale: LandingLocale
           </div>
         </header>
         <figure className="plugin-detail-hero">
-          <img src={domain.cover} alt="" loading="lazy" />
+          <img src={`/soia/skills/${doc.name}.png`} alt={doc.name} loading="lazy" />
         </figure>
         <div className="plugin-detail-columns">
           <article>
@@ -270,6 +276,9 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
         { id: 'models', title: '本地 LLM', body: '发现、启停、下载本机模型，并提供一个 OpenAI 兼容入口。现在推理引擎以 MLX 系为主，所以本地模型在 Apple Silicon 上最完整。作业台本身不依赖本地模型。', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck 本地 LLM 模型转发' },
         { id: 'network', title: 'AI 网络', body: '本机访问各 AI 服务走哪张网卡、连不连得通。核心管理能力断网可用。', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI 网络监控' },
         { id: 'remote', title: '远程访问与手机端', body: '电脑开启远程访问或通过中继配对后，手机端可随时查看对话进度、看代码改动与 Diff，并在手机上远程审批权限或止损停轮。', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck 手机端远程访问与设计总览' },
+        { id: 'account', title: '远程账号与名下主机', body: '账号网页支持邮箱验证码与 Passkey 登录，集中管理名下绑定的主机指纹、登录设备与中继流量；设备丢失时可一键标记丢失并自动通知中继收回授权。', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck 远程账号与名下主机' },
+        { id: 'relay', title: '中继服务', body: '不在同一局域网时，手机与电脑通过轻量中继建立加密通道，中继只做转发不看对话内容；维护期间支持 90 秒内自动续上，连接不断。', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck 中继服务状态与通道监控' },
+        { id: 'admin', title: '账号管理后台', body: '面向自部署与团队管理员的后台界面，统一查看账号状态、邀请名单、登记主机、封禁异常主机及操作审计记录，支持只读与 SSH 隧道模式。', image: '/soia/products/soiadeck-admin.png', alt: 'SoiaDeck 账号管理后台' },
         { id: 'agents', title: '已接 19 个 coding agent', body: '包括 Claude Code、Codex、Cursor、Gemini CLI、Pi、OpenCode、Copilot、Qwen、Kimi、Kiro、Trae、Grok、Antigravity 等。清单以 SoiaDeck 的 agent-manifest-index 为准。', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 已接入 19 个 Coding Agent 矩阵' },
         { id: 'open', title: '即将开源', body: '现在是私有仓，持续开发中。目前只发 macOS arm64 安装包；Linux / Windows 有构建入口，但没验收、不发包。官网不假装已有公开下载。' },
       ]
@@ -280,6 +289,9 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
         { id: 'models', title: 'Local LLM', body: 'Discover, start/stop and download local models, plus one OpenAI-compatible endpoint. Engines today are mostly MLX, so local models are most complete on Apple Silicon.', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck Local LLM router' },
         { id: 'network', title: 'AI Network', body: 'Which network interface the machine uses to reach AI services, and whether they are reachable. Core management still works offline.', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI Network' },
         { id: 'remote', title: 'Remote & Mobile', body: 'Pair your phone over local LAN or relay to follow running sessions, inspect diffs, approve tool permissions, or stop a turn on the go.', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck mobile surface' },
+        { id: 'account', title: 'Remote account & bound hosts', body: 'Sign in with email verification or Passkey on the Account Web to manage bound host fingerprints, active devices, and relay usage — or mark a lost device to revoke access immediately.', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck account web and bound hosts' },
+        { id: 'relay', title: 'Relay service', body: 'When away from your local network, desktop and mobile connect through an encrypted relay that forwards traffic without inspecting contents, with automatic 90s reconnect during maintenance.', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck relay service' },
+        { id: 'admin', title: 'Admin console', body: 'A dedicated operator console for self-hosted and team deployments to inspect accounts, manage invite lists, ban anomalous hosts, and audit operations.', image: '/soia/products/soiadeck-admin.png', alt: 'SoiaDeck admin console' },
         { id: 'agents', title: '19 coding agents', body: 'Including Claude Code, Codex, Cursor, Gemini CLI, Pi, OpenCode, Copilot, Qwen, Kimi, Kiro, Trae, Grok and Antigravity.', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 19 coding agents' },
         { id: 'open', title: 'Coming open source', body: 'Private today, under active development. Only macOS arm64 installers ship; Linux and Windows have build entry points but are not released.' },
       ];
