@@ -334,7 +334,133 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
             ))}
             <div className="missing-cta">
               <a className="btn btn-primary" href={href('/skills/')}>{zh ? '看开源技能' : 'Open skills'}</a>
-              <a className="btn btn-ghost" href="https://github.com/soia-team/soia" target="_blank" rel="noreferrer noopener">SOIA Runtime</a>
+              <a className="btn btn-ghost" href={href('/soia/')}>SOIA Runtime</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </SubpageLayout>
+  );
+}
+
+/** SoiaCode (si) — tutorial-detail template. */
+export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
+  const href = (path: string) => hrefFor(path, locale);
+  const zh = isZh(locale);
+  const sections: ReadonlyArray<{ id: string; title: string; body: string }> = zh
+    ? [
+        { id: 'overview', title: '极小内核，单二进制', body: 'SoiaCode（简称与命令 si）是用 Rust 编写的轻量 coding agent：一个极小内核加一个命令行工具，打成单个静态二进制，内存占用低，可以直接拷到线上服务器排查问题。' },
+        { id: 'tools', title: '五个内置工具与按需扩展', body: '内置读（read）、写（write）、改（edit）、执行命令（bash）、搜索（search）五个工具，以及权限检查与会话管理。子 agent、todo、记忆、网页、LSP 等做成扩展按需安装，也支持接入 MCP 工具。' },
+        { id: 'attention', title: '省注意力', body: '「Your attention is all it needs.」系统提示词短，工具输出先裁剪再进上下文，只在授权、风险和方向这些关键节点打断人，不把无关噪声堆进对话。' },
+        { id: 'modes', title: '五种运行方式', body: '支持 si（终端交互）、si -p "任务"（print 模式用于脚本与 CI）、si --mode rpc（RPC 长期驱动）、si --mode acp（接入 Zed 等编辑器）以及作为 Rust 库 soiacode-sdk 嵌入外部程序。' },
+        { id: 'safety', title: '内置权限检查与审计', body: '不依赖外部沙箱：工作区内读写默认放行，写工作区外文件、执行命令、联网、读取凭据均需经过权限挂载点，无人批准即拒绝。提供 plan（只读）、default、bypass 三种模式（Shift+Tab 切换），每次调用与决定均进会话可回放，凭据不入日志。' },
+        { id: 'status', title: '当前进度', body: '目前处于方案与详细设计阶段（M1），还没有发布可用代码与二进制包。仓库内提供完整原则、架构、详细设计与决策记录。' },
+      ]
+    : [
+        { id: 'overview', title: 'Minimal kernel, single binary', body: 'SoiaCode (command si) is a lightweight coding agent written in Rust: one tiny core plus a CLI compiled into a single static binary with a small memory footprint.' },
+        { id: 'tools', title: 'Five built-in tools & extensions', body: 'Ships with read, write, edit, bash, and search, plus permission checks and session storage. Subagents, todo, memory, web, and LSP live as extensions or MCP tools.' },
+        { id: 'attention', title: 'Attention-preserving', body: '“Your attention is all it needs.” Short system prompt, trimmed tool outputs before entering context, interrupting the user only on approvals, risk, and direction.' },
+        { id: 'modes', title: 'Five ways to run', body: 'Interactive terminal (si), print mode (si -p "task"), long-lived RPC (si --mode rpc), ACP for editors like Zed (si --mode acp), and Rust crate embedding (soiacode-sdk).' },
+        { id: 'safety', title: 'Built-in permissions & audit', body: 'Built-in permission hooks without relying on an external sandbox. Three modes via Shift+Tab: plan (read-only), default, and bypass. Every tool call and decision is recorded for replay; credentials never enter logs.' },
+        { id: 'status', title: 'Current status', body: 'Currently in the design stage (milestone M1) with no released binary yet.' },
+      ];
+  return (
+    <SubpageLayout active="product" locale={locale}>
+      <article className="missing-page tutorial-detail">
+        <nav className="breadcrumb" aria-label="breadcrumb">
+          <a href={href('/')}>SOIA</a><span>/</span><span>SoiaCode</span>
+        </nav>
+        <header className="catalog-head">
+          <span className="label">{zh ? 'SOIA 家族 · 方案阶段 · 暂未开源' : 'SOIA family · design stage · not open source yet'}</span>
+          <h1 className="display">SoiaCode (si)</h1>
+          <p className="lead">
+            {zh
+              ? '用 Rust 编写的轻量 coding agent：极小内核、内置五个工具与权限检查。宗旨是「人守住注意力，系统守住安全」。'
+              : 'A lightweight Rust coding agent: minimal kernel, five built-in tools, and explicit permission checks.'}
+          </p>
+        </header>
+        <figure className="tutorial-detail-hero">
+          <img src="/soia/products/soiacode-overview.png" alt="SoiaCode overview" />
+        </figure>
+        <div className="tutorial-detail-layout">
+          <aside className="missing-toc">
+            <span>{zh ? '本页内容' : 'On this page'}</span>
+            {sections.map((section) => (
+              <a href={`#${section.id}`} key={section.id}>{section.title}</a>
+            ))}
+          </aside>
+          <div className="missing-article">
+            {sections.map((section) => (
+              <section id={section.id} key={section.id}>
+                <h2>{section.title}</h2>
+                <p>{section.body}</p>
+              </section>
+            ))}
+            <div className="missing-cta">
+              <a className="btn btn-primary" href={href('/soiadeck/')}>SoiaDeck</a>
+              <a className="btn btn-ghost" href={href('/skills/')}>{zh ? '看开源技能' : 'Open skills'}</a>
+            </div>
+          </div>
+        </div>
+      </article>
+    </SubpageLayout>
+  );
+}
+
+/** SOIA Runtime — tutorial-detail template. */
+export function SoiaRuntimePage({ locale }: { locale: LandingLocaleCode }) {
+  const href = (path: string) => hrefFor(path, locale);
+  const zh = isZh(locale);
+  const sections: ReadonlyArray<{ id: string; title: string; body: string }> = zh
+    ? [
+        { id: 'what', title: '开源 Agent Operating System', body: 'SOIA（System, Orchestration, Intelligence, Assurance）是本地运行 AI Agent 的开源运行时基础设施，位于 Claude Code、Codex CLI、Gemini CLI 等工具之下，负责统一凭据、执行历史记录、多 AI 协同调度与完整可审计性。' },
+        { id: 'provider', title: 'Provider Plane 与认证家族', body: '通过统一注册表接入 Claude、Codex、Gemini、Ollama 或任意 OpenAI 兼容端点，支持 5 种认证家族（ApiKey、OauthSubscription、CliCredentialImport、IamCloud、CompatibleEndpoint）与 SSE 流式分发。' },
+        { id: 'loop', title: 'Native Agent Loop 与上下文压缩', body: '内置 soia-agent-loop crate，提供 IterationBudget、InterruptToken 与并行工具批处理能力；配合 compact_with_summary、micro_compact 与 heuristic_summarize 防止长会话上下文溢出。' },
+        { id: 'memory', title: '本地记忆与混合检索', body: '通过 BM25 + 向量混合检索与本地 RAG 跨会话保留上下文，所有记忆与会话数据留在本地机器，不依赖云端托管。' },
+        { id: 'governance', title: '多 AI 治理与 8 层架构', body: '包含 Proposal 流水线、任务看板与审计日志以协同多个 AI 并行工作；底层由 29 个 Rust Runtime Crates 组成（覆盖 agent / channel / cli / foundation / gateway / llm / runtime / business 八层目录结构），上层提供 Tauri 2 + React 19 桌面端与 soia CLI。' },
+      ]
+    : [
+        { id: 'what', title: 'Open-source Agent Operating System', body: 'SOIA (System, Orchestration, Intelligence, Assurance) is the open-source runtime layer beneath tools like Claude Code, Codex CLI, and Gemini CLI — managing credentials, execution history, multi-AI coordination, and auditability locally.' },
+        { id: 'provider', title: 'Provider Plane & auth families', body: 'Unified registry for Claude, Codex, Gemini, Ollama, and OpenAI-compatible endpoints across 5 auth families (ApiKey, OauthSubscription, CliCredentialImport, IamCloud, CompatibleEndpoint) with SSE streaming.' },
+        { id: 'loop', title: 'Native Agent Loop & compaction', body: 'soia-agent-loop provides IterationBudget, InterruptToken, and parallel tool batching, paired with compact_with_summary, micro_compact, and heuristic_summarize.' },
+        { id: 'memory', title: 'Local memory & hybrid RAG', body: 'BM25 + vector hybrid search and local RAG persist context across sessions without sending data to a cloud service.' },
+        { id: 'governance', title: 'Multi-AI governance & 8-layer runtime', body: 'Proposal pipeline, task board, and audit logs coordinate parallel agents across 29 Rust runtime crates, paired with a Tauri 2 + React 19 desktop app and the soia CLI.' },
+      ];
+  return (
+    <SubpageLayout active="product" locale={locale}>
+      <article className="missing-page tutorial-detail">
+        <nav className="breadcrumb" aria-label="breadcrumb">
+          <a href={href('/')}>SOIA</a><span>/</span><span>SOIA Runtime</span>
+        </nav>
+        <header className="catalog-head">
+          <span className="label">{zh ? 'SOIA 家族 · 开源底层 · MIT' : 'SOIA family · open-source runtime · MIT'}</span>
+          <h1 className="display">SOIA Runtime</h1>
+          <p className="lead">
+            {zh
+              ? '开源 Agent Operating System（Rust + Tauri 2）：29 个 Runtime Crates、本地记忆与混合检索、多 AI 治理与 CLI。'
+              : 'Open-source Agent Operating System (Rust + Tauri 2): 29 runtime crates, local hybrid memory, multi-AI governance, and CLI.'}
+          </p>
+        </header>
+        <figure className="tutorial-detail-hero">
+          <img src="/soia/products/soia-runtime-overview.png" alt="SOIA Runtime overview" />
+        </figure>
+        <div className="tutorial-detail-layout">
+          <aside className="missing-toc">
+            <span>{zh ? '本页内容' : 'On this page'}</span>
+            {sections.map((section) => (
+              <a href={`#${section.id}`} key={section.id}>{section.title}</a>
+            ))}
+          </aside>
+          <div className="missing-article">
+            {sections.map((section) => (
+              <section id={section.id} key={section.id}>
+                <h2>{section.title}</h2>
+                <p>{section.body}</p>
+              </section>
+            ))}
+            <div className="missing-cta">
+              <a className="btn btn-primary" href="https://github.com/soia-team/soia" target="_blank" rel="noreferrer noopener">GitHub (soia-team/soia) ↗</a>
+              <a className="btn btn-ghost" href={href('/soiadeck/')}>SoiaDeck</a>
             </div>
           </div>
         </div>

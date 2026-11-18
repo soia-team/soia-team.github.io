@@ -13,7 +13,7 @@ import {
 } from './upstream/app/i18n';
 import { FaqPage, LegalPage, AboutPage } from './info-pages';
 import { COUNTS, GITHUB, hrefFor, REPO, SubpageLayout } from './shell';
-import { SoiaDeckPage, SkillsHubPage, SkillDomainPage, SkillDetailPage, SKILL_DOMAINS } from './soia-pages';
+import { SoiaDeckPage, SoiaCodePage, SoiaRuntimePage, SkillsHubPage, SkillDomainPage, SkillDetailPage, SKILL_DOMAINS } from './soia-pages';
 
 declare global {
   type MatterApi = {
@@ -452,6 +452,8 @@ export default function App() {
   const pageTitle =
     isHome ? (zh ? 'SOIA — SoiaDeck 桌面 AI 平台' : 'SOIA — SoiaDeck desktop AI platform')
     : path === '/soiadeck' ? (zh ? 'SoiaDeck — 桌面 AI 平台，即将开源' : 'SoiaDeck — desktop AI platform, coming open source')
+    : path === '/soiacode' ? (zh ? 'SoiaCode (si) — 轻量 Rust Coding Agent' : 'SoiaCode (si) — lightweight Rust coding agent')
+    : path === '/soia' ? (zh ? 'SOIA Runtime — 开源 Agent Operating System' : 'SOIA Runtime — open-source Agent OS')
     : path === '/skills' ? (zh ? '开源技能 — 47 个技能，4 个领域' : 'Open skills — 47 skills, 4 domains')
     : path.startsWith('/skills/') ? `SOIA Skills — ${path.slice('/skills/'.length).replace(/\/+$/, '')}`
     : isFaq ? (zh ? '常见问题 — SOIA' : 'FAQ — SOIA')
@@ -477,6 +479,8 @@ export default function App() {
 
   if (isHome) return <HomeRoute locale={locale} />;
   if (path === '/soiadeck') return <SoiaDeckPage locale={locale} />;
+  if (path === '/soiacode') return <SoiaCodePage locale={locale} />;
+  if (path === '/soia') return <SoiaRuntimePage locale={locale} />;
   if (path === '/skills') return <SkillsHubPage locale={locale} />;
   if (path.startsWith('/skills/')) {
     const parts = path.slice('/skills/'.length).split('/').filter(Boolean);

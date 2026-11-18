@@ -204,7 +204,7 @@ export function Header({
                       </a>
                     </li>
                     <li>
-                      <a href={href('/#faq')}>
+                      <a href={href('/soiacode/')}>
                         <span className='dropdown-name'>{productMenuCopy.htmlAnythingName}</span>
                       </a>
                     </li>
@@ -214,7 +214,7 @@ export function Header({
                       </a>
                     </li>
                     <li>
-                      <a href={REPO_RUNTIME} {...ext}>
+                      <a href={href('/soia/')}>
                         <span className='dropdown-name'>SOIA Runtime</span>
                       </a>
                     </li>

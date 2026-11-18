@@ -73,9 +73,9 @@ export function CompactFooter({ locale }: { locale: LandingLocaleCode }) {
         <div className="sub-footer-grid">
           <div className="sub-footer-col"><h5>SOIA</h5><ul>
             <li><a href={href('/soiadeck/')}>SoiaDeck</a></li>
-            <li><a href={href('/#faq')}>SoiaCode</a></li>
+            <li><a href={href('/soiacode/')}>SoiaCode</a></li>
             <li><a href={href('/skills/')}>{zh ? '开源技能' : 'Open Skills'}</a></li>
-            <li><a href={REPO_RUNTIME} target="_blank" rel="noreferrer noopener">SOIA Runtime</a></li>
+            <li><a href={href('/soia/')}>SOIA Runtime</a></li>
           </ul></div>
           <div className="sub-footer-col"><h5>{zh ? '技能域' : 'Skills'}</h5><ul>
             <li><a href={href('/skills/pkm/')}>PKM Vault</a></li>

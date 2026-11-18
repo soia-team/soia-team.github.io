@@ -1112,9 +1112,9 @@ export default function Page({
                 <h5>{menu.product}</h5>
                 <ul>
                   <li><a href={href('/soiadeck/')}>SoiaDeck</a></li>
-                  <li><a href={href('/#faq')}>SoiaCode</a></li>
+                  <li><a href={href('/soiacode/')}>SoiaCode</a></li>
                   <li><a href={href('/skills/')}>Open Skills</a></li>
-                  <li><a href={REPO_RUNTIME} target='_blank' rel='noopener'>SOIA Runtime</a></li>
+                  <li><a href={href('/soia/')}>SOIA Runtime</a></li>
                 </ul>
               </div>
 
