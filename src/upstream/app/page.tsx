@@ -27,8 +27,6 @@ import {
 import {
   heroBgImage,
   heroBgSrcset,
-  heroProductImage,
-  heroProductSrcset,
   PRECISE_LAZY_PLACEHOLDER,
 } from './image-assets';
 import { getHomeExtra, getHomeCta } from './home-translations';
@@ -138,9 +136,9 @@ function RemixIcon({ glyph, className }: { glyph: string; className?: string }) 
 }
 
 const arrowOut = <RemixIcon glyph={RI.arrowUpRight} />;
-const iconDownload = <RemixIcon glyph={RI.download} />;
-const arrowBack = <RemixIcon glyph={RI.arrowLeft} />;
-const arrowPlus = <RemixIcon glyph={RI.addCircle} />;
+const _iconDownload = <RemixIcon glyph={RI.download} />;
+const _arrowBack = <RemixIcon glyph={RI.arrowLeft} />;
+const _arrowPlus = <RemixIcon glyph={RI.addCircle} />;
 
 // Capability-card glyphs, drawn from the skill's Remix Icon line set.
 const capIcon = {
@@ -159,35 +157,30 @@ const NBSP = '\u00A0';
 // string (e.g. `v0.3.0`), never any surrounding label or punctuation. The
 // inline enhancement script in `app/pages/index.astro` assigns `textContent`
 // on each slot, so any extra text inside the wrapper would be clobbered.
-const REPO = 'https://github.com/nexu-io/open-design';
-const REPO_RELEASES = `${REPO}/releases`;
-const REPO_ISSUES = `${REPO}/issues`;
-const REPO_DAEMON = `${REPO}/tree/main/apps/daemon`;
-const REPO_SKILLS = `${REPO}/tree/main/skills`;
-const REPO_DOCS = `${REPO}#readme`;
-const DISCORD = 'https://discord.gg/mHAjSMV6gz';
-const X_TWITTER = 'https://x.com/OpenDesignHQ';
-const YOUTUBE = 'https://www.youtube.com/channel/UChtshixMhvtgBWzoD9R_Qfg';
+const REPO = 'https://github.com/soia-team/soia-open-skills';
+const REPO_RUNTIME = 'https://github.com/soia-team/soia';
+const REPO_ORG = 'https://github.com/soia-team';
+const REPO_DISCUSSIONS = `${REPO}/discussions`;
+const REPO_SKILLS = REPO;
 
 // Footer columns mirror the top-nav sections + `site-footer.astro` (the
 // sub-page footer) so the homepage and every sub-page share one footer
 // contract. Hrefs stay in lockstep with header.tsx (USE_CASE_HREFS / agent
 // routes); labels reuse the already-localized nav dropdown copy.
 const FOOTER_USE_CASE_HREFS = [
-  '/solutions/prototype/',
-  '/solutions/dashboard/',
-  '/solutions/slides/',
-  '/solutions/image/',
-  '/solutions/video/',
-  '/solutions/design-system/',
+  '/skills/pkm/',
+  '/skills/dev/',
+  '/skills/office/',
+  REPO_DISCUSSIONS,
+  '/soiadeck/#models',
+  '/soiadeck/',
 ] as const;
 
-const FOOTER_AGENTS = [
-  { name: 'Claude Code', route: 'claude-code-design' },
-  { name: 'Codex', route: 'codex-design' },
-  { name: 'Cursor', route: 'cursor-design' },
-  { name: 'Gemini CLI', route: 'gemini-design' },
-  { name: 'OpenCode', route: 'opencode-design' },
+const FOOTER_SKILL_DOMAINS = [
+  { name: 'PKM Vault', href: '/skills/pkm/' },
+  { name: 'Dev', href: '/skills/dev/' },
+  { name: 'Office', href: '/skills/office/' },
+  { name: 'Meta', href: '/skills/meta/' },
 ] as const;
 
 
@@ -200,29 +193,21 @@ const ext = {
 // playground (matter-js). Each is an icon chip that drops on hover instead of
 // a text word. Assets live in `public/agent-icons/`.
 const FALLING_ICONS = [
-  { src: '/agent-icons/claude.svg', alt: 'Claude' },
+  { src: '/agent-icons/claude.svg', alt: 'Claude Code' },
   { src: '/agent-icons/codex.svg', alt: 'Codex' },
-  { src: '/agent-icons/gemini.svg', alt: 'Gemini' },
+  { src: '/agent-icons/gemini.svg', alt: 'Gemini CLI' },
   { src: '/agent-icons/cursor-agent.svg', alt: 'Cursor' },
   { src: '/agent-icons/copilot.svg', alt: 'GitHub Copilot' },
   { src: '/agent-icons/opencode.svg', alt: 'OpenCode' },
-  { src: '/agent-icons/devin.png', alt: 'Devin' },
   { src: '/agent-icons/hermes.svg', alt: 'Hermes' },
   { src: '/agent-icons/pi.svg', alt: 'Pi' },
   { src: '/agent-icons/kimi.svg', alt: 'Kimi' },
   { src: '/agent-icons/kiro.svg', alt: 'Kiro' },
   { src: '/agent-icons/qwen.svg', alt: 'Qwen' },
   { src: '/agent-icons/grok-build.svg', alt: 'Grok' },
-  { src: '/agent-icons/deepseek.svg', alt: 'DeepSeek' },
   { src: '/agent-icons/qoder.svg', alt: 'Qoder' },
-  { src: '/agent-icons/amr.svg', alt: 'AMR' },
-  { src: '/agent-icons/kilo.svg', alt: 'Kilo' },
-  { src: '/agent-icons/aider.png', alt: 'Aider' },
   { src: '/agent-icons/trae-cli.png', alt: 'Trae' },
-  { src: '/agent-icons/vibe.svg', alt: 'Mistral Vibe' },
-  { src: '/agent-icons/mimo.svg', alt: 'MiMo' },
   { src: '/agent-icons/antigravity.svg', alt: 'Antigravity' },
-  { src: '/agent-icons/reasonix.svg', alt: 'Reasonix' },
 ];
 
 interface PageProps {
@@ -311,18 +296,18 @@ export default function Page({
   // all languages render the same structure. CJK locales use per-letter blur.
   const t = getHomeExtra(locale);
   const cta = getHomeCta(locale);
-  const cjk = locale === 'zh' || locale === 'zh-tw' || locale === 'ja' || locale === 'ko';
+  const _cjk = locale === 'zh' || locale === 'zh-tw' || locale === 'ja' || locale === 'ko';
   // Short inline labels still fall back to English for non-Chinese locales.
   const tt = (zh: string, en: string) => (locale === 'zh' ? zh : en);
-  const skills = fmt(counts.skills);
+  const _skills = fmt(counts.skills);
   const systems = fmt(counts.systems);
   // Design Systems stat card: derive from the raw count so a missing count
   // keeps the neutral "—" fallback with no countup metadata (never "—+" nor a
   // non-finite data-countup-to). `to: null` makes the renderer skip countup.
-  const systemsCardNum = counts.systems > 0 ? `${counts.systems}+` : '—';
-  const systemsCardTo: string | null = counts.systems > 0 ? String(counts.systems) : null;
-  const deckCount = pad2(counts.byMode?.deck);
-  const prototypeCount = pad2(counts.byMode?.prototype);
+  const _systemsCardNum = counts.systems > 0 ? `${counts.systems}+` : '—';
+  const _systemsCardTo: string | null = counts.systems > 0 ? String(counts.systems) : null;
+  const _deckCount = pad2(counts.byMode?.deck);
+  const _prototypeCount = pad2(counts.byMode?.prototype);
   const mobileCount = pad2(counts.byPlatform?.mobile);
   const commonCopy = getCommonCopy(locale);
   const home = getHomePageCopy(locale);
@@ -356,33 +341,33 @@ export default function Page({
       {
         num: t.stepTitle1,
         icon: capIcon.search,
-        href: REPO_SKILLS,
+        href: href('/skills/meta/soia-meta-find-skill/'),
         aria: t.stepTitle1,
-        img: '/step-cards/step-1.webp?v=8',
+        img: '/soia/domains/cover-meta.png',
         desc: t.stepDesc1,
       },
       {
         num: t.stepTitle2,
         icon: capIcon.direction,
-        href: REPO_SKILLS,
+        href: href('/skills/'),
         aria: t.stepTitle2,
-        img: '/step-cards/step-2.webp?v=8',
+        img: '/soia/domains/cover-dev.png',
         desc: t.stepDesc2,
       },
       {
         num: t.stepTitle3,
         icon: capIcon.grid,
-        href: REPO_DAEMON,
+        href: href('/soiadeck/'),
         aria: t.stepTitle3,
-        img: '/step-cards/step-3.webp?v=7',
+        img: '/soia/products/soiadeck-workbench.png',
         desc: t.stepDesc3,
       },
       {
         num: t.stepTitle4,
         icon: capIcon.adapters,
-        href: REPO,
+        href: href('/soiadeck/'),
         aria: t.stepTitle4,
-        img: '/step-cards/step-4.webp?v=9',
+        img: '/soia/products/soiadeck-router.png',
         desc: t.stepDesc4,
       },
     ];
@@ -450,47 +435,32 @@ export default function Page({
               <p className='hero-lead' data-reveal>
                 {t.heroTitleSub}
               </p>
+              <img
+                className='hero-mark'
+                src='/soia/products/soiadeck-icon.png'
+                width={72}
+                height={72}
+                alt=''
+                decoding='async'
+              />
               <h1 className='hero-title' data-reveal>
                 <span className='hero-title-corner tl' aria-hidden='true' />
                 <span className='hero-title-corner tr' aria-hidden='true' />
                 <span className='hero-title-corner bl' aria-hidden='true' />
                 <span className='hero-title-corner br' aria-hidden='true' />
                 <span className='hero-title-brand'>
-                  <BlurText text='Open Design' by='words' start={0} />
+                  <BlurText text='SOIA' by='words' start={0} />
                 </span>
-                {/* One-line category positioning (the product's own umbrella
-                    term). Kept as the canonical English category label across
-                    every locale — the narrative anchor, not translated. */}
                 <span className='hero-title-main'>
-                  <BlurText text='The Vibe Design Workspace' by='words' start={1} />
+                  <BlurText text='The Agent Family' by='words' start={1} />
                 </span>
               </h1>
               <div className='hero-actions' data-reveal>
-                {/* Platform-aware download: `enhanceDownloadCta` in the inline
-                    script of pages/index.astro rewrites href to the matching
-                    release asset (Apple Silicon / Intel Mac / Windows) for a
-                    direct download and appends the detected chip label. When
-                    the platform can't be named (Linux / undetermined / API
-                    rate-limited) it falls back to the /download/ page (the
-                    per-platform picker) rather than the GitHub releases list. */}
-                <a
-                  className='btn btn-primary'
-                  href={href('/download/')}
-                  data-download-cta
-                  data-download-chip-target
-                  data-download-placement='hero'
-                >
-                  <span className='arrow'>{iconDownload}</span>
+                <a className='btn btn-primary' href={href('/skills/')}>
                   {home.hero.download}
                 </a>
-                <a className='btn btn-ghost' href={REPO} {...ext}>
-                  <span className='arrow'>{<RemixIcon glyph={RI.github} />}</span>
-                  <span>
-                    Star{' '}
-                    <span className='star-count' data-github-stars>
-                      {github.starsLabel}
-                    </span>
-                  </span>
+                <a className='btn btn-ghost' href={href('/soiadeck/')}>
+                  {home.hero.star}
                 </a>
               </div>
               {/* `{systems}` in heroSub is substituted with the live
@@ -504,12 +474,11 @@ export default function Page({
                   high) win the connection first; this still loads, just yields. */}
               <div className='hero-shot' data-reveal>
                 <img
-                  src={heroProductImage}
-                  srcSet={heroProductSrcset}
+                  src='/soia/products/soiadeck-workbench.png'
                   sizes='(max-width: 768px) 100vw, 60vw'
                   width={2508}
                   height={1450}
-                  alt='Open Design desktop — design files & index.html preview'
+                  alt='SoiaDeck AI Workbench'
                   decoding='async'
                   fetchPriority='low'
                   className='hero-shot-img'
@@ -525,7 +494,7 @@ export default function Page({
             <div className='about-grid'>
               <div className='about-copy' data-reveal>
                 <p className='about-kicker'>
-                  {locale === 'zh' ? '为什么选择 Open Design？' : 'Why Open Design?'}
+                  {t.aboutKicker}
                 </p>
                 {/*
                   Text Scroll Reveal (Magic UI / Inspira port): a tall track
@@ -589,7 +558,7 @@ export default function Page({
                     <div className='about-panel'>
                       <div className='about-panel-img about-panel-img-bare about-panel-img-captioned'>
                         <LazyImg
-                          src='/about/desktop-native.webp'
+                          src='/soia/products/soiadeck-wb-home.png'
                           alt={t.aboutCap1.replace(/\n/g, ' ')}
                         />
                         <p className='about-panel-caption'>
@@ -600,7 +569,7 @@ export default function Page({
                     <div className='about-panel'>
                       <div className='about-panel-img about-panel-img-bare about-panel-img-captioned'>
                         <LazyImg
-                          src='/about/access-agent.webp'
+                          src='/soia/products/soiadeck-agent.png'
                           alt={t.aboutCap2.replace(/\n/g, ' ')}
                         />
                         {/* Caption laid over the image's baked-in white card. */}
@@ -612,7 +581,7 @@ export default function Page({
                     <div className='about-panel'>
                       <div className='about-panel-img about-panel-img-bare about-panel-img-captioned'>
                         <LazyImg
-                          src='/about/self-evolution.webp?v=4'
+                          src='/soia/products/soiadeck-plugins.png'
                           alt={t.aboutCap3.replace(/\n/g, ' ')}
                         />
                         <p className='about-panel-caption'>
@@ -630,13 +599,12 @@ export default function Page({
                       link + download. Agents live in the Method section now, so
                       they're intentionally not repeated here. */}
                   <div className='about-ctas cta-pair'>
-                    <a className='btn btn-ghost' href={href('/plugins/systems/')}>
+                    <a className='btn btn-ghost' href={href('/skills/')}>
                       {cta.systems}
                       <span className='arrow'>{arrowOut}</span>
                     </a>
-                    <a className='btn btn-primary' href={href('/download/')} data-download-cta data-download-chip-target data-download-placement='about'>
-                      <span className='arrow'>{iconDownload}</span>
-                      {home.hero.download}
+                    <a className='btn btn-primary' href={href('/soiadeck/')}>
+                      {home.hero.star}
                     </a>
                   </div>
                 </div>
@@ -716,17 +684,12 @@ export default function Page({
                         ))}
                       </ol>
                       <div className='cta-pair cap-steps-link'>
-                        <a className='btn btn-ghost' href={href('/solutions/')}>
+                        <a className='btn btn-ghost' href={href('/skills/')}>
                           {cta.solutions}
                           <span className='arrow'>{arrowOut}</span>
                         </a>
-                        <a
-                          className='btn btn-primary'
-                          href={href('/download/')}
-                          data-download-cta
-                          data-download-placement='capabilities'
-                        >
-                          <span className='arrow'>{iconDownload}</span>
+                        <a className='btn btn-primary' href={REPO} {...ext}>
+                          <span className='arrow'>{<RemixIcon glyph={RI.github} />}</span>
                           {home.hero.download}
                         </a>
                       </div>
@@ -769,26 +732,19 @@ export default function Page({
               <div data-reveal>
                 <h2 className='display'>
                   {t.labsPre}
-                  <em>Open Design</em>
+                  <em>SOIA</em>
                   {t.labsPost}
                 </h2>
                 {t.labsLead ? (
                   <p className='labs-lead'>{t.labsLead}</p>
                 ) : null}
                 <div className='cta-pair' style={{ justifyContent: 'center', marginTop: 20 }}>
-                  <a className='btn btn-ghost' href={href('/plugins/templates/')}>
+                  <a className='btn btn-ghost' href={href('/skills/')}>
                     {cta.templates}
                     <span className='arrow'>{arrowOut}</span>
                   </a>
-                  <a
-                    className='btn btn-primary'
-                    href={href('/download/')}
-                    data-download-cta
-                    data-download-chip-target
-                    data-download-placement='labs'
-                  >
-                    <span className='arrow'>{iconDownload}</span>
-                    {home.hero.download}
+                  <a className='btn btn-primary' href={href('/soiadeck/')}>
+                    {home.hero.star}
                   </a>
                 </div>
               </div>
@@ -823,23 +779,23 @@ export default function Page({
               <div className='lab-dock' data-lab-dock data-reveal>
                 {([
                   {
-                    label: 'Prototype',
-                    href: href('/plugins/templates/prototype/'),
-                    preview: '/lab-cards/prototype.webp?v=5',
+                    label: 'PKM',
+                    href: href('/skills/pkm/'),
+                    preview: '/soia/domains/cover-pkm.png',
                   },
                   {
-                    label: 'Live Artifact',
-                    href: href('/plugins/templates/live-artifact/'),
-                    preview: '/lab-cards/live-artifact.webp?v=3',
+                    label: 'Dev',
+                    href: href('/skills/dev/'),
+                    preview: '/soia/domains/cover-dev.png',
                   },
                   {
-                    label: 'Slides',
-                    href: href('/plugins/templates/deck/'),
-                    preview: '/lab-cards/slides.png?v=5',
+                    label: 'Office',
+                    href: href('/skills/office/'),
+                    preview: '/soia/domains/cover-office.png',
                   },
-                  { label: tt('图片', 'Image'), href: href('/plugins/templates/image/'), preview: '/lab-cards/quest.webp?v=1', wide: true },
-                  { label: 'HyperFrames', href: href('/plugins/templates/hyperframes/'), video: '/lab-hyperframes.mp4' },
-                  { label: tt('视频', 'Video'), href: href('/plugins/templates/video/'), video: '/lab-video.mp4' },
+                  { label: 'Meta', href: href('/skills/meta/'), preview: '/soia/domains/cover-meta.png' },
+                  { label: 'SoiaDeck', href: href('/soiadeck/'), preview: '/soia/products/soiadeck-home.png' },
+                  { label: 'Mobile', href: href('/soiadeck/'), preview: '/soia/products/soiadeck-phone.png' },
                 ] as ReadonlyArray<{
                   label: string;
                   href: string;
@@ -885,7 +841,7 @@ export default function Page({
               </div>
               <a
                 className='btn btn-ghost method-link'
-                href={href('/agents/')}
+                href={href('/soiadeck/')}
                 style={{ marginTop: 16 }}
                 data-reveal
               >
@@ -915,7 +871,7 @@ export default function Page({
               <img
                 className='falling-text-reveal'
                 src='/method-coding-agent.png'
-                alt='21+ Coding Agent'
+                alt='SoiaDeck coding agents'
                 data-falling-reveal
                 loading='lazy'
                 decoding='async'
@@ -931,31 +887,24 @@ export default function Page({
               <div className='testimonial-copy' data-reveal>
                 <h2 style={{ marginTop: 30 }}>
                   {t.testiPre}
-                  <span data-github-contributors>343</span>
+                  <span>soia-team</span>
                   {t.testiMid}
                   <br />
                   <span style={{ whiteSpace: 'nowrap' }}>{t.testiPost}</span>
                 </h2>
                 <div className='cta-pair' style={{ marginTop: 16 }}>
-                  <a className='btn btn-ghost' href='/community/contributors/'>
+                  <a className='btn btn-ghost' href={REPO_ORG} {...ext}>
                     {cta.contributors}
                     <span className='arrow'>{arrowOut}</span>
                   </a>
-                  <a
-                    className='btn btn-primary'
-                    href={href('/download/')}
-                    data-download-cta
-                    data-download-chip-target
-                    data-download-placement='contributors'
-                  >
-                    <span className='arrow'>{iconDownload}</span>
-                    {home.hero.download}
+                  <a className='btn btn-primary' href={REPO_DISCUSSIONS} {...ext}>
+                    {home.hero.star}
                   </a>
                 </div>
               </div>
               <div className='testimonial-globe' data-reveal='right' data-testimonial-globe>
                 <canvas
-                  aria-label='Open Design global contributor map'
+                  aria-label='SOIA'
                   className='testimonial-globe-canvas'
                   height={720}
                   width={720}
@@ -984,12 +933,12 @@ export default function Page({
                   // [data-github-stars] / [data-github-contributors] enhancers in
                   // index.astro); the hard-coded `num` is only the SSR fallback
                   // shown until the API responds. The rest count up from 0.
-                  { src: 'card-1.webp', num: '74K+', to: '74', suffix: 'K+', alt: 'GitHub Stars', href: REPO, live: 'stars' as const },
-                  { src: 'card-2.webp', num: '340+', to: '340', suffix: '+', alt: tt('贡献者', 'Contributors'), href: `${REPO}/graphs/contributors`, live: 'contributors' as const },
-                  { src: 'card-3.webp', num: '217+', to: '217', suffix: '+', alt: 'Plugins', href: href('/plugins/') },
-                  { src: 'card-4.webp', num: systemsCardNum, to: systemsCardTo, suffix: '+', alt: 'Design Systems', href: href('/plugins/systems/') },
-                  { src: 'card-5.webp', num: '21', to: '21', suffix: '', alt: tt('Coding Agent 支持', 'Coding Agents'), href: href('/agents/') },
-                  { src: 'card-6.webp', num: null, to: null, suffix: '', alt: 'Star us', href: REPO, cta: true },
+                  { src: 'card-1.webp', num: '47', to: '47', suffix: '', alt: tt('开源技能', 'Open skills'), href: href('/skills/') },
+                  { src: 'card-2.webp', num: '4', to: '4', suffix: '', alt: tt('技能域', 'Skill domains'), href: href('/skills/') },
+                  { src: 'card-3.webp', num: '3', to: '3', suffix: '', alt: tt('技能宿主', 'Skill hosts'), href: href('/skills/') },
+                  { src: 'card-4.webp', num: '19', to: '19', suffix: '', alt: tt('SoiaDeck Agent', 'SoiaDeck agents'), href: href('/soiadeck/') },
+                  { src: 'card-5.webp', num: null, to: null, suffix: '', alt: tt('SoiaCode 进行中', 'SoiaCode in progress'), href: href('/#faq') },
+                  { src: 'card-6.webp', num: null, to: null, suffix: '', alt: 'GitHub', href: REPO_ORG, cta: true },
                 ] as ReadonlyArray<{ src: string; num: string | null; to: string | null; suffix: string; alt: string; href: string; live?: 'stars' | 'contributors'; cta?: boolean }>).map((item, index) => (
                   <a
                     className={`work-stat-card work-img-card${item.cta ? ' work-stat-card-cta' : ''}`}
@@ -1041,7 +990,7 @@ export default function Page({
               <img
                 className='cta-window'
                 src='/cta-window.webp'
-                alt='Open Design 桌面端首页'
+                alt='SoiaDeck'
                 width={2996}
                 height={1870}
                 decoding='async'
@@ -1058,18 +1007,11 @@ export default function Page({
                       attr, and appends the platform chip. Falls back to the
                       /download/ picker when detection or the API is unavailable
                       — not the raw GitHub releases list. */}
-                  <a
-                    className='btn btn-primary'
-                    href={href('/download/')}
-                    data-download-cta
-                    data-download-chip-target
-                    data-download-placement='cta'
-                  >
-                    <span className='arrow'>{iconDownload}</span>
-                    {home.hero.download}
-                  </a>
                   <a className='btn btn-primary' href={REPO} {...ext}>
                     <span className='arrow'>{<RemixIcon glyph={RI.github} />}</span>
+                    {home.hero.download}
+                  </a>
+                  <a className='btn btn-primary' href={REPO_DISCUSSIONS} {...ext}>
                     {home.cta.star}
                   </a>
                 </div>
@@ -1126,14 +1068,8 @@ export default function Page({
                     download (same `data-download-cta` enhancer as hero/CTA);
                     social proof below to lift conversion. */}
                 <div className='faq-download'>
-                  <a
-                    className='btn btn-primary'
-                    href={href('/download/')}
-                    data-download-cta
-                    data-download-chip-target
-                    data-download-placement='faq'
-                  >
-                    <span className='arrow'>{iconDownload}</span>
+                  <a className='btn btn-primary' href={REPO} {...ext}>
+                    <span className='arrow'>{<RemixIcon glyph={RI.github} />}</span>
                     {home.hero.download}
                   </a>
                   <p className='faq-download-note'>
@@ -1175,65 +1111,62 @@ export default function Page({
               <div className='sub-footer-col'>
                 <h5>{menu.product}</h5>
                 <ul>
-                  <li><a href={href('/')}>Open Design</a></li>
-                  <li><a href={href('/html-anything/')}>{ui.footer.htmlAnything}</a></li>
-                  <li><a href={href('/html-video/')}>{ui.footer.htmlVideo}</a></li>
-                  <li><a href={href('/codex-slides/')}>Codex Slides</a></li>
+                  <li><a href={href('/soiadeck/')}>SoiaDeck</a></li>
+                  <li><a href={href('/#faq')}>SoiaCode</a></li>
+                  <li><a href={href('/skills/')}>Open Skills</a></li>
+                  <li><a href={REPO_RUNTIME} target='_blank' rel='noopener'>SOIA Runtime</a></li>
                 </ul>
               </div>
 
               <div className='sub-footer-col'>
-                <h5><a href={href('/solutions/')}>{menu.solution}</a></h5>
+                <h5><a href={href('/skills/')}>{menu.solution}</a></h5>
                 <ul>
-                  {menu.useCaseItems.map((name, i) => (
-                    <li key={FOOTER_USE_CASE_HREFS[i]}>
-                      <a href={href(FOOTER_USE_CASE_HREFS[i]!)}>{name}</a>
+                  {menu.useCaseItems.map((name, i) => {
+                    const target = FOOTER_USE_CASE_HREFS[i]!;
+                    return (
+                      <li key={target}>
+                        <a href={href(target)} {...(target.startsWith('http') ? ext : {})}>{name}</a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+
+              <div className='sub-footer-col'>
+                <h5><a href={href('/skills/')}>{menu.plugins}</a></h5>
+                <ul>
+                  {FOOTER_SKILL_DOMAINS.map((domain) => (
+                    <li key={domain.name}>
+                      <a href={href(domain.href)}>{domain.name}</a>
                     </li>
                   ))}
                 </ul>
               </div>
 
               <div className='sub-footer-col'>
-                <h5><a href={href('/agents/')}>{menu.agent}</a></h5>
+                <h5><a href={href('/skills/')}>{commonCopy.header.nav.plugins}</a></h5>
                 <ul>
-                  {FOOTER_AGENTS.map((a) => (
-                    <li key={a.route}>
-                      <a href={href(`/agents/${a.route}/`)}>{a.name}</a>
-                    </li>
-                  ))}
-                  <li><a href={href('/agents/')}>{footL.allAgents} →</a></li>
+                  <li><a href="https://github.com/soia-team/soia-open-pkm-vault-skills" target='_blank' rel='noopener'>{commonCopy.header.nav.templates}</a></li>
+                  <li><a href="https://github.com/soia-team/soia-open-dev-skills" target='_blank' rel='noopener'>{commonCopy.header.nav.skills}</a></li>
+                  <li><a href="https://github.com/soia-team/soia-open-cwork-office-skills" target='_blank' rel='noopener'>{commonCopy.header.nav.systems}</a></li>
                 </ul>
               </div>
 
               <div className='sub-footer-col'>
-                <h5><a href={href('/plugins/')}>{commonCopy.header.nav.plugins}</a></h5>
+                <h5>{menu.pricing}</h5>
                 <ul>
-                  <li><a href={href('/plugins/templates/')}>{commonCopy.header.nav.templates}</a></li>
-                  <li><a href={href('/plugins/skills/')}>{commonCopy.header.nav.skills}</a></li>
-                  <li><a href={href('/plugins/systems/')}>{commonCopy.header.nav.systems}</a></li>
-                </ul>
-              </div>
-
-              <div className='sub-footer-col'>
-                <h5><a href={href('/compare/')}>{ui.footer.compare}</a></h5>
-                <ul>
-                  <li><a href={href('/alternatives/claude-design/')}>Claude Design</a></li>
-                  <li><a href={href('/alternatives/figma/')}>Figma</a></li>
-                  <li><a href={href('/alternatives/lovable/')}>Lovable</a></li>
-                  <li><a href={href('/alternatives/bolt/')}>Bolt</a></li>
-                  <li><a href={href('/alternatives/v0/')}>v0</a></li>
-                  <li><a href={href('/alternatives/framer/')}>Framer</a></li>
+                  <li><a href={href('/#contact')}>{menu.pricing}</a></li>
+                  <li><a href={REPO_DISCUSSIONS} target='_blank' rel='noopener'>{menu.communityItems.discussions}</a></li>
                 </ul>
               </div>
 
               <div className='sub-footer-col'>
                 <h5>{menu.resources}</h5>
                 <ul>
-                  <li><a href={href('/blog/')}>{menu.resourceItems.blog}</a></li>
-                  <li><a href={href('/tutorials/')}>{menu.resourceItems.tutorials}</a></li>
-                  <li><a href={href('/download/')}>{menu.resourceItems.download}</a></li>
-                  <li><a href={href('/quickstart/')}>{ui.footer.quickstart}</a></li>
-                  <li><a href={href('/official/')}>{ui.footer.official}</a></li>
+                  <li><a href={href('/soiadeck/')}>SoiaDeck</a></li>
+                  <li><a href={href('/skills/')}>Open Skills</a></li>
+                  <li><a href={href('/faq/')}>{footL.faq}</a></li>
+                  <li><a href={REPO} target='_blank' rel='noopener'>GitHub</a></li>
                 </ul>
               </div>
 
@@ -1241,44 +1174,31 @@ export default function Page({
                 <h5>{footL.company}</h5>
                 <ul>
                   <li><a href={href('/about/')}>{footL.about}</a></li>
-                  <li><a href={href('/careers/')}>{footL.careers}</a></li>
                   <li><a href={href('/faq/')}>{footL.faq}</a></li>
                   <li><a href={href('/privacy/')}>{footL.privacy}</a></li>
                   <li><a href={href('/terms/')}>{footL.terms}</a></li>
-                  <li><a href={REPO} target='_blank' rel='noopener'>{ui.footer.github}</a></li>
-                  <li><a href={DISCORD} target='_blank' rel='noopener'>{ui.footer.discord}</a></li>
+                  <li><a href={REPO_ORG} target='_blank' rel='noopener'>{ui.footer.github}</a></li>
+                  <li><a href={REPO_DISCUSSIONS} target='_blank' rel='noopener'>{menu.communityItems.discussions}</a></li>
                 </ul>
               </div>
             </div>
 
             <div className='foot-bar'>
               <div className='foot-bar-left'>
-                <span className='foot-copy'>© 2026 Powerformer, Inc. · Apache-2.0</span>
+                <span className='foot-copy'>© 2026 soia-team</span>
                 <a href={href('/privacy/')}>{footL.privacy}</a>
                 <span className='foot-dot' aria-hidden='true'>·</span>
                 <a href={href('/terms/')}>{footL.terms}</a>
               </div>
               <div className='foot-social'>
-                <a href={X_TWITTER} target='_blank' rel='noopener' aria-label='X'>
-                  <svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M18.244 2.25h3.308l-7.227 8.26 8.502 11.24h-6.65l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25h6.815l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z' /></svg>
-                </a>
-                <a href={DISCORD} target='_blank' rel='noopener' aria-label='Discord'>
-                  <svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M20.317 4.369a19.79 19.79 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.6 12.6 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.74 19.74 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.1 13.1 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127c-.598.349-1.22.645-1.873.891a.076.076 0 0 0-.04.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .032-.056c.5-5.177-.838-9.674-3.549-13.66a.06.06 0 0 0-.031-.028zM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z' /></svg>
-                </a>
-                <a href={REPO} target='_blank' rel='noopener' aria-label='GitHub'>
-                  <svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.5 11.5 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222 0 1.606-.014 2.898-.014 3.293 0 .322.216.694.825.576C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12' /></svg>
-                </a>
-                <a href={YOUTUBE} target='_blank' rel='noopener' aria-label='YouTube'>
-                  <svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z' /></svg>
+                <a href={REPO_ORG} target='_blank' rel='noopener' aria-label='GitHub'>
+                  <svg viewBox='0 0 24 24' width='18' height='18' fill='currentColor' aria-hidden='true'><path d='M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.305 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.51 11.51 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v2.345c0 .322.218.694.825.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z' /></svg>
                 </a>
               </div>
             </div>
-            {/* Masthead sign-off — same markup contract as
-                `site-footer.astro` so the shared `.foot-masthead` styles
-                in globals.css cover both footers. */}
             <div className='foot-masthead' data-od-id='footer-masthead'>
               <p className='foot-masthead-wordmark'>
-                Open <span className='foot-masthead-accent'>Design</span><span className='foot-masthead-period'>.</span>
+                SO<span className='foot-masthead-accent'>IA</span><span className='foot-masthead-period'>.</span>
               </p>
             </div>
           </div>

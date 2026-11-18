@@ -16,85 +16,38 @@ import {
   type HeaderCopy,
   type LandingLocaleCode,
 } from '../i18n';
-import { getSolutionPageCopy } from '../solution-pages-i18n';
-import type { SolutionPageKey } from '../solution-pages-i18n/types';
 
-const REPO = 'https://github.com/nexu-io/open-design';
+const REPO = 'https://github.com/soia-team/soia-open-skills';
+const REPO_RUNTIME = 'https://github.com/soia-team/soia';
+const REPO_ORG = 'https://github.com/soia-team';
 const REPO_DISCUSSIONS = `${REPO}/discussions`;
-const DISCORD = 'https://discord.gg/mHAjSMV6gz';
-const X_PROFILE = 'https://x.com/OpenDesignHQ';
 
-// Open Design Cloud endpoints for the header account module.
-// Production defaults; overridable at build time via PUBLIC_* env so a
-// preview/staging build can point at a non-prod cloud. These are surfaced to
-// the runtime via `data-*` on `.nav-account` because the auth logic lives in
-// `header-enhancer.astro`'s `<script is:inline>` (NOT processed by Vite, so it
-// cannot read `import.meta.env` itself).
-const env = import.meta.env as Record<string, string | undefined>;
-const CLOUD_API_BASE =
-  env.PUBLIC_CLOUD_API_BASE ?? env.PUBLIC_AMR_API_BASE ?? '';
-const CLOUD_CONSOLE_URL =
-  env.PUBLIC_CLOUD_CONSOLE_URL ??
-  env.PUBLIC_AMR_CONSOLE_URL ??
-  'https://open-design.ai/cloud/wallet?source=open_design';
-
-// Solution → Use cases / Roles. Hrefs mirror upstream main's header 1:1 and
-// pair positionally with the localized `useCaseItems` / `roleItems` tuples.
 const USE_CASE_HREFS = [
-  '/solutions/prototype/',
-  '/solutions/dashboard/',
-  '/solutions/slides/',
-  '/solutions/image/',
-  '/solutions/video/',
-  '/solutions/design-system/',
+  '/skills/pkm/',
+  '/skills/dev/',
+  '/skills/office/',
+  REPO_DISCUSSIONS,
+  '/soiadeck/#models',
+  '/soiadeck/',
 ] as const;
 
 const ROLE_HREFS = [
-  '/solutions/solo-builder/',
-  '/solutions/designer/',
-  '/solutions/engineering/',
-  '/solutions/product-managers/',
-  '/solutions/marketing/',
+  '/#labs',
+  '/skills/dev/',
+  '/skills/office/',
+  '/#contact',
+  REPO_DISCUSSIONS,
 ] as const;
 
-// Solution → Tools. AI generator pages. Labels come from the solution-page
-// copy (the page breadcrumb) so the dropdown and the hub cards share one
-// translation source and cannot drift apart.
-const TOOL_ENTRIES: ReadonlyArray<{ href: string; key: SolutionPageKey }> = [
-  { href: '/solutions/ai-wireframe-generator/', key: 'aiWireframeGenerator' },
-  { href: '/solutions/ai-ui-generator/', key: 'aiUiGenerator' },
-  { href: '/solutions/ai-prototype-generator/', key: 'aiPrototypeGenerator' },
-  { href: '/solutions/ai-landing-page-generator/', key: 'aiLandingPageGenerator' },
-  { href: '/solutions/design-to-code/', key: 'designToCode' },
-  { href: '/solutions/figma-to-code/', key: 'figmaToCode' },
-  { href: '/solutions/screenshot-to-code/', key: 'screenshotToCode' },
-  { href: '/solutions/html-to-ppt/', key: 'htmlToPpt' },
-];
-
-// Agent column — the coding agents with a dedicated long-form design page
-// upstream. Routes stay in lockstep with main's /agents/ hub.
-const AGENTS: ReadonlyArray<{ name: string; route: string }> = [
-  { name: 'Codex', route: 'codex-design' },
-  { name: 'Cursor Agent', route: 'cursor-design' },
-  { name: 'Claude Code', route: 'claude-code-design' },
-  { name: 'OpenCode', route: 'opencode-design' },
-  { name: 'Gemini CLI', route: 'gemini-design' },
-  { name: 'GitHub Copilot CLI', route: 'copilot-design' },
-  { name: 'Qwen Code', route: 'qwen-design' },
-  { name: 'Grok Build', route: 'grok-design' },
-  { name: 'Kimi CLI', route: 'kimi-design' },
-  { name: 'DeepSeek TUI', route: 'deepseek-design' },
-  { name: 'Trae CLI', route: 'trae-cli-design' },
-  { name: 'Aider', route: 'aider-design' },
-  { name: 'Antigravity', route: 'antigravity-design' },
-  { name: 'DeepSeek Reasonix', route: 'reasonix-design' },
-  { name: 'Hermes', route: 'hermes-design' },
-  { name: 'Devin for Terminal', route: 'devin-design' },
-  { name: 'Pi', route: 'pi-design' },
-  { name: 'Kiro CLI', route: 'kiro-design' },
-  { name: 'Kilo', route: 'kilo-design' },
-  { name: 'Mistral Vibe CLI', route: 'vibe-cli-design' },
-  { name: 'Qoder CLI', route: 'qoder-design' },
+const FEATURED_SKILLS: ReadonlyArray<{ name: string; href: string }> = [
+  { name: 'soia-meta-find-skill', href: '/skills/meta/soia-meta-find-skill/' },
+  { name: 'soia-pkm-clip-web', href: '/skills/pkm/soia-pkm-clip-web/' },
+  { name: 'soia-pkm-query-vault', href: '/skills/pkm/soia-pkm-query-vault/' },
+  { name: 'soia-dev-implement-task', href: '/skills/dev/soia-dev-implement-task/' },
+  { name: 'soia-dev-review-code', href: '/skills/dev/soia-dev-review-code/' },
+  { name: 'soia-cwork-feishu-cli', href: '/skills/office/soia-cwork-feishu-cli/' },
+  { name: 'soia-media-compose-article-draft', href: '/skills/office/soia-media-compose-article-draft/' },
+  { name: 'soia-media-generate-article-image', href: '/skills/office/soia-media-generate-article-image/' },
 ];
 
 const ext = {
@@ -165,7 +118,6 @@ export interface HeaderProps {
 
 export function Header({
   active = 'home',
-  github,
   localeSwitcher,
   locale = DEFAULT_LOCALE,
   copy,
@@ -182,10 +134,10 @@ export function Header({
         <a href={homeBrandHref} className='brand'>
           <img
             className='brand-logo'
-            src='/logo-lockup.svg'
-            alt='Open Design'
-            width={225}
-            height={83}
+            src='/soia/products/soiadeck-icon.png'
+            alt='SOIA'
+            width={40}
+            height={40}
           />
         </a>
         {/*
@@ -247,33 +199,23 @@ export function Header({
                   <span className='nav-mega-col-head'>{productMenuCopy.product}</span>
                   <ul className='nav-mega-list'>
                     <li>
-                      <a href={href('/')}>
+                      <a href={href('/soiadeck/')}>
                         <span className='dropdown-name'>{productMenuCopy.openDesignName}</span>
                       </a>
                     </li>
                     <li>
-                      <a
-                        href={href('/html-anything/')}
-                        className={active === 'html-anything' ? 'is-active' : undefined}
-                      >
+                      <a href={href('/#faq')}>
                         <span className='dropdown-name'>{productMenuCopy.htmlAnythingName}</span>
                       </a>
                     </li>
                     <li>
-                      <a href={href('/html-video/')}>
+                      <a href={href('/skills/')}>
                         <span className='dropdown-name'>{productMenuCopy.htmlVideoName}</span>
                       </a>
                     </li>
-                    {/* Product name, not a translatable phrase — same treatment
-                        as the hardcoded "Open Design" in the footer's product
-                        column, so it does not add an identical string to every
-                        locale block. */}
                     <li>
-                      <a
-                        href={href('/codex-slides/')}
-                        className={active === 'codex-slides' ? 'is-active' : undefined}
-                      >
-                        <span className='dropdown-name'>Codex Slides</span>
+                      <a href={REPO_RUNTIME} {...ext}>
+                        <span className='dropdown-name'>SOIA Runtime</span>
                       </a>
                     </li>
                   </ul>
@@ -285,18 +227,21 @@ export function Header({
                     off-screen; the shorter Products column stays static. */}
                 <li className='nav-mega-col nav-mega-col-agent'>
                   <a
-                    href={href('/agents/')}
-                    className={
-                      'nav-mega-col-head' + (active === 'agent' ? ' is-active' : '')
-                    }
+                    href={href('/skills/')}
+                    className='nav-mega-col-head'
                   >
-                    {productMenuCopy.agent}
+                    {productMenuCopy.plugins}
                   </a>
-                  <ul className='nav-mega-list nav-mega-list-scroll'>
-                    {AGENTS.map((agent) => (
-                      <li key={agent.route}>
-                        <a href={href(`/agents/${agent.route}/`)}>
-                          <span className='dropdown-name'>{agent.name}</span>
+                  <ul className='nav-mega-list'>
+                    {[
+                      { name: 'PKM Vault', href: '/skills/pkm/' },
+                      { name: 'Dev', href: '/skills/dev/' },
+                      { name: 'Office', href: '/skills/office/' },
+                      { name: 'Meta', href: '/skills/meta/' },
+                    ].map((domain) => (
+                      <li key={domain.name}>
+                        <a href={href(domain.href)}>
+                          <span className='dropdown-name'>{domain.name}</span>
                         </a>
                       </li>
                     ))}
@@ -311,7 +256,7 @@ export function Header({
             {/* Solution — Use cases + Roles. */}
             <li className='has-dropdown'>
               <a
-                href={href('/solutions/')}
+                href={href('/skills/')}
                 className={active === 'solution' ? 'is-active' : undefined}
               >
                 {productMenuCopy.solution}
@@ -328,7 +273,7 @@ export function Header({
                 </li>
                 {productMenuCopy.useCaseItems.map((name, index) => (
                   <li key={name}>
-                    <a href={href(USE_CASE_HREFS[index]!)}>
+                    <a href={href(USE_CASE_HREFS[index]!)} {...(USE_CASE_HREFS[index]!.startsWith('http') ? ext : {})}>
                       <span className='dropdown-name'>{name}</span>
                     </a>
                   </li>
@@ -340,7 +285,7 @@ export function Header({
                 </li>
                 {productMenuCopy.roleItems.map((name, index) => (
                   <li key={name}>
-                    <a href={href(ROLE_HREFS[index]!)}>
+                    <a href={href(ROLE_HREFS[index]!)} {...(ROLE_HREFS[index]!.startsWith('http') ? ext : {})}>
                       <span className='dropdown-name'>{name}</span>
                     </a>
                   </li>
@@ -350,12 +295,10 @@ export function Header({
                     {productMenuCopy.tools}
                   </span>
                 </li>
-                {TOOL_ENTRIES.map(({ href: toolHref, key }) => (
-                  <li key={key}>
-                    <a href={href(toolHref)}>
-                      <span className='dropdown-name'>
-                        {getSolutionPageCopy(locale, key).breadcrumb}
-                      </span>
+                {FEATURED_SKILLS.map((skill) => (
+                  <li key={skill.name}>
+                    <a href={href(skill.href)}>
+                      <span className='dropdown-name'>{skill.name}</span>
                     </a>
                   </li>
                 ))}
@@ -365,7 +308,7 @@ export function Header({
             {/* Plugins — the three composable catalogs. */}
             <li className='has-dropdown'>
               <a
-                href={href('/plugins/')}
+                href={href('/skills/')}
                 className={
                   active === 'plugins' ||
                   active === 'library' ||
@@ -382,29 +325,29 @@ export function Header({
               </a>
               <ul className='nav-dropdown' aria-label={productMenuCopy.plugins}>
                 <li>
-                  <a href={href('/plugins/templates/')}>
+                  <a href={href('/skills/pkm/')}>
                     <span className='dropdown-name'>
                       {productMenuCopy.pluginItems.templates}
                     </span>
                   </a>
                 </li>
                 <li>
-                  <a href={href('/plugins/skills/')}>
+                  <a href={href('/skills/dev/')}>
                     <span className='dropdown-name'>
                       {productMenuCopy.pluginItems.skills}
                     </span>
                   </a>
                 </li>
                 <li>
-                  <a href={href('/plugins/systems/')}>
+                  <a href={href('/skills/office/')}>
                     <span className='dropdown-name'>
                       {productMenuCopy.pluginItems.systems}
                     </span>
                   </a>
                 </li>
                 <li>
-                  <a href={href('/craft/')}>
-                    <span className='dropdown-name'>方法 Craft</span>
+                  <a href={href('/skills/meta/')}>
+                    <span className='dropdown-name'>Meta</span>
                   </a>
                 </li>
               </ul>
@@ -416,7 +359,7 @@ export function Header({
                 modal (see app/_lib/pricing-content.ts). */}
             <li>
               <a
-                href={href('/pricing/')}
+                href={href('/#contact')}
                 className={active === 'pricing' ? 'is-active' : undefined}
               >
                 {productMenuCopy.pricing}
@@ -446,60 +389,32 @@ export function Header({
               </button>
               <ul className='nav-dropdown' aria-label={productMenuCopy.resources}>
                 <li>
-                  <a href={href('/blog/')}>
-                    <span className='dropdown-name'>
-                      {productMenuCopy.resourceItems.blog}
-                    </span>
+                  <a href={href('/soiadeck/')}>
+                    <span className='dropdown-name'>SoiaDeck</span>
                   </a>
                 </li>
                 <li>
-                  <a href={href('/stories/')}>
-                    <span className='dropdown-name'>
-                      {productMenuCopy.resourceItems.stories}
-                    </span>
+                  <a href={href('/skills/')}>
+                    <span className='dropdown-name'>{productMenuCopy.htmlVideoName}</span>
                   </a>
                 </li>
                 <li>
-                  <a href={href('/tutorials/')}>
-                    <span className='dropdown-name'>
-                      {productMenuCopy.resourceItems.tutorials}
-                    </span>
+                  <a href={href('/faq/')}>
+                    <span className='dropdown-name'>FAQ</span>
                   </a>
                 </li>
                 <li>
-                  <a href={href('/compare/')}>
-                    <span className='dropdown-name'>
-                      {productMenuCopy.resourceItems.compare}
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href={href('/showcase/')}>
-                    <span className='dropdown-name'>展示 Showcase</span>
-                  </a>
-                </li>
-                {/* Weekly Newsletter is intentionally not listed — upstream
-                    main dropped it from Resources until the subscribe page
-                    ships. */}
-                <li>
-                  <a
-                    href={href('/download/')}
-                    className={active === 'download' ? 'is-active' : undefined}
-                  >
-                    <span className='dropdown-name'>
-                      {productMenuCopy.resourceItems.download}
-                    </span>
+                  <a href={REPO} {...ext}>
+                    <span className='dropdown-name'>GitHub</span>
                   </a>
                 </li>
               </ul>
             </li>
 
-            {/* Community — Contributors / Ambassadors / Moderators / Events. These
-                pages are now localized Astro routes, so link through `href()`
-                to keep visitors on their language variant. */}
+            {/* About — SOIA family, GitHub and Discussions. */}
             <li className='has-dropdown'>
               <a
-                href={href('/community/')}
+                href={href('/about/')}
                 className={active === 'community' ? 'is-active' : undefined}
               >
                 {productMenuCopy.community}
@@ -507,34 +422,13 @@ export function Header({
               </a>
               <ul className='nav-dropdown' aria-label={productMenuCopy.community}>
                 <li>
-                  <a href={href('/community/contributors/')}>
-                    <span className='dropdown-name'>
-                      {productMenuCopy.communityItems.contributors}
-                    </span>
+                  <a href={href('/about/')}>
+                    <span className='dropdown-name'>{productMenuCopy.community}</span>
                   </a>
                 </li>
                 <li>
-                  <a href={href('/community/ambassadors/')}>
-                    <span className='dropdown-name'>
-                      {productMenuCopy.communityItems.ambassadors}
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href={href('/community/moderators/')}>
-                    <span className='dropdown-name'>
-                      {productMenuCopy.communityItems.moderators}
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href={href('/community/events/')}>
-                    <span className='dropdown-name'>Events</span>
-                  </a>
-                </li>
-                <li>
-                  <a href={DISCORD} {...ext}>
-                    <span className='dropdown-name'>Discord</span>
+                  <a href={REPO_ORG} {...ext}>
+                    <span className='dropdown-name'>soia-team</span>
                   </a>
                 </li>
                 <li>
@@ -542,11 +436,6 @@ export function Header({
                     <span className='dropdown-name'>
                       {productMenuCopy.communityItems.discussions}
                     </span>
-                  </a>
-                </li>
-                <li>
-                  <a href={X_PROFILE} {...ext}>
-                    <span className='dropdown-name'>X</span>
                   </a>
                 </li>
               </ul>
@@ -596,67 +485,13 @@ export function Header({
           ) : null}
           <a
             className='nav-cta ghost'
-            href={href('/download/')}
+            href={REPO}
             aria-label={headerCopy.downloadAria}
             title={headerCopy.downloadTitle}
-            data-download-cta
-            data-download-page
-            data-download-placement='nav'
+            {...ext}
           >
             {headerCopy.download}
           </a>
-          {/*
-            Open Design Cloud account entry. Signed-out visitors only see the
-            download CTA above; the avatar menu stays `hidden` until the
-            enhancer confirms a live cloud session via
-            `GET {api}/api/auth/get-session`. Config flows through `data-*`
-            because the enhancer script cannot read `import.meta.env`.
-          */}
-          <div
-            className='nav-account'
-            data-amr-account
-            data-amr-api={CLOUD_API_BASE}
-            data-amr-console={CLOUD_CONSOLE_URL}
-          >
-            <details className='nav-account-menu' data-amr-menu hidden>
-              <summary
-                className='nav-account-trigger'
-                aria-label={headerCopy.accountAria}
-                title={headerCopy.accountAria}
-              >
-                <img className='nav-avatar' alt='' data-amr-avatar />
-                <span
-                  className='nav-avatar-fallback'
-                  data-amr-avatar-fallback
-                  aria-hidden='true'
-                />
-              </summary>
-              <div className='nav-account-dropdown' role='menu'>
-                <div className='nav-account-id'>
-                  <span className='nav-account-name' data-amr-name />
-                  <span className='nav-account-email' data-amr-email />
-                </div>
-                <a
-                  className='nav-account-item'
-                  role='menuitem'
-                  href={CLOUD_CONSOLE_URL}
-                  target='_blank'
-                  rel='noreferrer noopener'
-                  data-amr-console-link
-                >
-                  {headerCopy.menuConsole}
-                </a>
-                <button
-                  type='button'
-                  className='nav-account-item nav-account-signout'
-                  role='menuitem'
-                  data-amr-signout
-                >
-                  {headerCopy.menuSignOut}
-                </button>
-              </div>
-            </details>
-          </div>
         </div>
       </div>
       {/*

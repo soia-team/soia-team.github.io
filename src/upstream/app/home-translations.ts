@@ -59,95 +59,95 @@ export interface HomeExtra {
 
 const en: HomeExtra = {
   heroLead:
-    'From idea to prototype, web, slides, and HTML video — the entire product-design flow, finished on your own machine.',
-  heroTitleSub: 'Open Source Claude Design Alternative',
+    'The SOIA family. SoiaDeck is the current lead — coming open source.',
+  heroTitleSub: 'SOIA family · SoiaDeck is the current lead',
   heroSub:
-    'Open Design is the open-source, local vibe design workspace — it turns the coding agents you already run into a design engine that carries you from idea to prototype, web, slides, and HTML video, all finished on your own machine. Agent-native, with 21 coding agents, {systems} design systems, and an Apache-2.0 license.',
-  aboutKicker: 'Why Open Design?',
+    'SoiaDeck is the desktop AI platform: local daemon, AI Workbench for Claude Code and Codex, plus local LLM and network plugins. SoiaCode is the future coding agent, still in design. SOIA Runtime is the Agent OS under it. 47 open skills (PKM 27, Dev 9, Office 7, Meta 4) install on Claude Code, Codex and WorkBuddy.',
+  aboutKicker: 'Why SoiaDeck?',
   aboutStatement:
-    'Open Design is the open-source, agentic vibe design workspace — it turns the coding agent you already run into a design engine whose output you fully own. When an LLM first proved it can truly design — real design work, not just copy — that capability arrived closed, hosted, and model-locked. Open Design opens it up: local, BYOK, Apache-2.0.',
-  aboutTab1: 'Desktop-native',
-  aboutTab2: 'We don’t build agents, we plug them in',
-  aboutTab3: 'It learns you over time',
+    'SoiaDeck does not replace Claude Code or Codex. It puts the agents you already run on a desktop workbench: conversations, permissions, projects and worktrees in one place, with local models on the same machine. Your files stay local. The app will be open sourced.',
+  aboutTab1: 'Desktop workbench',
+  aboutTab2: 'Plug in agents you already have',
+  aboutTab3: 'Skills you can compose',
   aboutCap1:
-    'Design happens on the desktop.\nLocal files, Figma exports, and code repos are directly readable, and the agent has full terminal-execution power.',
+    'SoiaDeck is a desktop AI platform.\nRun coding-agent conversations, approvals, projects and worktrees without a separate terminal.',
   aboutCap2:
-    'The Claude Code / Codex / Cursor on your machine are already strong enough.\nOpen Design wires them into a complete design workflow.',
+    'Claude Code, Codex, Cursor and 16 other agents already work on your laptop.\nSoiaDeck connects them; open skills install on Claude Code, Codex and WorkBuddy.',
   aboutCap3:
-    'Every choice settles into a design system, preferences, and memory, so the next generation lands closer to what you want.',
-  stepTitle1: 'Choose a starting point',
-  stepTitle2: 'Set the visual direction',
-  stepTitle3: 'Generate the artifact',
-  stepTitle4: 'Deliver or make a video',
-  stepDesc1: 'Describe your goal in one line, or start from a template / plugin.',
-  stepDesc2: 'Once a direction is set, palette, type, and spacing flow into generation automatically.',
-  stepDesc3: 'The agent reads all context, produces real runnable files, and previews and edits them live in a sandbox.',
-  stepDesc4: 'Export it to engineering to keep building, or turn it into a marketing video with HyperFrames.',
-  capTitle: 'From idea to prototype, web, slides, and HTML video',
-  labsPre: 'What can you make with ',
+    'Four public skill domains — PKM, Dev, Office, Meta — 47 methods you can install one at a time.',
+  stepTitle1: 'Find a skill',
+  stepTitle2: 'Install on a host',
+  stepTitle3: 'Work in SoiaDeck or CLI',
+  stepTitle4: 'Verify and keep evidence',
+  stepDesc1: 'Describe the job. soia-meta-find-skill locates the matching public skill.',
+  stepDesc2: 'Install at project scope on Claude Code, Codex, or WorkBuddy — one skill unless you choose a whole domain.',
+  stepDesc3: 'SoiaDeck holds the conversation, permissions and worktrees. Skills run as methods, not a hosted black box.',
+  stepDesc4: 'Check real behavior. SoiaCode, still in design, is built so every step is visible, stoppable, and auditable.',
+  capTitle: 'From a need to a verified local result',
+  labsPre: 'What can you do with ',
   labsPost: '?',
   labsLead:
-    'Prototypes, landing pages, slide decks, dashboards, brand and design systems — even HTML video. Open Design turns each into real, runnable files, driven by your own coding agent and ready to ship or hand off to engineering.',
-  methodTitle: 'Plug in 21+ coding agents, zero config',
-  ctaTitle: 'Bring frontier AI design power back to every creator’s desk',
-  testiPre: 'From around the world, ',
-  testiMid: ' contributors ',
-  testiPost: 'are building Open Design together',
-  newsTitle: 'The Open Design newsletter',
+    'Run coding agents on the desktop, manage local models, and attach open skills for knowledge, engineering and office work. Featured skills include soia-meta-find-skill, soia-pkm-clip-web, soia-pkm-query-vault, soia-dev-implement-task, soia-dev-review-code, soia-cwork-feishu-cli, soia-media-compose-article-draft, and soia-media-generate-article-image.',
+  methodTitle: 'SoiaDeck already speaks 19 coding agents',
+  ctaTitle: 'SoiaDeck is coming open source.',
+  testiPre: 'Built in public by ',
+  testiMid: '. ',
+  testiPost: 'Courses are coming. Consulting is open now.',
+  newsTitle: 'SOIA updates',
   newsDesc:
-    'New templates, design-system updates, ambassador events, and product news — straight to your inbox.',
+    'Open-skill releases, SoiaDeck news, and when courses ship — no fake mailing list backend yet.',
   newsBtn: 'Subscribe',
-  newsDone: 'Thanks — you’re on the list!',
-  newsError: 'Couldn’t subscribe just now — please try again.',
-  faqTitle: 'Open Design FAQ — open source, local-first, and Claude Design alternative',
+  newsDone: 'Saved locally for now — mailing list is not wired yet.',
+  newsError: 'Could not save just now — try again.',
+  faqTitle: 'SOIA FAQ — open skills, SoiaDeck, SoiaCode',
   footProduct: 'Product',
-  footCommunity: 'Community',
+  footCommunity: 'About',
   footLegal: 'Legal',
-  footPartners: 'Partners',
+  footPartners: 'GitHub',
 };
 
 const zh: HomeExtra = {
-  heroLead: '从想法到原型、网页、Slides、HTML 视频——产品设计全流程，在你自己的设备上完成。',
-  heroTitleSub: 'Claude Design最佳开源平替',
+  heroLead: 'SOIA 家族。当前主角是 SoiaDeck，即将开源。',
+  heroTitleSub: 'SOIA 家族 · 当前主角 SoiaDeck',
   heroSub:
-    'Open Design 是开源、本地的 vibe design workspace——把你已经在用的 coding agent 变成设计引擎，从想法到原型、网页、Slides、HTML 视频，全流程在你自己的设备上完成。\nAgent-native，接入 21 个 Coding Agent、{systems} 个 Design System，Apache-2.0。',
-  aboutKicker: '为什么选择 Open Design？',
+    'SoiaDeck 是桌面 AI 平台：本机 daemon、AI 作业台（Claude Code / Codex 等）、本地 LLM 与 AI 网络。SoiaCode 是未来的 coding agent，仍在设计。SOIA Runtime 是它的 Agent OS 底层。47 个开源技能（PKM 27、Dev 9、Office 7、Meta 4）装到 Claude Code、Codex、WorkBuddy。',
+  aboutKicker: '为什么选择 SoiaDeck？',
   aboutStatement:
-    'Open Design 是开源、agentic 的 vibe design workspace——把你已经在用的 coding agent 变成一台产出完全归你的设计引擎。当 LLM 第一次证明它能真正做设计——是真的设计稿，不是写文案——这份能力却是闭源、托管、锁模型的。Open Design 把它打开：本地、BYOK、Apache-2.0。',
-  aboutTab1: '桌面端原生',
-  aboutTab2: '不造 Agent，接入 Agent',
-  aboutTab3: '越用越懂你',
-  aboutCap1: '设计在桌面端发生。\n本地文件、Figma 导出、代码仓库直接可读，Agent 拥有终端执行全部能力',
-  aboutCap2: '你电脑上的 Claude Code / Codex / Cursor 已经够强。\nOpen Design 做的是把它们接进完整设计工作流',
-  aboutCap3: '每次选择都沉淀为 Design System、偏好和记忆，下次生成更接近你要的结果',
-  stepTitle1: '选择起点',
-  stepTitle2: '确定视觉方向',
-  stepTitle3: '生成 Artifact',
-  stepTitle4: '交付或制作视频',
-  stepDesc1: '一句话描述目标，或从模板 / Plugin 直接选起点',
-  stepDesc2: '选定方向后，色板、字体、间距自动带入生成流程',
-  stepDesc3: 'Agent 读取所有 context，产出真实可运行的文件，沙盒内即时预览和修改',
-  stepDesc4: '导出给工程继续开发，或用 HyperFrames 直接转为营销视频',
-  capTitle: '从想法到原型、网页、Slides、HTML 视频',
+    'SoiaDeck 不替代 Claude Code 或 Codex。它把你已经在用的编码 Agent 接到桌面作业台：对话、权限、项目和工作树在一个地方，本地模型也在同一台机器上。文件留在本地。应用即将开源。',
+  aboutTab1: '桌面作业台',
+  aboutTab2: '接入已有 Agent',
+  aboutTab3: '技能可组合',
+  aboutCap1: 'SoiaDeck 是桌面 AI 平台。\n编码 Agent 的对话、权限审批、项目和工作树都在桌面里，不必另开终端。',
+  aboutCap2: '你电脑上的 Claude Code、Codex、Cursor 等已经够强。\nSoiaDeck 负责接入；开源技能可装到 Claude Code、Codex、WorkBuddy。',
+  aboutCap3: '四个公开技能域——知识库、工程、办公、生态——47 个方法，默认一次只装一个。',
+  stepTitle1: '发现技能',
+  stepTitle2: '装到宿主',
+  stepTitle3: '在 SoiaDeck 或 CLI 干活',
+  stepTitle4: '验证并留证据',
+  stepDesc1: '说出需求。soia-meta-find-skill 会定位匹配的公开技能。',
+  stepDesc2: '按项目、明确宿主安装：Claude Code、Codex 或 WorkBuddy。默认单个技能，整域须明确选择。',
+  stepDesc3: 'SoiaDeck 持有对话、权限和工作树。技能是方法，不是托管黑盒。',
+  stepDesc4: '核对真实行为。仍在设计中的 SoiaCode，目标是每一步可见、可拦、可追溯。',
+  capTitle: '从需求到可验证的本地结果',
   labsPre: '用 ',
-  labsPost: ' 能产出什么？',
+  labsPost: ' 能做什么？',
   labsLead:
-    '原型、落地页、Slides、仪表盘、品牌与设计系统——甚至 HTML 视频。Open Design 把每一样都变成可运行的真实文件，由你自己的 coding agent 驱动，随时交付或交接给工程。',
-  methodTitle: '接入 21+ Coding Agent，零配置',
-  ctaTitle: '让最前沿的 AI 设计能力回到每一个创作者的桌上',
-  testiPre: '来自全球，',
-  testiMid: ' 贡献者',
-  testiPost: '正在一起构建 Open Design',
-  newsTitle: 'Open Design 订阅',
-  newsDesc: '新模板、设计系统更新、大使活动与产品动态，直接发到你的邮箱。',
+    '在桌面里跑编码 Agent、管本地模型，并挂上知识库、工程与办公开源技能。代表技能：soia-meta-find-skill、soia-pkm-clip-web、soia-pkm-query-vault、soia-dev-implement-task、soia-dev-review-code、soia-cwork-feishu-cli、soia-media-compose-article-draft、soia-media-generate-article-image。',
+  methodTitle: 'SoiaDeck 已接入 19 个 coding agent',
+  ctaTitle: 'SoiaDeck 即将开源。',
+  testiPre: '由 ',
+  testiMid: ' 公开构建。',
+  testiPost: '课程即将推出。企业咨询可以开始约。',
+  newsTitle: 'SOIA 更新',
+  newsDesc: '开源技能发版、SoiaDeck 动态、课程上线通知。邮件后端尚未接通，提交只留在本机。',
   newsBtn: '订阅',
-  newsDone: '已收到，感谢关注！',
-  newsError: '订阅失败，请稍后重试。',
-  faqTitle: 'Open Design 常见问题 —— 开源、本地优先、Claude Design 替代',
+  newsDone: '已记下。邮件列表还没接通。',
+  newsError: '现在存不了，请稍后重试。',
+  faqTitle: 'SOIA 常见问题 —— 开源技能、SoiaDeck、SoiaCode',
   footProduct: '产品',
-  footCommunity: '社区',
+  footCommunity: '关于',
   footLegal: '法律',
-  footPartners: '伙伴',
+  footPartners: 'GitHub',
 };
 
 const zhTw: HomeExtra = {
@@ -884,7 +884,7 @@ const uk: HomeExtra = {
   footPartners: 'Партнери',
 };
 
-const TABLE: Partial<Record<LandingLocaleCode, HomeExtra>> = {
+const _TABLE: Partial<Record<LandingLocaleCode, HomeExtra>> = {
   en,
   zh,
   'zh-tw': zhTw,
@@ -907,7 +907,7 @@ const TABLE: Partial<Record<LandingLocaleCode, HomeExtra>> = {
 
 /** Localized copy for the homepage visual modules; falls back to English. */
 export function getHomeExtra(locale: LandingLocaleCode): HomeExtra {
-  return TABLE[locale] ?? en;
+  return locale === 'zh' ? zh : en;
 }
 
 /**
@@ -930,24 +930,24 @@ export interface HomeCta {
 
 const HOME_CTA: Partial<Record<LandingLocaleCode, HomeCta>> = {
   en: {
-    solutions: 'Explore solutions',
-    templates: 'Browse all templates',
-    agents: 'Browse all 21+ agents',
-    contributors: 'View all contributors',
-    systems: 'Explore design systems',
+    solutions: 'Browse skill domains',
+    templates: 'Browse open skills',
+    agents: 'SoiaDeck agents',
+    contributors: 'soia-team on GitHub',
+    systems: 'Open skill domains',
     learnMore: 'Learn more →',
-    statsTitle: 'The open-source vibe design workspace, by the numbers',
-    downloadProof: '74K+ stars · Apache-2.0 · Free',
+    statsTitle: 'SOIA by the numbers — public facts only',
+    downloadProof: '47 skills · 4 domains · MIT',
   },
   zh: {
-    solutions: '浏览全部解决方案',
-    templates: '浏览全部模板',
-    agents: '浏览全部 Agent',
-    contributors: '查看全部贡献者',
-    systems: '浏览设计系统',
+    solutions: '浏览技能域',
+    templates: '浏览开源技能',
+    agents: 'SoiaDeck 已接 Agent',
+    contributors: 'soia-team GitHub',
+    systems: '开源技能域',
     learnMore: '了解更多 →',
-    statsTitle: '开源 vibe design workspace，用数据说话',
-    downloadProof: '74K+ Star · Apache-2.0 · 免费',
+    statsTitle: 'SOIA 用公开数字说话',
+    downloadProof: '47 个技能 · 4 个域 · MIT',
   },
   ja: {
     solutions: 'すべてのソリューションを見る',
@@ -1043,5 +1043,6 @@ const HOME_CTA: Partial<Record<LandingLocaleCode, HomeCta>> = {
 
 /** Localized homepage CTA labels; falls back to English for retired locales. */
 export function getHomeCta(locale: LandingLocaleCode): HomeCta {
-  return HOME_CTA[locale] ?? (HOME_CTA.en as HomeCta);
+  if (locale === 'zh') return HOME_CTA.zh as HomeCta;
+  return HOME_CTA.en as HomeCta;
 }

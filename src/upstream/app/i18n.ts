@@ -300,15 +300,15 @@ export interface CommonCopy {
 
 const HEADER_PRODUCT_MENU_COPY: Record<LandingLocaleCode, HeaderProductMenuCopy> = {
   en: {
-    pricing: "Pricing",
+    pricing: 'Services',
     toggleNavigationMenu: 'Toggle navigation menu',
     product: 'Product',
-    openDesignName: 'Open Design',
-    openDesignBlurb: 'The agentic design surface: skills, systems, templates.',
-    htmlAnythingName: 'HTML Anything',
-    htmlAnythingBlurb: 'Markdown / data to ship-ready HTML, by your local agent.',
-    htmlVideoName: 'HTML Video',
-    htmlVideoBlurb: 'A prompt, article, or repo to a real MP4 — by your local agent.',
+    openDesignName: 'SoiaDeck',
+    openDesignBlurb: 'Desktop AI workbench. Coming open source.',
+    htmlAnythingName: 'SoiaCode',
+    htmlAnythingBlurb: 'Lightweight coding agent. In design, not open yet.',
+    htmlVideoName: 'Open Skills',
+    htmlVideoBlurb: '47 public skills across knowledge, engineering, and office work.',
     amrName: 'Open Design',
     amrKicker: 'Design Agent',
     amrBlurb: 'Professional design Agent, zero-config use, built-in SOTA models & Harness',
@@ -316,13 +316,13 @@ const HEADER_PRODUCT_MENU_COPY: Record<LandingLocaleCode, HeaderProductMenuCopy>
     tutorialsBlurb: 'Video walkthroughs, demos, and community reviews.',
     solution: 'Solution',
     useCases: 'Use cases',
-    useCaseItems: ['Prototype', 'Dashboard', 'Slides', 'Image', 'Video', 'Design System'],
+    useCaseItems: ['Knowledge vault', 'Engineering', 'Office content', 'Consulting', 'Local models', 'Agent workbench'],
     roles: 'Roles',
-    roleItems: ['Solo Builder', 'Designer', 'Engineering', 'Product Managers', 'Marketing'],
-    tools: 'Tools',
-    agent: 'Agent',
-    plugins: 'Plugins',
-    pluginItems: { templates: 'Templates', skills: 'Skills', systems: 'Systems' },
+    roleItems: ['Individual', 'Engineer', 'Writer', 'Team lead', 'Company'],
+    tools: 'Featured skills',
+    agent: 'Skills',
+    plugins: 'Skills',
+    pluginItems: { templates: 'PKM', skills: 'Dev', systems: 'Office' },
     resources: 'Resources',
     resourceItems: {
       blog: 'Blog',
@@ -330,9 +330,9 @@ const HEADER_PRODUCT_MENU_COPY: Record<LandingLocaleCode, HeaderProductMenuCopy>
       tutorials: 'Tutorials',
       compare: 'Compare',
       newsletter: 'Weekly Newsletter',
-      download: 'Download',
+      download: 'Open skills',
     },
-    community: 'Community',
+    community: 'About',
     communityItems: {
       contributors: 'Contributors',
       ambassadors: 'Ambassadors',
@@ -341,15 +341,15 @@ const HEADER_PRODUCT_MENU_COPY: Record<LandingLocaleCode, HeaderProductMenuCopy>
     },
   },
   zh: {
-    pricing: "价格",
+    pricing: '服务',
     toggleNavigationMenu: '切换导航菜单',
     product: '产品',
-    openDesignName: 'Open Design',
-    openDesignBlurb: 'Agent 原生设计工作台：围绕 SKILL.md 工作流组织。',
-    htmlAnythingName: 'HTML Anything',
-    htmlAnythingBlurb: 'Markdown / 数据变成可交付 HTML，由本地 Agent 完成。',
-    htmlVideoName: 'HTML Video',
-    htmlVideoBlurb: '一个 prompt、文章或仓库，变成真实 MP4——由你的本地 Agent 完成。',
+    openDesignName: 'SoiaDeck',
+    openDesignBlurb: '桌面 AI 作业台，即将开源。',
+    htmlAnythingName: 'SoiaCode',
+    htmlAnythingBlurb: '轻量 coding agent，正在设计中，暂未开源。',
+    htmlVideoName: '开源技能',
+    htmlVideoBlurb: '47 个公开技能，覆盖知识库、工程与办公。',
     amrName: 'Open Design',
     amrKicker: '设计 Agent',
     amrBlurb: '专业设计Agent、零配置使用、自带SOTA模型与Harness',
@@ -357,13 +357,13 @@ const HEADER_PRODUCT_MENU_COPY: Record<LandingLocaleCode, HeaderProductMenuCopy>
     tutorialsBlurb: '视频上手、演示与社区评测。',
     solution: '解决方案',
     useCases: '使用场景',
-    useCaseItems: ['原型', '看板', '幻灯片', '图片', '视频', '设计系统'],
+    useCaseItems: ['知识库', '工程交付', '办公内容', '企业咨询', '本地模型', 'Agent 作业台'],
     roles: '角色',
-    roleItems: ['独立开发者', '设计师', '工程', '产品经理', '市场'],
-    tools: '工具',
-    agent: 'Agent',
-    plugins: '插件',
-    pluginItems: { templates: '模板', skills: '技能', systems: '设计系统' },
+    roleItems: ['个人', '工程师', '创作者', '团队负责人', '企业'],
+    tools: '代表技能',
+    agent: '技能',
+    plugins: '技能',
+    pluginItems: { templates: '知识库', skills: '工程', systems: '办公' },
     resources: '资源',
     resourceItems: {
       blog: '博客',
@@ -371,9 +371,9 @@ const HEADER_PRODUCT_MENU_COPY: Record<LandingLocaleCode, HeaderProductMenuCopy>
       tutorials: '教程',
       compare: '比较',
       newsletter: '每周通讯',
-      download: '下载桌面端',
+      download: '开源技能',
     },
-    community: '社区',
+    community: '关于',
     communityItems: {
       contributors: '贡献者',
       ambassadors: '大使',
@@ -1642,10 +1642,10 @@ const COMMON_COPY: Record<LandingLocaleCode, CommonCopy> = {
         useCases: 'Use cases',
         roles: 'Roles',
       },
-      download: 'Download',
-      downloadAria: 'Download Open Design desktop',
-      downloadTitle: 'Download the desktop app',
-      starAria: 'Star Open Design on GitHub',
+      download: 'Open skills',
+      downloadAria: 'Browse SOIA open skills on GitHub',
+      downloadTitle: 'Open skills on GitHub',
+      starAria: 'SOIA on GitHub',
       starTitle: 'Click to star us on GitHub',
       starPrefix: 'Star',
       signIn: 'Sign in',
@@ -1688,10 +1688,10 @@ const COMMON_COPY: Record<LandingLocaleCode, CommonCopy> = {
         useCases: '使用场景',
         roles: '角色',
       },
-      download: '下载',
-      downloadAria: '下载 Open Design 桌面端',
-      downloadTitle: '下载桌面应用',
-      starAria: '在 GitHub 为 Open Design 点 Star',
+      download: '开源技能',
+      downloadAria: '在 GitHub 浏览 SOIA 开源技能',
+      downloadTitle: '打开开源技能仓库',
+      starAria: 'SOIA 的 GitHub',
       starTitle: '去 GitHub 点 Star',
       starPrefix: 'Star',
       signIn: '登录',
@@ -2440,14 +2440,14 @@ const COMMON_COPY: Record<LandingLocaleCode, CommonCopy> = {
 
 const HOME_SEO_COPY: Record<LandingLocaleCode, HomeSeoCopy> = {
   en: {
-    title: 'Open Design — Best Open Source Claude Design Alternative',
+    title: 'SOIA — Local Agent Platform · Open Skills',
     description:
-      'Open-source vibe design workspace & Claude Design alternative — build prototypes, landing pages, dashboards, slides & HTML video with your own coding agent.',
+      'SOIA is a local-first agent platform. SoiaDeck is a desktop AI workbench coming open source. 47 public skills cover knowledge, engineering, and office work. SoiaCode is in design.',
   },
   zh: {
-    title: 'Open Design —— 最佳 Claude Design 开源替代',
+    title: 'SOIA — 本地 Agent 平台 · 开源技能',
     description:
-      'Open Design 是开源的 vibe design workspace，也是 Claude Design 的开源替代——用你自己的 coding agent 做原型、落地页、仪表盘、Slides 和 HTML 视频。',
+      'SOIA 是本地优先的 Agent 平台。SoiaDeck 桌面作业台即将开源；47 个开源技能覆盖知识库、工程与办公。SoiaCode 正在设计中，暂未开源。',
   },
   'zh-tw': {
     title: 'Open Design —— 最佳 Claude Design 開源替代',
@@ -2534,136 +2534,78 @@ const HOME_SEO_COPY: Record<LandingLocaleCode, HomeSeoCopy> = {
 const HOME_FAQ_COPY: Record<LandingLocaleCode, HomeFaqTemplate[]> = {
   en: [
     {
-      q: 'What is Open Design?',
-      a: 'Open Design is the official open-source AI design workspace from the nexu-io/open-design project. It turns a local coding agent — Claude Code, Codex, Cursor, Gemini CLI, OpenCode, or Qwen — into a design engine driven by composable skills and portable DESIGN.md systems.',
+      q: 'What is SOIA?',
+      a: 'SOIA is a local-first agent platform. SoiaDeck is the desktop workbench (coming open source). SoiaCode is a lightweight coding agent still in design. Open skills are 47 public methods for knowledge, engineering, and office work. SOIA Runtime is the open-source agent OS.',
     },
     {
-      q: 'Is Open Design official?',
-      a: 'Yes. The canonical project lives at {origin} and the source is on GitHub at {repo}. "Open Design", "OpenDesign", "open-design", and "Open Design AI" all refer to this same project.',
-      official: true,
+      q: 'What is SoiaDeck?',
+      a: 'SoiaDeck is a desktop AI platform: one local daemon, a workbench for Claude Code, Codex and other coding agents, plus local-model and network plugins. It will be open sourced. It is private today, so there is no public download page yet.',
     },
     {
-      q: 'How is Open Design different from Claude Design?',
-      a: 'Claude Design is a hosted product tied to a single vendor. Open Design is local-first, open source under Apache-2.0, and BYOK: you bring your own agent, credentials, and DESIGN.md system.',
+      q: 'What is SoiaCode?',
+      a: 'SoiaCode (command si) is a small Rust coding agent: five built-in tools, explicit permissions, and a short system prompt. It is in the design stage (milestone M1). There is no code release and it is not open source yet.',
     },
     {
-      q: 'Is Open Design an open-source Claude Design alternative?',
-      a: 'Yes — Open Design is the open-source, local-first Claude Design alternative. Where Claude Design is closed, hosted, and locked to Anthropic models, Open Design is Apache-2.0, runs on your own machine, and is BYOK, so you drive it with Claude Code, Codex, Cursor, Gemini, OpenCode, or Qwen and keep every artifact as files you own.',
-      href: '/alternatives/claude-design/',
+      q: 'Are the skills open source?',
+      a: 'Yes. Four public domains — PKM (27), Dev (9), Office (7), Meta (4) — live under github.com/soia-team. They install on Claude Code, Codex, and WorkBuddy. Source and docs are MIT.',
     },
     {
-      q: 'What is a vibe design workspace?',
-      a: 'A vibe design workspace is where you design by describing intent to an AI agent — from prompt to prototype, web page, slides, or HTML video — instead of hand-placing every element. Open Design is an open-source, agent-native vibe design workspace: it wires the coding agent you already run into a full design workflow, so one tool takes you from a rough idea to production-ready output you own.',
-      href: '/blog/what-is-vibe-design/',
+      q: 'Which coding agents does SoiaDeck support?',
+      a: 'SoiaDeck currently lists 19 agents, including Claude Code, Codex, Cursor, Gemini CLI, Pi, OpenCode, Copilot, Qwen, Kimi, Kiro, Trae, Grok, and Antigravity.',
     },
     {
-      q: 'Does Open Design run locally?',
-      a: 'Yes. The desktop app, daemon, and skill runtime run on your machine. Generated artifacts land in your project directory instead of being forced through a vendor cloud.',
+      q: 'How do I install a skill?',
+      a: 'Default is project-level, one host, one skill. Example: npx skills add soia-team/soia-open-skills -a codex -s soia-meta-find-skill. Say what you need; soia-meta-find-skill locates the rest.',
     },
     {
-      q: 'Which coding agents does Open Design support?',
-      a: 'Open Design ships 17 first-party BYOK adapters out of the box: Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot CLI, Grok, Hermes, Kimi, Devin for Terminal, OpenCode, Qwen, DeepSeek, Pi, Mistral Vibe, Kiro, Kilo, and Qoder. Any adapter that speaks the same skill protocol works — switching agents is a config change, not a redesign.',
+      q: 'Does SOIA upload my data?',
+      a: 'Open skills run on your machine and do not host your files. SoiaDeck is local-first and does not upload machine, model, or conversation data. Model-market search only happens when you ask.',
     },
     {
-      q: 'Can I self-host or fork it?',
-      a: 'Yes. The code is Apache-2.0. You can fork the repo, edit skills, add your own DESIGN.md systems, or run the daemon on your own machines.',
-    },
-    // ---- Q7+ — added after the initial sync; every locale carries
-    // translated copies of these entries (keep all 18 lists at 13 items).
-    // Order is intentional: data-flow / cost questions first (the highest
-    // evaluator concerns), then workflow / roadmap. ----
-    {
-      q: 'Is my data sent to Anthropic, OpenAI, or Google?',
-      a: 'Only your prompt and skill context goes to whichever provider you bring keys for (BYOK). Open Design has no server of its own — the daemon talks to your provider directly. Generated artifacts land as files in your project directory, not in any vendor cloud.',
+      q: 'Can I hire you or buy a course?',
+      a: 'Courses are coming. Company consulting can start now — open a GitHub Discussion on soia-team/soia-open-skills. This site does not sell subscriptions.',
     },
     {
-      q: 'Can I run Open Design without installing the CLI or desktop app?',
-      a: 'Not today. Open Design is local-first by design — the minimum is a local daemon plus an agent (Claude Code, Codex, Cursor, Gemini CLI, or one of the 17 supported adapters). A hosted sandbox is on the roadmap but not the priority: artifacts in your repo beat documents in someone else\'s database.',
-    },
-    {
-      q: 'How much does Open Design cost?',
-      a: 'The product is free and Apache-2.0 — there is no Open Design subscription. You pay the API costs of whichever provider you use (Anthropic, OpenAI, Google, Mistral, xAI, Moonshot, etc.), billed directly to your account. BYOK keeps both the credentials and the spend on your side of the line.',
-    },
-    {
-      q: 'Can I self-host Open Design on Vercel, Cloudflare, or my own server?',
-      a: 'Yes. The daemon runs anywhere Node 24 runs, and the landing page is a static Astro build that deploys to Cloudflare Pages, Vercel, or Netlify as-is. Teams running shared deployments typically pin the daemon to a machine inside their network and point each developer\'s CLI at it.',
-    },
-    {
-      q: 'How do I move my brand into Open Design?',
-      a: 'Drop a screenshot or a Figma export into the web UI and ask your agent to extract a brand into a DESIGN.md file. Save that file under design-systems/<your-brand>/ in your repo; every skill then renders in that brand without re-prompting. /alternatives/claude-design/ describes the same flow in step form.',
-    },
-    {
-      q: 'Can I switch agents without redoing my work?',
-      a: 'Yes. Skills and DESIGN.md systems are agent-agnostic — the same SKILL.md file renders against Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot, Grok, Hermes, Qwen, or any other supported adapter. Switching agents is a config change in the daemon, not a redesign.',
-    },
-    {
-      q: 'What\'s on the Open Design roadmap?',
-      a: 'The live roadmap is at docs/roadmap.md in the GitHub repo, and weekly release notes ship through GitHub Releases. Major themes for the next quarter: more agent adapters, richer template families (3D, video, audio), and an optional shared-daemon mode for design teams.',
+      q: 'Where is the source?',
+      a: 'Public work lives at {repo} and github.com/soia-team/soia. SoiaDeck and SoiaCode are not public repositories yet.',
     },
   ],
   zh: [
     {
-      q: 'Open Design 是开源的 Claude Design 替代品吗？',
-      a: '是的——Open Design 是开源、本地优先的 Claude Design 替代方案。Claude Design 闭源、托管、锁定 Anthropic 模型；Open Design 是 Apache-2.0，跑在你自己的机器上，且 BYOK，你可以用 Claude Code、Codex、Cursor、Gemini、OpenCode 或 Qwen 驱动它，产出的每个文件都归你所有。',
-      href: '/alternatives/claude-design/',
+      q: 'SOIA 是什么？',
+      a: 'SOIA 是本地优先的 Agent 平台。SoiaDeck 是桌面作业台（即将开源）；SoiaCode 是正在设计中的轻量 coding agent；开源技能有 47 个，覆盖知识库、工程与办公；SOIA Runtime 是开源 Agent OS。',
     },
     {
-      q: '什么是 vibe design workspace？',
-      a: 'vibe design workspace 是通过向 AI agent 描述意图来做设计——从 prompt 到原型、网页、slides、HTML 视频——而不是手动摆放每个元素。Open Design 是一个开源、agent-native 的 vibe design workspace：把你已经在用的 coding agent 接进完整设计工作流，一个工具就把你从粗略想法带到可交付、归你所有的成品。',
-      href: '/blog/what-is-vibe-design/',
+      q: 'SoiaDeck 是什么？什么时候开源？',
+      a: 'SoiaDeck 是桌面 AI 平台：本机 daemon、AI 作业台（Claude Code、Codex 等）、本地模型与网络插件。产品会开源。现在仍是私有仓，所以没有公开下载页。',
     },
     {
-      q: 'Open Design 是什么？',
-      a: 'Open Design 是 nexu-io/open-design 项目的官方开源 AI 设计工作台。它把本地编码 Agent（Claude Code、Codex、Cursor、Gemini CLI、OpenCode 或 Qwen）变成设计引擎，并由可组合 SKILL.md 工作流驱动。',
+      q: 'SoiaCode 是什么？已经开源了吗？',
+      a: 'SoiaCode（命令 si）是用 Rust 写的轻量 coding agent：五个内置工具、权限检查、短提示词。目前处于方案阶段（里程碑 M1），还没有代码，暂未开源。',
     },
     {
-      q: 'Open Design 是官方项目吗？',
-      a: '是。官方站点是 {origin}，源代码在 GitHub：{repo}。"Open Design"、"OpenDesign"、"open-design" 和 "Open Design AI" 都指向同一个项目。',
-      official: true,
+      q: '开源技能有哪些？',
+      a: '四个公开域：知识库 PKM 27 个、工程 Dev 9 个、办公 Office 7 个、生态 Meta 4 个。可装到 Claude Code、Codex、WorkBuddy。源码与文档是 MIT。',
     },
     {
-      q: '它和 Claude Design 有什么不同？',
-      a: 'Claude Design 是绑定单一厂商的云端产品。Open Design 本地优先、Apache-2.0 开源，并且 BYOK：你使用自己的 Agent、密钥和 Skill 规则。',
+      q: 'SoiaDeck 支持哪些 Agent？',
+      a: '当前清单 19 个，包括 Claude Code、Codex、Cursor、Gemini CLI、Pi、OpenCode、Copilot、Qwen、Kimi、Kiro、Trae、Grok、Antigravity。',
     },
     {
-      q: 'Open Design 可以本地运行吗？',
-      a: '可以。桌面端、daemon 和 Skill 运行时都在你的机器上运行，生成的 artifact 会落在你的项目目录里。',
+      q: '技能怎么安装？',
+      a: '默认项目级、明确宿主、单个技能。例如：npx skills add soia-team/soia-open-skills -a codex -s soia-meta-find-skill。先说需求，soia-meta-find-skill 会帮你定位。',
     },
     {
-      q: '支持哪些编码 Agent？',
-      a: '支持 Claude Code、Codex、Cursor、Gemini CLI、OpenCode、Qwen，以及遵循同一 Skill 协议的其它适配器。',
+      q: '会上传我的数据吗？',
+      a: '开源技能在你自己的机器上跑，不托管你的文件。SoiaDeck 本地优先，不上传本机、模型或对话数据。只有你主动检索或下载模型时才会访问模型市场。',
     },
     {
-      q: '可以自托管或 fork 吗？',
-      a: '可以。代码采用 Apache-2.0 协议，你可以 fork 仓库、编辑 Skill、加入自己的 reference 规则，或在自己的机器上运行 daemon。',
+      q: '可以买课或做企业咨询吗？',
+      a: '课程即将推出。企业咨询现在就可以约——到 soia-team/soia-open-skills 开 GitHub Discussion。本站不卖订阅。',
     },
     {
-      q: '我的数据会发送给 Anthropic、OpenAI 或 Google 吗？',
-      a: '只有你的 prompt 和 Skill 上下文会发给你自带密钥（BYOK）的那家模型供应商。Open Design 没有自己的服务器——daemon 直接与你的供应商通信，生成的 artifact 以文件形式落在你的项目目录里，不会进入任何厂商云端。',
-    },
-    {
-      q: '不安装 CLI 或桌面端能用 Open Design 吗？',
-      a: '目前不行。Open Design 的设计就是本地优先——最少需要一个本地 daemon 加一个 Agent（Claude Code、Codex、Cursor、Gemini CLI 或 17 个受支持适配器之一）。托管沙盒在路线图上但不是优先级：落在你仓库里的 artifact，胜过存在别人数据库里的文档。',
-    },
-    {
-      q: 'Open Design 要多少钱？',
-      a: '产品本身免费且为 Apache-2.0 开源——不存在 Open Design 订阅。你只需支付所用供应商（Anthropic、OpenAI、Google、Mistral、xAI、Moonshot 等）的 API 费用，直接计入你自己的账户。BYOK 让密钥和开销都留在你这一侧。',
-    },
-    {
-      q: '可以把 Open Design 自托管到 Vercel、Cloudflare 或自己的服务器吗？',
-      a: '可以。daemon 在任何能跑 Node 24 的地方运行，落地页是静态 Astro 构建，可直接部署到 Cloudflare Pages、Vercel 或 Netlify。团队共享部署通常把 daemon 固定在内网一台机器上，让每个开发者的 CLI 指向它。',
-    },
-    {
-      q: '怎么把我的品牌迁入 Open Design？',
-      a: '把截图或 Figma 导出拖进 Web UI，让 Agent 把品牌提取成一个 DESIGN.md 文件。把它保存到仓库的 design-systems/<your-brand>/ 下，之后所有 Skill 都会按这个品牌渲染，无需重复提示。/alternatives/claude-design/ 以分步形式描述了同一流程。',
-    },
-    {
-      q: '换 Agent 需要重做工作吗？',
-      a: '不需要。Skill 和 DESIGN.md 系统与 Agent 无关——同一个 SKILL.md 文件可以在 Claude Code、Codex、Cursor、Gemini CLI、GitHub Copilot、Grok、Hermes、Qwen 或其他受支持的适配器上渲染。换 Agent 只是 daemon 里的一项配置变更，不是重新设计。',
-    },
-    {
-      q: 'Open Design 的路线图有什么？',
-      a: '实时路线图在 GitHub 仓库的 docs/roadmap.md，每周发布说明通过 GitHub Releases 发出。下个季度的主要方向：更多 Agent 适配器、更丰富的模板族（3D、视频、音频），以及面向设计团队的可选共享 daemon 模式。',
+      q: '源码在哪？',
+      a: '公开仓在 {repo} 与 github.com/soia-team/soia。SoiaDeck 与 SoiaCode 目前还不是公开仓库。',
     },
   ],
   'zh-tw': [
@@ -3654,8 +3596,8 @@ const HOME_PAGE_COPY_EN: HomePageCopy = {
     titleSecondEmphasis: 'your own agent',
     lead: (skills, systems) =>
       `Open Design is the official, local-first alternative to Claude Design. Your existing coding agent — Claude Code · Codex · Cursor · Gemini · OpenCode · Qwen — becomes the design engine, driven by ${skills} composable skills and ${systems} portable DESIGN.md systems.`,
-    star: 'Star us on GitHub',
-    download: 'Download desktop',
+    star: 'SoiaDeck coming soon',
+    download: 'Browse open skills',
     plate: 'Plate Nº 08',
     composedIn: 'Composed in',
     stats: [
@@ -3705,7 +3647,7 @@ const HOME_PAGE_COPY_EN: HomePageCopy = {
     titleEmphasis: 'for creative',
     titleSuffix: 'intelligence',
     lead:
-      'Brief → Template → Visual direction → Artifact → Memory',
+      'Find a skill → Install on a host → Work in SoiaDeck or CLI → Verify',
     cards: [
       {
         tag: 'Skills',
@@ -3792,7 +3734,7 @@ const HOME_PAGE_COPY_EN: HomePageCopy = {
     titleEmphasis: 'signals',
     titleSuffix: 'to systems',
     lead:
-      'Every stage is iterative, visual, and research-driven — composable files, not opaque prompts.',
+      'SoiaDeck already connects 19 coding agents. Open skills install on Claude Code, Codex, and WorkBuddy.',
     steps: [
       {
         title: 'Detect',
@@ -3875,8 +3817,8 @@ const HOME_PAGE_COPY_EN: HomePageCopy = {
     titleVisual: 'visually',
     titleSuffix: 'unforgettable',
     lead:
-      'Open · Local · Agent-native',
-    star: 'Star on GitHub',
+      'Local-first · Open skills · Consulting',
+    star: 'Talk to soia-team',
     issue: 'Open an issue',
     live: 'Live',
     ribbon: 'OPEN DESIGN · FIN.',
@@ -3932,8 +3874,8 @@ const HOME_PAGE_COPY: Partial<Record<LandingLocaleCode, HomePageCopy>> = {
       titleSecondEmphasis: '你自己的 Agent 上',
       lead: (skills) =>
         `Open Design 是官方、本地优先的 Claude Design 替代方案。你现有的编码 Agent —— Claude Code · Codex · Cursor · Gemini · OpenCode · Qwen —— 会变成设计引擎，并由 ${skills} 个可组合 SKILL.md 工作流驱动。`,
-      star: 'Download',
-      download: '下载桌面端',
+      star: 'SoiaDeck 即将开源',
+      download: '浏览开源技能',
       plate: '图版 Nº 08',
       composedIn: '由',
       stats: [
@@ -3982,7 +3924,7 @@ const HOME_PAGE_COPY: Partial<Record<LandingLocaleCode, HomePageCopy>> = {
       titlePrefix: 'Skill、规范与界面',
       titleEmphasis: '服务于创意',
       titleSuffix: '智能',
-      lead: 'Brief → 模板 → 视觉方向 → Artifact → 记忆沉淀',
+      lead: '发现技能 → 装到宿主 → 在 SoiaDeck 或 CLI 干活 → 验证',
       cards: [
         {
           tag: 'Skills',
@@ -4069,7 +4011,7 @@ const HOME_PAGE_COPY: Partial<Record<LandingLocaleCode, HomePageCopy>> = {
       titleEmphasis: '信号',
       titleSuffix: '到规则',
       lead:
-        '自动检测 PATH 上已安装的 CLI，也支持任何 OpenAI / Azure / Google 兼容端点通过 BYOK 代理接入',
+        'SoiaDeck 已接入 19 个 coding agent。开源技能可装到 Claude Code、Codex、WorkBuddy。',
       steps: [
         {
           title: '检测',
@@ -4149,8 +4091,8 @@ const HOME_PAGE_COPY: Partial<Record<LandingLocaleCode, HomePageCopy>> = {
       titleMiddle: '',
       titleVisual: '',
       titleSuffix: '',
-      lead: 'Open · Local · Agent-native',
-      star: '在 GitHub 点 Star',
+      lead: '本地优先 · 开源技能 · 企业咨询',
+      star: '联系 soia-team',
       issue: 'Star on GitHub',
       live: '在线',
       ribbon: 'OPEN DESIGN · 完。',
@@ -6914,13 +6856,15 @@ export function getLocaleDefinition(code: LandingLocaleCode): LandingLocale {
 }
 
 export function getCommonCopy(locale: LandingLocaleCode): CommonCopy {
-  return COMMON_COPY[locale] ?? COMMON_COPY[DEFAULT_LOCALE];
+  const effective = locale === 'zh' ? 'zh' : DEFAULT_LOCALE;
+  return COMMON_COPY[effective] ?? COMMON_COPY[DEFAULT_LOCALE];
 }
 
 export function getHeaderProductMenuCopy(
   locale: LandingLocaleCode,
 ): HeaderProductMenuCopy {
-  return HEADER_PRODUCT_MENU_COPY[locale] ?? HEADER_PRODUCT_MENU_COPY[DEFAULT_LOCALE];
+  const effective = locale === 'zh' ? 'zh' : DEFAULT_LOCALE;
+  return HEADER_PRODUCT_MENU_COPY[effective] ?? HEADER_PRODUCT_MENU_COPY[DEFAULT_LOCALE];
 }
 
 export function getLandingUiCopy(locale: LandingLocaleCode): LandingUiCopy {
@@ -6939,7 +6883,8 @@ export function getLandingUiCopy(locale: LandingLocaleCode): LandingUiCopy {
 }
 
 export function getHomePageCopy(locale: LandingLocaleCode): HomePageCopy {
-  const exactCopy = HOME_PAGE_COPY[locale];
+  const effective = locale === 'zh' ? 'zh' : DEFAULT_LOCALE;
+  const exactCopy = HOME_PAGE_COPY[effective];
   if (exactCopy) return exactCopy;
   const localizedHomeBodyCopy = mergeCopy(
     LOCALIZED_HOME_BODY_COPY[locale] ?? {},
@@ -7009,7 +6954,8 @@ export function getHomeFaq(
   locale: LandingLocaleCode,
   replacements: { origin: string; repo: string },
 ): HomeFaqEntry[] {
-  const templates = HOME_FAQ_COPY[locale] ?? HOME_FAQ_COPY[DEFAULT_LOCALE];
+  const effective = locale === 'zh' ? 'zh' : DEFAULT_LOCALE;
+  const templates = HOME_FAQ_COPY[effective] ?? HOME_FAQ_COPY[DEFAULT_LOCALE];
   return templates.map((entry) => ({
     q: entry.q,
     a: entry.a

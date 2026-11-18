@@ -1,20 +1,15 @@
 {
-  "name": "Open Design",
-  "short_name": "Open Design",
-  "description": "The official Open Design site for the open-source, local-first Claude Design alternative.",
+  "name": "SOIA",
+  "short_name": "SOIA",
+  "description": "SOIA family — SoiaDeck desktop AI platform and 47 open skills for knowledge, engineering and office work.",
   "icons": [
     {
-      "src": "/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/android-chrome-512x512.png",
+      "src": "/soia/products/soiadeck-icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
   ],
-  "theme_color": "#efe7d2",
-  "background_color": "#efe7d2",
+  "theme_color": "#fafafa",
+  "background_color": "#fafafa",
   "display": "standalone"
 }

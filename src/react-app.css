@@ -185,3 +185,61 @@
     transition: none;
   }
 }
+
+.hero-mark {
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 16px;
+  object-fit: contain;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.capabilities .cap-frame-caption {
+  top: auto;
+  bottom: 6%;
+  left: 5%;
+  right: 5%;
+  transform: none;
+  background: rgba(255, 255, 255, 0.94);
+  padding: 10px 14px;
+  border-radius: 10px;
+}
+
+.about-panel-img img {
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+
+.about-panel-img-captioned .about-panel-caption {
+  top: auto;
+  bottom: 7%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.94);
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: clamp(13px, 1.35vw, 16px);
+  width: 88%;
+}
+
+/* The Labs dock's label bubble sat above the tile and overlapped the preview
+   card; below the dock there is free stage padding, so drop it there. */
+.lab-dock .lab-dock-label {
+  top: calc(100% + 6px);
+  bottom: auto;
+  transform: translateX(-50%) translateY(-6px);
+}
+.lab-dock .lab-dock-item:hover .lab-dock-label,
+.lab-dock .lab-dock-item:focus-visible .lab-dock-label,
+.lab-dock .lab-dock-item.active .lab-dock-label {
+  transform: translateX(-50%) translateY(0);
+}
+
+.plugin-detail-hero img {
+  max-height: none;
+}

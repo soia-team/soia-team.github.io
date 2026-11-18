@@ -1,0 +1,12 @@
+<svg width="225" height="83" viewBox="0 0 225 83" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SOIA">
+  <rect x="10" y="18" width="47" height="47" rx="12" fill="#0891B2"/>
+  <g transform="translate(17.4 25.4) scale(1.34)">
+    <path d="M12 11.2C10.6 9 9.7 6.9 9.7 5.4a2.3 2.3 0 0 1 4.6 0c0 1.5-.9 3.6-2.3 5.8Z" transform="rotate(0 12 12)" fill="#FFFFFF"/>
+    <path d="M12 11.2C10.6 9 9.7 6.9 9.7 5.4a2.3 2.3 0 0 1 4.6 0c0 1.5-.9 3.6-2.3 5.8Z" transform="rotate(60 12 12)" fill="#FFFFFF" fill-opacity=".8"/>
+    <path d="M12 11.2C10.6 9 9.7 6.9 9.7 5.4a2.3 2.3 0 0 1 4.6 0c0 1.5-.9 3.6-2.3 5.8Z" transform="rotate(120 12 12)" fill="#FFFFFF"/>
+    <path d="M12 11.2C10.6 9 9.7 6.9 9.7 5.4a2.3 2.3 0 0 1 4.6 0c0 1.5-.9 3.6-2.3 5.8Z" transform="rotate(180 12 12)" fill="#FFFFFF" fill-opacity=".8"/>
+    <path d="M12 11.2C10.6 9 9.7 6.9 9.7 5.4a2.3 2.3 0 0 1 4.6 0c0 1.5-.9 3.6-2.3 5.8Z" transform="rotate(240 12 12)" fill="#FFFFFF"/>
+    <path d="M12 11.2C10.6 9 9.7 6.9 9.7 5.4a2.3 2.3 0 0 1 4.6 0c0 1.5-.9 3.6-2.3 5.8Z" transform="rotate(300 12 12)" fill="#FFFFFF" fill-opacity=".8"/>
+  </g>
+  <text x="68" y="52" fill="#111111" font-family="ui-serif, Georgia, 'Times New Roman', serif" font-size="32" font-weight="600" letter-spacing="0.08em">SOIA</text>
+</svg>
