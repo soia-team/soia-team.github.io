@@ -270,7 +270,7 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
         { id: 'models', title: '本地 LLM', body: '发现、启停、下载本机模型，并提供一个 OpenAI 兼容入口。现在推理引擎以 MLX 系为主，所以本地模型在 Apple Silicon 上最完整。作业台本身不依赖本地模型。', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck 本地 LLM 模型转发' },
         { id: 'network', title: 'AI 网络', body: '本机访问各 AI 服务走哪张网卡、连不连得通。核心管理能力断网可用。', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI 网络监控' },
         { id: 'remote', title: '远程访问与手机端', body: '电脑开启远程访问或通过中继配对后，手机端可随时查看对话进度、看代码改动与 Diff，并在手机上远程审批权限或止损停轮。', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck 手机端远程访问与设计总览' },
-        { id: 'agents', title: '已接 19 个 coding agent', body: '包括 Claude Code、Codex、Cursor、Gemini CLI、Pi、OpenCode、Copilot、Qwen、Kimi、Kiro、Trae、Grok、Antigravity 等。清单以 SoiaDeck 的 agent-manifest-index 为准。', image: '/soia/products/soiadeck-agent.png', alt: 'SoiaDeck 已接入的 Coding Agent 管理' },
+        { id: 'agents', title: '已接 19 个 coding agent', body: '包括 Claude Code、Codex、Cursor、Gemini CLI、Pi、OpenCode、Copilot、Qwen、Kimi、Kiro、Trae、Grok、Antigravity 等。清单以 SoiaDeck 的 agent-manifest-index 为准。', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 已接入 19 个 Coding Agent 矩阵' },
         { id: 'open', title: '即将开源', body: '现在是私有仓，持续开发中。目前只发 macOS arm64 安装包；Linux / Windows 有构建入口，但没验收、不发包。官网不假装已有公开下载。' },
       ]
     : [
@@ -280,7 +280,7 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
         { id: 'models', title: 'Local LLM', body: 'Discover, start/stop and download local models, plus one OpenAI-compatible endpoint. Engines today are mostly MLX, so local models are most complete on Apple Silicon.', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck Local LLM router' },
         { id: 'network', title: 'AI Network', body: 'Which network interface the machine uses to reach AI services, and whether they are reachable. Core management still works offline.', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI Network' },
         { id: 'remote', title: 'Remote & Mobile', body: 'Pair your phone over local LAN or relay to follow running sessions, inspect diffs, approve tool permissions, or stop a turn on the go.', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck mobile surface' },
-        { id: 'agents', title: '19 coding agents', body: 'Including Claude Code, Codex, Cursor, Gemini CLI, Pi, OpenCode, Copilot, Qwen, Kimi, Kiro, Trae, Grok and Antigravity.', image: '/soia/products/soiadeck-agent.png', alt: 'SoiaDeck agent management' },
+        { id: 'agents', title: '19 coding agents', body: 'Including Claude Code, Codex, Cursor, Gemini CLI, Pi, OpenCode, Copilot, Qwen, Kimi, Kiro, Trae, Grok and Antigravity.', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 19 coding agents' },
         { id: 'open', title: 'Coming open source', body: 'Private today, under active development. Only macOS arm64 installers ship; Linux and Windows have build entry points but are not released.' },
       ];
   return (
