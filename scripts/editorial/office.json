@@ -1,0 +1,695 @@
+{
+  "soia-cwork-feishu-cli": {
+    "title": {
+      "zh": "飞书只读调研与知识库本地增量同步",
+      "en": "Feishu Read-Only Audit & Markdown Sync"
+    },
+    "pain": {
+      "zh": "团队文档、Wiki 和多维表格全沉淀在飞书里，想盘点目录层级、迁移到本地 Obsidian / Git，或者排查应用权限缺哪一条，手动点开几十个页面抄到手软，又怕 AI 一上来用个人权限乱翻或误改远端文档。",
+      "en": "When team knowledge lives in Feishu Wiki and Drive, auditing folder structures, diagnosing minimal app scopes, or backing up pages to local Markdown/Git by hand is slow—and running scripts with broad user OAuth or write access feels risky."
+    },
+    "solution": {
+      "zh": "以飞书官方 `lark-cli` 为唯一通道，默认用受限应用身份 `bot`（`tenant_access_token`）只读运行：严格分离 Wiki 与 Drive 接口，先盘点可见范围与权限缺口；同步知识库时先跑 `--dry-run` 再小点试跑、全量增量镜像并校验完整性，绝不猜测个人资源或修改远端文档。",
+      "en": "Drive official `lark-cli` read-only using least-privilege `bot` (`tenant_access_token`) by default: separate Wiki vs. Drive APIs, audit scope gaps safely, and mirror authorized spaces to local Markdown/Git via `--dry-run`, pilot sync, incremental update, and `--validate-only` checks."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "身份分流与凭证诊断", "desc": "默认 `bot` 只读（仅显式请求个人云盘才用用户 OAuth）；遇错先排查 `errors.yml` 再开最小权限。" },
+          { "title": "Wiki/Drive 独立盘点", "desc": "分别枚举知识空间、节点树与文档类型，明示哪些目录因未对应用开放而不可见。" },
+          { "title": "先 dry-run 再试点增量同步", "desc": "`sync_feishu_wiki.py` 先 `--dry-run`，再 `--pilot-node-token` 小范围验证，最后全量增量同步。" },
+          { "title": "校验收口绝不顺手推送", "desc": "跑 `--validate-only` 与失败重跑；默认停在本地 Markdown，不自动 Git commit/push。" }
+        ],
+        "guardrails": [
+          "绝不在命令行裸传密钥（stdin 注入凭证），绝不把 Secret/Token 写进日志或仓库",
+          "绝不因 bot 搜不到就静默切换个人 user OAuth",
+          "远端写操作或导出需单独展示命令与影响并获当次确认"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Least-privilege auth check", "desc": "Default to `bot` (`tenant_access_token`); diagnose credentials cleanly via `errors.yml`." },
+          { "title": "Separate Wiki & Drive inventory", "desc": "List spaces, node trees, and doc types while flagging bot-invisible permissions explicitly." },
+          { "title": "Dry-run, pilot, incremental sync", "desc": "Run `sync_feishu_wiki.py --dry-run`, pilot one node, then sync incrementally." },
+          { "title": "Validate without auto-pushing", "desc": "Verify sync integrity with `--validate-only`; never auto-commit or push to Git." }
+        ],
+        "guardrails": [
+          "Credentials passed via stdin only; never leaked to logs, vault, or repo",
+          "Never silently escalate from bot to personal user OAuth",
+          "Any remote write or export requires explicit per-command confirmation"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "用飞书 CLI 增量同步我授权的这个知识空间到本地目录，先 dry-run 再校验完整性。",
+        "title": "飞书知识库只读增量同步示例",
+        "lines": [
+          { "text": "$ python3 scripts/sync_feishu_wiki.py --config <private.yml> --dry-run", "tone": "muted" },
+          { "text": "[AUTH] identity=bot · lark-cli doctor OK · target space=3 nodes (42 docs)", "tone": "cyan" },
+          { "text": "[SYNC] created: 38 · updated: 4 · failed: 0 · stale: 0 (mode: incremental)", "tone": "green" },
+          { "text": "$ python3 scripts/sync_feishu_wiki.py --config <private.yml> --validate-only", "tone": "muted" },
+          { "text": "✓ --validate-only exit 0 · 远端文档 0 修改 · 无密钥写入日志", "tone": "green" }
+        ],
+        "footer": "单向只读镜像到 Markdown/Git/Obsidian，权限与凭证全程脱敏"
+      },
+      "en": {
+        "prompt": "Dry-run and incrementally sync my authorized Feishu Wiki space to local Markdown, then validate.",
+        "title": "Feishu Wiki Read-Only Sync Sample",
+        "lines": [
+          { "text": "$ python3 scripts/sync_feishu_wiki.py --config <private.yml> --dry-run", "tone": "muted" },
+          { "text": "[AUTH] identity=bot · lark-cli doctor OK · target space=3 nodes (42 docs)", "tone": "cyan" },
+          { "text": "[SYNC] created: 38 · updated: 4 · failed: 0 · stale: 0 (mode: incremental)", "tone": "green" },
+          { "text": "$ python3 scripts/sync_feishu_wiki.py --config <private.yml> --validate-only", "tone": "muted" },
+          { "text": "✓ --validate-only exit 0 · 0 remote edits · 0 secrets in output", "tone": "green" }
+        ],
+        "footer": "One-way read-only backup with strict redaction & validation"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "只读盘点飞书 Wiki 与云盘结构", "action": "分离 Wiki 与 Drive 接口盘点空间、节点、文档类型及 bot 权限缺口", "outcome": "完整层级清单与不可见范围提示" },
+        { "want": "诊断 `lark-cli` 认证与最小权限", "action": "通过 stdin 初始化 profile，区分凭证错误与缺 scope，列出最小需开权限", "outcome": "脱敏连通性状态与权限开通闭环指引" },
+        { "want": "单向增量备份飞书知识库到 Markdown", "action": "运行 `sync_feishu_wiki.py` 按 dry-run → 试点 → 增量 → `--validate-only` 收口", "outcome": "保留层级与元数据的新增/失败清单" }
+      ],
+      "en": [
+        { "want": "Audit Feishu Wiki & Drive read-only", "action": "Enumerate spaces, nodes, doc types, and bot visibility gaps", "outcome": "Structured inventory and permission gaps" },
+        { "want": "Troubleshoot `lark-cli` scopes & auth", "action": "Initialize credentials via stdin and isolate minimal required scopes", "outcome": "Desensitized auth diagnosis & scope checklist" },
+        { "want": "Sync Feishu Wiki to local Markdown", "action": "Execute dry-run, pilot node, incremental mirror, and `--validate-only`", "outcome": "Local Markdown tree + verified sync manifest" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "用飞书 CLI 盘点我这个应用可见的知识库层级和文档类型，不要改远端任何内容。",
+        "把这个飞书知识空间先 dry-run 预览，再增量同步成本地 Markdown 并跑完整性验收。"
+      ],
+      "en": [
+        "List all Wiki spaces and document types visible to my Feishu bot read-only.",
+        "Dry-run and incrementally sync this Feishu Wiki space to local Markdown with validation."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "强制脱敏契约 `doc-git-sync-output-redaction.yml`，App Secret/Token 绝不落入公开库与日志。",
+        "附带 `test_feishu_cli_setup` 与 `test_feishu_doc_sync` 回归单测与 `--strict` 审计。"
+      ],
+      "en": [
+        "Enforces `doc-git-sync-output-redaction.yml` so secrets and local paths stay redacted.",
+        "Tested via `test_feishu_cli_setup`, `test_feishu_doc_sync`, and strict skill audit."
+      ]
+    }
+  },
+  "soia-cwork-processon-diagrams": {
+    "title": {
+      "zh": "ProcessOn 图表安全盘点、受控导出与本地解析",
+      "en": "ProcessOn Safe Inventory, Export & Parsing"
+    },
+    "pain": {
+      "zh": "团队在 ProcessOn 里攒了几百张架构图和脑图，想全量盘点或归档成 VSDX / XMind / POS 备份到本地：手动逐张点下载会漏掉深层子目录、碰到同名覆盖，还怕自动化脚本去附着你正在用的日常 Chrome，搞乱登录态或误删远端文件。",
+      "en": "Backing up hundreds of ProcessOn diagrams into local VSDX/XMind/POS archives by hand misses nested folders and causes filename collisions—while naive browser automation risks hijacking your daily Chrome profile."
+    },
+    "solution": {
+      "zh": "坚持三阶段严格隔离与「永不碰主浏览器」：在技能专属独立浏览器 profile 内只读递归盘点、生成可断点审计的快照（支持两份快照离线做增量对比）；第二阶段先建受控导出计划，经同盘 staging 校验格式与 SHA-256 后无复制归档；第三阶段按需离线解析 POS/XMind/SVG/PDF 内容。",
+      "en": "Three isolated stages using a dedicated skill-only browser profile (never touching your daily Chrome): read-only recursive inventory with checkpoint audit & snapshot diffing; staged downloads verified by SHA-256 before atomic move; and optional offline parsing of POS/XMind/SVG/PDF exports."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "Stage 1 · 只读递归盘点", "desc": "专用 profile 分批审计至叶子目录（discovered - visited - blocked = 0 方算全量），支持增量对比。" },
+          { "title": "Stage 2 · staging 校验与归档", "desc": "先出下载计划，单写者串行下载至同盘 staging，核完大小与 SHA-256 再原子 move。" },
+          { "title": "碰撞与未知类型隔离", "desc": "重名冲突与无法判别类型进人工确认清单，绝不静默覆盖或猜格式。" },
+          { "title": "Stage 3 · 本地离线解析", "desc": "按需用 `inspect_processon_export.py` 解析 POS/XMind/SVG/PDF 标题与节点。" }
+        ],
+        "guardrails": [
+          "严禁附着客户日常默认 Chrome profile",
+          "全程只读远端：绝不修改、分享、移动或删除线上图表",
+          "正常或异常退出浏览器都必须关闭页面并交关闭回执"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Stage 1 · Read-only inventory", "desc": "Audit nested folders in an isolated profile with checkpoints and snapshot diffing." },
+          { "title": "Stage 2 · Staged download & move", "desc": "Build plan, download to same-filesystem staging, verify SHA-256, and move atomically." },
+          { "title": "Isolate collisions & unknowns", "desc": "Queue ambiguous types and name collisions for explicit confirmation—never overwrite." },
+          { "title": "Stage 3 · Offline export inspection", "desc": "Parse local POS/XMind/SVG/PDF structures on demand without touching the cloud." }
+        ],
+        "guardrails": [
+          "Never attach to your default daily Chrome profile",
+          "Strictly read-only remotely: zero edits, shares, moves, or deletes",
+          "Guaranteed browser page cleanup receipt even on error exit"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "只读盘点我们这个 ProcessOn 团队空间，审计通过后按计划导出 VSDX 和 XMind 到本地。",
+        "title": "ProcessOn 盘点审计与归档校验示例",
+        "lines": [
+          { "text": "$ python3 scripts/processon_inventory_state.py audit --run-dir <run-dir>", "tone": "muted" },
+          { "text": "[AUDIT] discovered=142  visited=142  blocked=0  -> inventory complete", "tone": "cyan" },
+          { "text": "[ARCHIVE] flowcharts->.vsdx (88) · mindmaps->.xmind (51) · unknown->queue (3)", "tone": "green" },
+          { "text": "[FINALIZE] SHA-256 verified · collisions=0 · scoped_pages_closed=1 (exit 0)", "tone": "green" }
+        ],
+        "footer": "不碰日常浏览器、不断点丢进度、未知类型与重名冲突全入待确认队列"
+      },
+      "en": {
+        "prompt": "Audit this ProcessOn team space read-only, then archive confirmed VSDX and XMind files locally.",
+        "title": "ProcessOn Audit & Archive Receipt Sample",
+        "lines": [
+          { "text": "$ python3 scripts/processon_inventory_state.py audit --run-dir <run-dir>", "tone": "muted" },
+          { "text": "[AUDIT] discovered=142  visited=142  blocked=0  -> inventory complete", "tone": "cyan" },
+          { "text": "[ARCHIVE] flowcharts->.vsdx (88) · mindmaps->.xmind (51) · unknown->queue (3)", "tone": "green" },
+          { "text": "[FINALIZE] SHA-256 verified · collisions=0 · scoped_pages_closed=1 (exit 0)", "tone": "green" }
+        ],
+        "footer": "Isolated browser profile; unknown types and collisions gated cleanly"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "全量递归盘点并做快照增量对比", "action": "分批记录不可变 checkpoint 并用 `diff_processon_inventory.py` 算差集", "outcome": "目录树、新增/变更清单与两份快照 SHA-256" },
+        { "want": "受控批量导出并无复制归档", "action": "专用 headless profile 下载至同盘 staging，校验后原子 move 与监督续跑", "outcome": "含格式/尺寸/SHA-256 的 `download-progress.json`" },
+        { "want": "解析已下载到本地的图表文件", "action": "运行 `inspect_processon_export.py` 抽取 POS/XMind/SVG/PDF 标题与节点", "outcome": "结构化离线内容清单（不联网）" }
+      ],
+      "en": [
+        { "want": "Recursive inventory & delta diff", "action": "Save checkpoint batches and diff two audited snapshots offline", "outcome": "Full tree, delta manifest, and snapshot SHA-256s" },
+        { "want": "Verified batch export & archive", "action": "Download to staging in isolated profile, verify SHA-256, and move", "outcome": "Resumable `download-progress.json` receipt" },
+        { "want": "Inspect local ProcessOn exports", "action": "Parse POS/XMind/SVG/PDF titles and nodes offline", "outcome": "Structured local content inventory" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "初始化盘点这个 ProcessOn 团队空间，只读不下载，先给我结构树。",
+        "对比前后两次盘点快照，只列出新增和有变更的图表。"
+      ],
+      "en": [
+        "Initialize a read-only inventory of this ProcessOn team workspace.",
+        "Diff two audited ProcessOn snapshots and list only added or modified diagrams."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "仓库包含 11 个可编译脚本与完整 `test_processon_*.py` 单元测试套。",
+        "登录态仅留在专用独立目录，账号密码与短信验证码绝不进仓库或日志。"
+      ],
+      "en": [
+        "Backed by 11 compiled Python tools and full `test_processon_*.py` unit coverage.",
+        "Auth lives strictly inside the skill's isolated profile; zero credentials logged."
+      ]
+    }
+  },
+  "soia-media-compose-article-draft": {
+    "title": {
+      "zh": "以真实观点为骨、Vault 摘抄为料的成文工坊",
+      "en": "Draft Composition from Your Views & Vault"
+    },
+    "pain": {
+      "zh": "让普通 AI 直接帮你写文章，写出来往往一股浓浓的「套路开场 + 假金句 + 空洞排比」AI 味，还经常替你编造观点；另外公众号要求的单篇 `digest` 摘要、合集引语和正文首段也常常混在一起。",
+      "en": "Asking a generic AI to write an article yields templated clichés, fake quotes, and invented opinions—while mixing up collection intros, prefaces, and per-article digests."
+    },
+    "solution": {
+      "zh": "守住「以你的真实观点为骨、你的 vault 摘抄为料」：把合集引语、长序与单篇 `digest` 严格拆进 frontmatter 而不污染正文首段；按体裁锁定「流量钩子体」与「极简意象体」不混用；发表前还支持只检不擅改的勘误对照、去 AI 味和 `6-gram/8-gram` 原创防撞库打散重写。",
+      "en": "Anchor every draft in your real views and vault clips without fabricating opinions: isolate `series_intro`, `preface`, and `digest` in frontmatter, keep hook vs. essay styles separate, run pre-publish typo/AI-tone audits, and support structural rewrites checked against `6-gram`/`8-gram` overlap."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "收料定调绝不编造", "desc": "收集指定笔记的「我的看法」与 `[[双链]]` 摘抄，缺料直接问你，绝不脑补立场。" },
+          { "title": "正文与元数据分离", "desc": "写规范 frontmatter，把合集总推/序言与 20–40 字单篇 `digest` 分离，正文干净起笔。" },
+          { "title": "体裁锁定不串味", "desc": "知乎/科普「流量钩子体」与自省随笔「极简意象体」严格分界。" },
+          { "title": "勘误、去 AI 味与防撞", "desc": "先列勘误对照确认再改，清套路空话，重创作自检 `6-gram/8-gram` 重叠趋近 0%。" }
+        ],
+        "guardrails": [
+          "绝不替用户编造未表达过的观点或案例",
+          "原稿勘误先出「位置/原文/建议/原因」对照表，确认后再改",
+          "只写草稿目录，不改摘抄原文，不越界触发排版或发布"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Gather real views & sources", "desc": "Read your `## 我的看法` and vault clips; ask if material is missing—never invent stance." },
+          { "title": "Separate prose & metadata", "desc": "Place `series_intro`, `preface`, and 20–40 char `digest` cleanly into frontmatter." },
+          { "title": "Enforce genre discipline", "desc": "Keep hook-driven explainers separate from minimal literary essays." },
+          { "title": "Audit, de-AI & anti-overlap", "desc": "Produce typo diff tables first, strip AI clichés, and check 6/8-gram originality." }
+        ],
+        "guardrails": [
+          "Never fabricate user opinions or fake examples",
+          "Present typo/errata diff table before editing existing drafts",
+          "Writes only to draft directory; never modifies source clips or publishes"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "帮我检查这篇公众号草稿的错别字、AI 味套话，并补一个 30 字单篇摘要，先列对照再改。",
+        "title": "发表前勘误与摘要分离交付示例",
+        "lines": [
+          { "text": "[元数据补齐] frontmatter.digest: \"把外部 CLI 派单做成先查额度再隔离执行的工程守门员。\" (31字)", "tone": "cyan" },
+          { "text": "[勘误对照 · 共 2 处，等待你确认]", "tone": "amber" },
+          { "text": "  L18: 「其它工具」 -> 「其他工具」 (用词统一)", "tone": "normal" },
+          { "text": "  L42: 「在当今AI时代，不难发现…」 -> 建议删去套路起手式，直接切入故障现场", "tone": "normal" },
+          { "text": "✓ 原文摘抄零改动 · 6-gram 重叠率: 0.00% · 可直交 publish-wechat-draft", "tone": "green" }
+        ],
+        "footer": "保留作者原语调，Metadata 与正文各归其位"
+      },
+      "en": {
+        "prompt": "Audit this draft for typos and AI clichés, and add a concise frontmatter digest before editing.",
+        "title": "Pre-Publish Audit & Metadata Separation Sample",
+        "lines": [
+          { "text": "[Metadata] frontmatter.digest: \"Gate external AI CLI dispatch behind read-only quota checks.\" (11w)", "tone": "cyan" },
+          { "text": "[Errata Diff · 2 items awaiting confirmation]", "tone": "amber" },
+          { "text": "  L18: 'In today's fast-paced AI era...' -> Cut boilerplate opener; start with failure case", "tone": "normal" },
+          { "text": "✓ Source clips untouched · 6-gram overlap: 0.00% · Ready for publish-wechat-draft", "tone": "green" }
+        ],
+        "footer": "Preserves author voice while separating metadata cleanly"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把 vault 观点和摘抄起草成文章", "action": "按公众号/知乎/随笔风格组织骨架并自动带入 `[[双链]]`", "outcome": "带规范 frontmatter 的完整成文草稿" },
+        { "want": "拆分合集引语与单篇摘要", "action": "把 `series_intro`/`preface`/`digest` 写入头部字段而不污染正文首段", "outcome": "多平台可直接复用的干净正文与摘要" },
+        { "want": "发表前勘误、去 AI 味或防撞库重写", "action": "先列勘误对照表、清理空洞套话并校 `6-gram/8-gram` 重叠", "outcome": "勘误清单、`0.00%` 重叠率核验与定稿" }
+      ],
+      "en": [
+        { "want": "Draft articles from vault views", "action": "Structure prose around your opinions and `[[wikilink]]` clips", "outcome": "Draft Markdown with clean frontmatter" },
+        { "want": "Separate series intro from digest", "action": "Isolate `series_intro`, `preface`, and `digest` in metadata", "outcome": "Clean opening paragraph + reusable headers" },
+        { "want": "Errata, de-AI & structural rewrite", "action": "List typo diffs, strip clichés, and check 6/8-gram overlap", "outcome": "Verified original draft ready to publish" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把我在《xxx》和 MOC 观点综述里的看法写成一篇公众号草稿，走极简随笔风。",
+        "帮我检查这篇草稿的重字错别字和 AI 味，先出修改对照表让我看。"
+      ],
+      "en": [
+        "Turn my notes in this MOC summary into an editorial article draft.",
+        "Check this draft for typos and AI clichés; show a diff table before editing."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯本地 LLM 工作流，不联网、不向外部泄露你知识库里的未发表草稿。",
+        "坚持「先对照确认再改稿」与「原文摘抄永不篡改」双底线。"
+      ],
+      "en": [
+        "100% local Markdown workflow with zero network uploads of unpublished drafts.",
+        "Never overwrites source clips and shows errata tables before editing."
+      ]
+    }
+  },
+  "soia-media-generate-article-image": {
+    "title": {
+      "zh": "基于组合轴与中华传统色的配图与 SVG 工坊",
+      "en": "Axis-Driven Editorial Artwork & Vector SVG Studio"
+    },
+    "pain": {
+      "zh": "用生图模型配文章封面或信息图，十有八九长这样：文字写错乱码、公众号 `2.35:1` 首图转发到朋友圈被 `1:1` 裁掉半个标题、45 秒手机海报字密到看不清，或者随便塞一张和文章内容毫不相干的赛博朋克图。",
+      "en": "Generic AI images for articles often break on real publishing requirements: garbled Chinese text, titles cropped off in WeChat's `1:1` share preview from a `2.35:1` banner, unreadable walls of text, or mismatched stock sci-fi art."
+    },
+    "solution": {
+      "zh": "把配图工程化成「渐进路由 + 七块规范 Prompt + 实图验收」：支持公众号 `2.35:1`（必检中央 `1:1` 安全区）+ 正文配图、30–45 秒手机信息海报（严控 ≤220 字）、中国传统构图 20 式与 742 种中华传统色（绝不把 HEX 印进画面）、1–6 页自适应康奈尔笔记图，以及社交卡与确定性矢量 SVG Logo。",
+      "en": "Turn illustration into an auditable pipeline: route cleanly across WeChat `2.35:1` banners (with `1:1` center-crop checks), mobile posters (`<=220` chars), 20 traditional Chinese compositions & 742 colors, adaptive 1–6 page Cornell visual notes, social cards, and deterministic vector SVGs—always verified visually."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "L0 需求确认不盲猜", "desc": "用途模糊时先给支持目录反问确认，清晰时直接按家族与组合轴编译。" },
+          { "title": "七块规范 Prompt 落盘", "desc": "从文章提取真实事实，先落盘含七个标准块与严格文字清单的 `prompts/NN.md`。" },
+          { "title": "按通道选渲染引擎", "desc": "位图走 `imagegen`、高字密/排版走无头浏览器 `html_render`、图标/Logo 走确定性 SVG。" },
+          { "title": "实测看图不过再重绘", "desc": "必用 `view_image` 检查文字、比例与 `1:1` 安全区；有错改单一主因用新文件名重生。" }
+        ],
+        "guardrails": [
+          "绝不用 Pillow/Canvas 在出错位图上强行贴字遮丑",
+          "绝不把色彩 HEX 代码或内部布局术语印到图片里",
+          "绝不伪造二维码、虚假评分或不存在的 URL"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Clarify or route cleanly", "desc": "Ask via L0 catalog if ambiguous; otherwise resolve composition axes immediately." },
+          { "title": "Compile 7-block prompt", "desc": "Ground facts from source material and write `prompts/NN.md` before rendering." },
+          { "title": "Match engine to deliverable", "desc": "Use `imagegen` for art, `html_render` for dense text, and `svg_deterministic` for logos." },
+          { "title": "Visual QA with `view_image`", "desc": "Inspect actual pixels for text accuracy, aspect ratio, and `1:1` safe-zone framing." }
+        ],
+        "guardrails": [
+          "Never patch garbled AI text with Pillow/Canvas overlays",
+          "Never leak raw HEX codes or prompt metadata onto rendered images",
+          "Never fabricate QR codes, ratings, or fake URLs"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "给这篇公众号随笔出 2.35:1 国风首图（平远法 + 中华传统色）并确保 1:1 分享安全区完整。",
+        "title": "Prompt 编译与视觉验收回执示例",
+        "lines": [
+          { "text": "[路由] preset=wechat_cover · family=editorial_chinese · aspect=2.35:1", "tone": "cyan" },
+          { "text": "[构图] 平远法（留白三分之二，远山与孤舟居中央 1:1 安全区）· 配色: 蟹壳青/缃色/宣纸白", "tone": "normal" },
+          { "text": "✓ prompts/01-cover.md 已落盘 · cover-235.png (2350x1000) 已生成", "tone": "green" },
+          { "text": "✓ view_image 核验: 中央 1:1 裁切标题居中无遮挡 · 0 乱码 · 0 HEX 参数泄露", "tone": "green" }
+        ],
+        "footer": "有 Prompt、有 manifest、有实图复核记录，可复现也可微调"
+      },
+      "en": {
+        "prompt": "Generate a 2.35:1 WeChat cover in traditional ink style and verify the central 1:1 share crop.",
+        "title": "Prompt Compilation & Visual QA Sample",
+        "lines": [
+          { "text": "[Route] preset=wechat_cover · family=editorial_chinese · aspect=2.35:1", "tone": "cyan" },
+          { "text": "[Layout] Level-distance ink composition · text centered inside 1:1 safe zone", "tone": "normal" },
+          { "text": "✓ prompts/01-cover.md saved · cover-235.png (2350x1000) rendered", "tone": "green" },
+          { "text": "✓ view_image QA: crisp title inside 1:1 center crop · 0 garbled glyphs · 0 HEX leaks", "tone": "green" }
+        ],
+        "footer": "Grounded prompts, manifest audit, and verified final imagery"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "公众号全套配图（首图+分享+正文）", "action": "生成 `2.35:1` 首图并校验中央 `1:1` 安全区，克制规划 1–3 张正文图", "outcome": "高清 PNG、裁切核验与插入位置清单" },
+        { "want": "45 秒一图读懂手机信息海报", "action": "提炼 3–4 组结构要点，全图可见文字严控 ≤220 字无孤字", "outcome": "`3:4`/`4:5` 高可读竖版信息海报" },
+        { "want": "国风随笔意境图或康奈尔笔记图", "action": "调用传统构图 20 式与 742 传统色，或用分页脚本拆 1–6 页康奈尔图", "outcome": "宣纸水墨封面或带 `NN/TT` 页码系列图" },
+        { "want": "小红书轮播、社交卡或 SVG 品牌标", "action": "先抽取真实事实或出方向稿，终稿按 `svg_deterministic` 重绘多变体", "outcome": "通过事实/OCR 核验的卡片或彩色/单色/反白 SVG" }
+      ],
+      "en": [
+        { "want": "Full WeChat article image suite", "action": "Render `2.35:1` cover with `1:1` center safety check + 1–3 body visuals", "outcome": "High-res PNGs, crop audit, and placement map" },
+        { "want": "45-second mobile summary poster", "action": "Distill 3–4 visual blocks capped strictly at <=220 visible chars", "outcome": "Readable `3:4` or `4:5` mobile infographic" },
+        { "want": "Traditional ink art or Cornell notes", "action": "Use 20 Chinese compositions & 742 colors, or paginate 1–6 Cornell pages", "outcome": "Ink artwork or paginated `NN/TT` visual notes" },
+        { "want": "Social cards & vector SVG brand logos", "action": "Ground repo facts and redraw icons/logos in deterministic SVG", "outcome": "Fact-checked cards or color/mono/inverse SVGs" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "给这篇公众号文章出一张 2.35:1 首图（平远法+传统色）和 2 张正文配图，标题写「行至半山，止息内耗」。",
+        "把这篇长文做成康奈尔笔记信息图，按每页 6–10 个模块自适应分页。"
+      ],
+      "en": [
+        "Create a 2.35:1 WeChat cover in traditional ink style plus 2 inline diagrams for this article.",
+        "Convert this long article into adaptive paginated Cornell visual notes (6–10 blocks/page)."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "全流程通过 `audit_skills.py --strict`、目录生成器校验与全量 `unittest`。",
+        "内置输入契约、质量门、传统色表与社交卡校验脚本，拒绝糊弄验收。"
+      ],
+      "en": [
+        "Passes strict skill audit, catalog generator checks, and full unit tests.",
+        "Ships deterministic validation scripts for social cards and Cornell pagination."
+      ]
+    }
+  },
+  "soia-media-publish-rednote-card": {
+    "title": {
+      "zh": "小红书笔记改写与当次授权网页代传草稿",
+      "en": "Rednote Adaptation & Authorized Web Draft Flow"
+    },
+    "pain": {
+      "zh": "把公众号长文改发小红书，最容易踩三个坑：直接照搬长段没人看；超过 1000 字不知道走「写长文」还是拆文字卡；或者用了第三方逆向发帖脚本结果泄露 Cookie 甚至触发风控封号。",
+      "en": "Adapting long articles for Rednote often fails when copying dense paragraphs verbatim, mis-handling `>1000` char long-form layouts, or risking account bans by using unofficial reverse-engineered posting APIs."
+    },
+    "solution": {
+      "zh": "默认只交付干净可直接复制的 Rednote Markdown 文案（单一角度 + 承诺明确标题 + 3–5 段短文 + 5–10 个精准标签 + 配图建议），超过 1000 字优先适配官方「写长文」路线；仅当你明确授权时，才在你自己已登录的官方网页端代为传图、填文、点选蓝色标签，并在点发布前截图停下等你确认。",
+      "en": "Outputs copy-ready Rednote Markdown by default (single angle, grounded title, 3–5 punchy paragraphs, 5–10 narrow tags, and visual briefs—routing `>1000` char posts to official long-form formatting). Only with your per-run approval does it fill your already logged-in web composer, stopping with a screenshot before clicking Publish."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "选定单一分享角度", "desc": "围绕解问题/避坑/复盘/方法立单主线，不编造原文里没有的案例或数据。" },
+          { "title": "短文或写长文双路线", "desc": "短笔记精炼为 3–5 段；超 1000 字优先适配官方「写长文」或拆 4–8 张自产卡。" },
+          { "title": "当次授权才进网页填稿", "desc": "在你已登录的创作服务平台传图、填文、逐个下拉点选蓝色标签、按需挂 Red Skill。" },
+          { "title": "发布前截图停下确认", "desc": "默认关闭原创声明（开启须另获授权），发前必截图确认，发后核对对外正式链接。" }
+        ],
+        "guardrails": [
+          "严禁使用任何第三方逆向签名包或私有接口，防泄露 Cookie 与封号",
+          "「帮我改写成小红书」绝不自动打开网页发布",
+          "绝不把「已生成文案」或草稿态冒充成「线上已发布」"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Pick one sharp angle", "desc": "Focus on problem-solving, pitfall, or method without inventing unverified claims." },
+          { "title": "Adapt short or long-form", "desc": "Distill to 3–5 crisp paragraphs, or format `>1000` chars for official long-form / text cards." },
+          { "title": "Fill official web UI if approved", "desc": "Upload images, select blue tag dropdowns, and attach Red Skill cards only in your logged-in browser." },
+          { "title": "Screenshot gate before Publish", "desc": "Stop for visual approval before publishing, then verify the live note URL." }
+        ],
+        "guardrails": [
+          "Strictly bans reverse-engineered APIs or third-party auto-post bots",
+          "Drafting Rednote copy never authorizes opening the web composer",
+          "Never claim published until verified on the live note management page"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "把这篇笔记改写成小红书文案（不发网页），标题克制别夸大。",
+        "title": "小红书文案改写与发布边界回执示例",
+        "lines": [
+          { "text": "## 主标题：11款AI CLI升级太麻烦？一句话全搞定", "tone": "cyan" },
+          { "text": "## 正文（850/1000字）：痛点开篇 -> 只读 dry-run 机制 -> 信任证据 -> 三宿主安装", "tone": "normal" },
+          { "text": "## 话题标签：#REDSkill #AI工具 #ClaudeCode #WorkBuddy #SoiaSkills ...", "tone": "normal" },
+          { "text": "✓ 纯文案模式完成 · 原稿零覆盖 · 未触碰网页端发布", "tone": "green" }
+        ],
+        "footer": "不夸大收益、不代点发布、登录态永远留在你自己的浏览器里"
+      },
+      "en": {
+        "prompt": "Adapt this draft into a grounded Rednote post (copy only, do not open browser).",
+        "title": "Rednote Adaptation Copy Sample",
+        "lines": [
+          { "text": "## Title: 11 AI CLIs Out of Date? Audit & Upgrade in One Prompt", "tone": "cyan" },
+          { "text": "## Body (4 short blocks): Real failure -> Read-only dry-run -> MIT evidence -> Hosts", "tone": "normal" },
+          { "text": "## Tags: #REDSkill #AITools #ClaudeCode #WorkBuddy #SoiaSkills", "tone": "normal" },
+          { "text": "✓ Markdown copy delivered · Source draft untouched · Browser untouched", "tone": "green" }
+        ],
+        "footer": "No exaggerated claims; browser actions stay strictly gated"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把长文改写成克制好读的小红书文案", "action": "提炼单主线、具体标题、3–5 段短文、精准标签与配图建议", "outcome": "可直接复制的 Markdown 笔记文案（不改原稿）" },
+        { "want": "处理超过 1000 字的深度长文", "action": "走官方「写长文」一键排版路线或拆 4–8 张自产文字卡", "outcome": "≤20 字标题、导语及合规长文结构" },
+        { "want": "当次授权后网页端辅助填稿", "action": "在已登录官方页传图、点选蓝色标签与 Red Skill，发前截图停下", "outcome": "待你确认的最终截图与正式链接核实回执" }
+      ],
+      "en": [
+        { "want": "Rewrite articles for Rednote", "action": "Extract one angle, grounded title, 3–5 blocks, tags, and image brief", "outcome": "Copy-ready Markdown without altering source" },
+        { "want": "Handle >1000-character long posts", "action": "Route to official long-form composer or 4–8 self-rendered text cards", "outcome": "Compliant long-form structure & summary" },
+        { "want": "Authorized web composer fill", "action": "Upload images, pick live blue tags, attach Red Skill, pause pre-Publish", "outcome": "Pre-publish screenshot + live link verification" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把这篇草稿改写成小红书笔记文案，读者是独立开发者，不要夸大效果。",
+        "我已经登录小红书创作平台了，把图和这套文案代我传上去，最后点发布前截图给我确认。"
+      ],
+      "en": [
+        "Adapt this draft into a concise Rednote post for indie developers without hype.",
+        "I'm logged into Rednote Creator Studio—fill the images and copy, then pause for my screenshot check before publishing."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "Cookie 与登录态永远留在你本地浏览器，绝不导出、读取或写入任何日志。",
+        "传图强制走串行剪贴板校验宽高，杜绝多任务并发错图。"
+      ],
+      "en": [
+        "Cookies and session tokens never leave your browser.",
+        "Serial clipboard image verification prevents multi-task image mix-ups."
+      ]
+    }
+  },
+  "soia-media-publish-wechat-draft": {
+    "title": {
+      "zh": "公众号内联 HTML 排版、机械校验与只推草稿箱",
+      "en": "WeChat Inline HTML Validation & Draft-Only Push"
+    },
+    "pain": {
+      "zh": "写完公众号 Markdown 往后台粘贴总是灾难：外链 CSS 全被剥离、样式乱掉、代码块崩坏、图片还要一张张手动上传；更麻烦的是改两个错字重新推送，结果草稿箱里又多出一条重复草稿。",
+      "en": "Pasting Markdown into WeChat MP strips external CSS, breaks code blocks, forces manual image uploads—and re-pushing after a small typo fix creates duplicate drafts."
+    },
+    "solution": {
+      "zh": "绝不擅改你的正文与标题，专注把排版和投递做成零失误流水线：先渲染严格内联样式 HTML 与带 390px 手机预览的 `.copy.html` 一键复制工作台；过机械红线校验后按需走三级通道（零配置 `.copy.html` 复制 / 浏览器存草稿 / 官方 API 多账号推草稿或原地 `draft/update`）；发表后还能把正文连同 `assets/` 一键归档。",
+      "en": "Preserves your prose and title untouched while automating inline-style HTML rendering, mechanical rule linting (`validate_wechat_html.py`), 390px mobile preview `.copy.html`, and 3 delivery tiers—including in-place `draft/update` by `media_id` and post-publish archiving. Never auto-broadcasts."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "核对摘要与 2.35:1 首图", "desc": "把单篇 `digest` 与首图安全区对齐，发表前仅列勘误对照，绝不擅改观点。" },
+          { "title": "渲染双产物并过机械红线", "desc": "`render_wechat.py` 产出 `.html` 与 `.copy.html`，校验禁止 `<div>`/CSS 变量/`<style>`。" },
+          { "title": "三级通道只进草稿箱", "desc": "按需选 `.copy.html` 复制、浏览器填稿，或 API `draft/add` / 原地 `draft/update`。" },
+          { "title": "发表后连带配图一键归档", "desc": "人工后台发表并回传链接后，`archive.py --move` 连同 `assets/` 迁入已发布区。" }
+        ],
+        "guardrails": [
+          "只进草稿箱，任何情况绝不自动点击群发/发表",
+          "多账号未指定 `--account` 且无默认账号时 fail-closed 报错防串号",
+          "AppSecret 与 access_token 绝不落入仓库、vault 或终端回执"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Verify digest & cover crop", "desc": "Check single-article `digest` and `2.35:1` cover without rewriting author prose." },
+          { "title": "Render & lint inline HTML", "desc": "Generate `.html` + `.copy.html` and block forbidden `<div>`, `<style>`, or CSS vars." },
+          { "title": "Push to draft box only", "desc": "Deliver via `.copy.html`, browser fill, or API `draft/add` / in-place `draft/update`." },
+          { "title": "Archive after publishing", "desc": "Move published `.md` + `assets/` via `archive.py --move` and clean temp HTML." }
+        ],
+        "guardrails": [
+          "Draft-only: never triggers mass broadcast or publish",
+          "Multi-account configs fail-closed if `--account` is ambiguous",
+          "AppSecrets and access tokens never enter repos, vaults, or logs"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "用 minimal 主题排版这篇公众号，生成 .copy.html 并校验红线，先 --dry-run 看下。",
+        "title": "公众号排版校验与 API Dry-Run 示例",
+        "lines": [
+          { "text": "$ python3 scripts/render_wechat.py --file draft.md --theme minimal", "tone": "muted" },
+          { "text": "$ python3 scripts/validate_wechat_html.py --file draft.html --json", "tone": "muted" },
+          { "text": "✓ lint passed: 0 forbidden tags (div/style/var) · 0 warnings", "tone": "green" },
+          { "text": "✓ 已生成 draft.copy.html (含一键复制富文本 + 390px 手机预览 + 1:1 裁切框)", "tone": "cyan" },
+          { "text": "[DRY-RUN] 准备上传 2 张正文图 + 更新现有草稿 media_id=...（停在草稿箱）", "tone": "normal" }
+        ],
+        "footer": "不发错号、不漏红线、绝不自动群发，发表后支持连图带文归档"
+      },
+      "en": {
+        "prompt": "Render this draft in minimal theme, lint WeChat HTML rules, and dry-run push.",
+        "title": "WeChat HTML Lint & Dry-Run Sample",
+        "lines": [
+          { "text": "$ python3 scripts/render_wechat.py --file draft.md --theme minimal", "tone": "muted" },
+          { "text": "$ python3 scripts/validate_wechat_html.py --file draft.html --json", "tone": "muted" },
+          { "text": "✓ lint passed: 0 forbidden tags (div/style/var) · 0 warnings", "tone": "green" },
+          { "text": "✓ Built draft.copy.html (one-click rich copy + 390px mobile preview)", "tone": "cyan" },
+          { "text": "[DRY-RUN] Ready to upload 2 inline images and update existing draft (draft-only)", "tone": "normal" }
+        ],
+        "footer": "Strict HTML linting + fail-closed multi-account guard + draft-only"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "零配置本地排版并手机预览", "action": "渲染内联 HTML 并通过机械校验，产出带一键复制的 `.copy.html`", "outcome": "含 `390px` 视口、`1:1` 安全框与 7 项自查清单的预览页" },
+        { "want": "API 新建或原地更新草稿箱", "action": "上传正文图换微信 CDN URL，新建 `draft/add` 或按 `media_id` 原地更新", "outcome": "草稿 `media_id` 与无重复草稿状态" },
+        { "want": "发表后连同配图归档整理", "action": "运行 `archive.py --move` 更新发布元数据并迁出源稿与 `assets/`", "outcome": "自包含的正式归档文章并清理临时 HTML" }
+      ],
+      "en": [
+        { "want": "Zero-config inline HTML & preview", "action": "Render and lint strict inline HTML + `.copy.html` workbench", "outcome": "390px mobile preview + 1:1 cover check + copy button" },
+        { "want": "Create or update MP drafts via API", "action": "Upload images to WeChat CDN and call `draft/add` or `draft/update`", "outcome": "Draft `media_id` without duplicate entries" },
+        { "want": "Archive article + assets post-publish", "action": "Run `archive.py --move` to update frontmatter and relocate assets", "outcome": "Clean published archive with temp files pruned" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "不要改正文和标题，用 minimal 主题先排版并生成 copy.html 给我预览。",
+        "刚改了两处错字，原地更新刚才那条公众号草稿，不要新建第二条。"
+      ],
+      "en": [
+        "Render this draft with the minimal theme and produce a `.copy.html` preview without altering prose.",
+        "Update the existing WeChat draft in-place after these typo fixes without creating a duplicate."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "自带 `tests.test_wechat_draft` 回归测试与纯标准库 HTML 机械校验门禁。",
+        "凭据按多账号独立存放在私有配置目录，严防 IP 白名单或 Secret 错配。"
+      ],
+      "en": [
+        "Covered by `tests.test_wechat_draft` and stdlib `html.parser` lint gates.",
+        "Fail-closed multi-account credential isolation with zero secrets in logs."
+      ]
+    }
+  },
+  "soia-media-publish-x": {
+    "title": {
+      "zh": "X 推文串拆条与 X Articles 长文草稿箱投递",
+      "en": "X Thread Splitter & X Articles Draft Uploader"
+    },
+    "pain": {
+      "zh": "把中文长文拆成 X Thread 发出去，经常每条超了 280 字符、代码块和链接被拆断；而想发 X Articles 长文时，在网页编辑器里手动重新排版、逐张补插图又慢又容易丢样式，还担心自动化脚本错点 Publish。",
+      "en": "Turning long posts into X threads often breaks code snippets or exceeds the 280-char limit—while pasting Markdown + inline images into X Articles manually is tedious, and nobody wants a script accidentally clicking Publish."
+    },
+    "solution": {
+      "zh": "把 X 的两个出口做成明确分级授权：做 Thread 默认只交付每条严格 ≤280 字符（代码与链接保持原样）的 Markdown 文本，获授权才经 `x_post.py` 填入草稿；做 X Articles 先用无浏览器预检解析标题/封面/插图位置，再在可见浏览器中富文本粘贴、按原位插图并机械校验，源码里根本没有点击 Publish 的代码路径。",
+      "en": "Cleanly split X workflows by authorization tier: Threads default to copy-ready `<=280`-char Markdown blocks keeping code and links intact (browser fill/send only when explicitly approved); X Articles dry-run parse first, then paste rich text + inline images in a visible browser and save to drafts only—with no Publish code path at all."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先分清 Thread 还是 Articles", "desc": "只读对应一份参考文档，含糊时先问清目标格式不混跑。" },
+          { "title": "预检拆条或无浏览器校验", "desc": "Thread 严控每条 ≤280 字符；Articles 先 dry-run 核对标题、封面与缺图。" },
+          { "title": "受控浏览器草稿写入", "desc": "使用本地独立 `x-profile` 登录态填入草稿或按原位逐张插图。" },
+          { "title": "机械核验后交人工发布", "desc": "Thread 逐字确认且明确说发才可 `send --yes`；Articles 永远停在草稿箱。" }
+        ],
+        "guardrails": [
+          "`x_article_post.py` 中不存在任何点击 Publish 的代码路径",
+          "绝不读取日常浏览器的 Cookie、Keychain 或代输密码",
+          "绝不把「已存草稿」说成「已发布」"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Route Thread vs. X Articles", "desc": "Load only the matching reference guide and clarify if format is ambiguous." },
+          { "title": "Pre-check length or assets", "desc": "Verify every tweet `<=280` chars, or run `parse_x_article.py` dry-run for missing images." },
+          { "title": "Draft via local isolated profile", "desc": "Use the dedicated local browser profile to fill text and inline images." },
+          { "title": "Verify & leave Publish to you", "desc": "Threads publish only on verbatim approval (`--yes`); Articles stay draft-only." }
+        ],
+        "guardrails": [
+          "`x_article_post.py` has zero code paths for clicking Publish",
+          "Never reads your daily browser cookies or Keychain passwords",
+          "Never equates 'saved to draft' with 'published'"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "先把这篇 Markdown 跑一下 X Article 无浏览器预检，看标题、封面和插图缺不缺。",
+        "title": "X Articles 无浏览器预检与校验示例",
+        "lines": [
+          { "text": "$ python3 scripts/parse_x_article.py article.md", "tone": "muted" },
+          { "text": "[CHECK] title=\"Why Local Agent OS Needs a Ledger\" · cover=cover.png (OK)", "tone": "cyan" },
+          { "text": "[IMAGES] 3 inline diagrams resolved · 0 missing files · headings/code blocks OK", "tone": "green" },
+          { "text": "[GUARD] X Articles mode = draft-only (no Publish path in x_article_post.py)", "tone": "normal" }
+        ],
+        "footer": "不调用 X 付费 API、不碰日常浏览器、草稿交由你亲自审阅后点发布"
+      },
+      "en": {
+        "prompt": "Run the browserless preflight check on this Markdown file for X Articles.",
+        "title": "X Articles Browserless Preflight Sample",
+        "lines": [
+          { "text": "$ python3 scripts/parse_x_article.py article.md", "tone": "muted" },
+          { "text": "[CHECK] title=\"Why Local Agent OS Needs a Ledger\" · cover=cover.png (OK)", "tone": "cyan" },
+          { "text": "[IMAGES] 3 inline diagrams resolved · 0 missing files · code blocks OK", "tone": "green" },
+          { "text": "[GUARD] X Articles mode = draft-only (no Publish path in x_article_post.py)", "tone": "normal" }
+        ],
+        "footer": "No X API keys needed; your draft waits safely in X Articles drafts"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把文章拆成不超长的 X Thread", "action": "按 ≤280 字符编号拆条，完整保留代码片段与链接原样", "outcome": "可复制的 Markdown 推文串与字符长度核查" },
+        { "want": "将确认文案填入 X 存草稿或发送", "action": "在本地独立 profile 用 `x_post.py` 存草稿，仅获逐字授权才发送", "outcome": "单行 JSON 回执（草稿位置或推文 URL）" },
+        { "want": "把长文 Markdown 推到 X Articles 草稿箱", "action": "无浏览器预检后富文本粘贴、按原位插图并逐项校验", "outcome": "X Articles 草稿 URL 与校验清单（仅存草稿）" }
+      ],
+      "en": [
+        { "want": "Split articles into valid X threads", "action": "Number tweets strictly `<=280` chars while preserving code and URLs", "outcome": "Copy-ready thread Markdown with length checks" },
+        { "want": "Fill X thread drafts safely", "action": "Save via `x_post.py` in isolated profile; send only with `--yes` approval", "outcome": "Single-line JSON receipt with draft or tweet URL" },
+        { "want": "Upload Markdown to X Articles drafts", "action": "Preflight assets, paste rich text + inline images, run checklist", "outcome": "X Articles draft URL and verification report" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把这篇文章拆成 X thread，保留文中的命令和 GitHub 链接，先只输出文本给我看。",
+        "先无浏览器预检下这篇长文能不能发 X Article，确认缺不缺封面和插图。"
+      ],
+      "en": [
+        "Split this article into an X thread keeping all CLI commands and links intact; text only.",
+        "Run a dry-run preflight check on this article for X Articles before opening any browser."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "自动兼容并原地复用旧技能 `x-profile` 登录目录，老用户不用重新扫码登录。",
+        "脚本内置空 profile 拦截、缺 `--yes` 拒绝发送与超 280 字符拒绝等离线前向检查。"
+      ],
+      "en": [
+        "Reuses legacy `x-profile` login folders seamlessly without forcing re-login.",
+        "Scripts enforce missing-login block, `--yes` gate, and >280 char rejection."
+      ]
+    }
+  }
+}

@@ -62,10 +62,10 @@ const en: HomeExtra = {
     'The SOIA family. SoiaDeck is the current lead — coming open source.',
   heroTitleSub: 'SOIA family · SoiaDeck is the current lead',
   heroSub:
-    'SoiaDeck is the desktop AI platform: local daemon, AI Workbench for Claude Code and Codex, plus local LLM and network plugins. SoiaCode is the future coding agent, still in design. SOIA Runtime is the Agent OS under it. 47 open skills (PKM 27, Dev 9, Office 7, Meta 4) install on Claude Code, Codex and WorkBuddy.',
+    'Run coding agents locally on your desktop — with open skills, explicit permissions, and zero lock-in.',
   aboutKicker: 'Why SoiaDeck?',
   aboutStatement:
-    'SoiaDeck does not replace Claude Code or Codex. It puts the agents you already run on a desktop workbench: conversations, permissions, projects and worktrees in one place, with local models on the same machine. Your files stay local. The app will be open sourced.',
+    'Your existing coding agents, unified on one local desktop workbench.',
   aboutTab1: 'Desktop workbench',
   aboutTab2: 'Plug in agents you already have',
   aboutTab3: 'Skills you can compose',
@@ -110,10 +110,10 @@ const zh: HomeExtra = {
   heroLead: 'SOIA 家族。当前主角是 SoiaDeck，即将开源。',
   heroTitleSub: 'SOIA 家族 · 当前主角 SoiaDeck',
   heroSub:
-    'SoiaDeck 是桌面 AI 平台：本机 daemon、AI 作业台（Claude Code / Codex 等）、本地 LLM 与 AI 网络。SoiaCode 是未来的 coding agent，仍在设计。SOIA Runtime 是它的 Agent OS 底层。47 个开源技能（PKM 27、Dev 9、Office 7、Meta 4）装到 Claude Code、Codex、WorkBuddy。',
+    '把你的编码 Agent、开源技能与本地模型装进同一张桌面作业台——可控、可审计、零锁定。',
   aboutKicker: '为什么选择 SoiaDeck？',
   aboutStatement:
-    'SoiaDeck 不替代 Claude Code 或 Codex。它把你已经在用的编码 Agent 接到桌面作业台：对话、权限、项目和工作树在一个地方，本地模型也在同一台机器上。文件留在本地。应用即将开源。',
+    '把你常用的编码 Agent，装进同一张本地桌面作业台。',
   aboutTab1: '桌面作业台',
   aboutTab2: '接入已有 Agent',
   aboutTab3: '技能可组合',

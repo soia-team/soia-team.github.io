@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Derive src/skill-data.ts from the public skill docs.
+"""Derive src/skill-data.ts from public skill docs, source SKILL.md files, and editorial JSON.
 
-Source of truth: soia-open-skills/docs/skills/<skill>.md (itself generated from
-each skill's SKILL.md). Re-run after skill docs change:
+Re-run after skill docs, SKILL.md files, or scripts/editorial/*.json change:
 
     python3 scripts/generate-skill-data.py
 """
@@ -13,8 +12,17 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-DOCS = ROOT.parent / "soia-open-skills" / "docs" / "skills"
+V7 = ROOT.parent
+DOCS = V7 / "soia-open-skills" / "docs" / "skills"
+EDITORIAL_DIR = ROOT / "scripts" / "editorial"
 OUT = ROOT / "src" / "skill-data.ts"
+
+SKILL_REPOS = [
+    V7 / "soia-open-pkm-vault-skills" / "skills",
+    V7 / "soia-open-dev-skills" / "skills",
+    V7 / "soia-open-cwork-office-skills" / "skills",
+    V7 / "soia-open-skills" / "skills",
+]
 
 DOMAIN_OF = {
     "pkm": "pkm",
@@ -27,96 +35,141 @@ DOMAIN_OF = {
 FENCE = re.compile(r"```[a-zA-Z]*\n(.*?)```", re.S)
 
 
-def sections(text: str) -> dict[str, str]:
+def find_skill_md(name: str) -> Path | None:
+    for repo in SKILL_REPOS:
+        cand = repo / name / "SKILL.md"
+        if cand.exists():
+            return cand
+    return None
+
+
+def strip_frontmatter(text: str) -> tuple[dict[str, str], str]:
+    meta: dict[str, str] = {}
+    if text.startswith("---\n"):
+        end = text.find("\n---\n", 4)
+        if end != -1:
+            fm = text[4:end]
+            for line in fm.splitlines():
+                if ":" in line:
+                    k, _, v = line.partition(":")
+                    meta[k.strip()] = v.strip().strip('"').strip("'")
+            return meta, text[end + 5 :].strip()
+    return meta, text
+
+
+def sections(text: str) -> list[tuple[str, str]]:
     parts = re.split(r"^## ", text, flags=re.M)
-    out: dict[str, str] = {}
+    out: list[tuple[str, str]] = []
     for part in parts[1:]:
         title, _, body = part.partition("\n")
-        out[title.strip()] = body.strip()
+        out.append((title.strip(), body.strip()))
     return out
 
 
-def bullets(body: str) -> list[str]:
-    return [m.group(1).strip() for m in re.finditer(r"^- (.+)$", body, re.M)]
+def load_editorial() -> dict[str, dict]:
+    merged: dict[str, dict] = {}
+    for path in sorted(EDITORIAL_DIR.glob("*.json")):
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for skill_name, entry in data.items():
+            if skill_name in merged:
+                raise ValueError(f"Duplicate editorial entry for {skill_name} in {path}")
+            merged[skill_name] = entry
+    return merged
 
 
-def paragraphs(body: str) -> list[str]:
-    text = re.sub(r"^### .*$", "", body, flags=re.M)
-    text = re.sub(r"^\|.*$", "", text, flags=re.M)
-    text = re.sub(r"^- .*$", "", text, flags=re.M)
-    chunks = [c.strip() for c in re.split(r"\n\s*\n", text) if c.strip()]
-    return [re.sub(r"\s+", " ", c) for c in chunks]
-
-
-def sub(body: str, name: str) -> str:
-    m = re.search(rf"^### {re.escape(name)}\s*$(.*?)(?=^### |\Z)", body, flags=re.M | re.S)
-    return m.group(1).strip() if m else ""
-
-
-def table_rows(body: str) -> list[str]:
-    """Some skills document capability as a table only; turn rows into items."""
-    rows = []
-    for line in body.splitlines():
-        line = line.strip()
-        if not line.startswith("|") or re.match(r"^\|[\s|:-]+\|$", line):
-            continue
-        cells = [c.strip() for c in line.strip("|").split("|")]
-        if len(cells) < 2 or cells[0] in {"客户想要", "客户目标", "客户场景"}:
-            continue
-        rows.append(f"{cells[0]}：{cells[1]}")
-    return rows
-
-
-def parse(path: Path) -> dict:
-    text = path.read_text()
-    heading = re.match(r"# (.+)", text)
+def parse(path: Path, editorial_map: dict[str, dict]) -> dict:
+    doc_text = path.read_text(encoding="utf-8")
+    heading = re.match(r"# (.+)", doc_text)
     name = heading.group(1).strip() if heading else path.stem
     tagline = ""
-    for line in text.splitlines():
+    for line in doc_text.splitlines():
         if line.startswith("> "):
             tagline = line[2:].strip()
             break
-    sec = sections(text)
+    doc_sec = dict(sections(doc_text))
 
-    trigger_body = sec.get("怎么触发", "")
-    triggers = [re.sub(r"\s+", " ", t) for t in paragraphs(trigger_body)]
-    triggers = [t for t in triggers if "Agent 按下列意图命中本技能" not in t]
-
-    usage = sec.get("能力与用法", "")
-    what_body = sub(usage, "这个技能可以做什么") or usage
-    what = bullets(what_body) or paragraphs(what_body) or table_rows(what_body)
-    how = bullets(sub(usage, "客户如何使用")) or paragraphs(sub(usage, "客户如何使用"))
-
-    install = [c.strip() for c in FENCE.findall(sec.get("安装", ""))]
+    install = [c.strip() for c in FENCE.findall(doc_sec.get("安装", ""))]
     single = [c for c in install if "npx skills add" in c]
     plugin = [c for c in install if "plugin" in c and "npx" not in c]
 
+    version = ""
+    skill_md = find_skill_md(name)
+    if skill_md:
+        meta, _ = strip_frontmatter(skill_md.read_text(encoding="utf-8"))
+        version = meta.get("version", "")
+        if not tagline and meta.get("description"):
+            tagline = meta["description"]
+
+    if name not in editorial_map:
+        raise KeyError(f"Missing editorial profile for {name} in {EDITORIAL_DIR}")
+
+    ed = editorial_map[name]
     prefix = name.split("-")[1] if name.count("-") >= 2 else "meta"
     domain = DOMAIN_OF.get(prefix, "meta")
+
     return {
         "name": name,
         "domain": domain,
+        "version": version,
         "tagline": tagline,
-        "triggers": triggers[:1],
-        "what": what[:4],
-        "how": how[:4],
+        "title": ed["title"],
+        "pain": ed["pain"],
+        "solution": ed["solution"],
+        "mechanism": ed["mechanism"],
+        "liveSample": ed["liveSample"],
+        "capabilities": ed["capabilities"],
+        "prompts": ed["prompts"],
+        "trust": ed["trust"],
         "install": single[:1] + plugin[:2],
     }
 
 
 def main() -> None:
+    editorial_map = load_editorial()
     rows = []
     for path in sorted(DOCS.glob("soia-*.md")):
-        rows.append(parse(path))
+        rows.append(parse(path, editorial_map))
     rows.sort(key=lambda r: (r["domain"], r["name"]))
     payload = json.dumps(rows, ensure_ascii=False, indent=2)
     OUT.write_text(
         "// Generated by scripts/generate-skill-data.py from\n"
-        "// soia-open-skills/docs/skills/*.md — do not hand-edit.\n\n"
+        "// soia-open-skills/docs/skills/*.md, source SKILL.md files, and scripts/editorial/*.json.\n\n"
+        "export type LocaleText = { zh: string; en: string };\n\n"
+        "export type SkillCapabilityRow = {\n"
+        "  want: string;\n  action: string;\n  outcome: string;\n};\n\n"
+        "export type SkillMechanismStep = {\n"
+        "  title: string;\n  desc: string;\n};\n\n"
+        "export type SkillMechanism = {\n"
+        "  steps: SkillMechanismStep[];\n"
+        "  guardrails: string[];\n"
+        "};\n\n"
+        "export type SkillLiveLine = {\n"
+        "  text: string;\n"
+        "  tone?: 'normal' | 'muted' | 'green' | 'amber' | 'cyan';\n"
+        "};\n\n"
+        "export type SkillLiveSample = {\n"
+        "  prompt: string;\n"
+        "  title: string;\n"
+        "  lines: SkillLiveLine[];\n"
+        "  footer: string;\n"
+        "};\n\n"
         "export type SkillDoc = {\n"
-        "  name: string;\n  domain: string;\n  tagline: string;\n"
-        "  triggers: string[];\n  what: string[];\n  how: string[];\n  install: string[];\n};\n\n"
-        f"export const SKILL_DOCS: readonly SkillDoc[] = {payload};\n"
+        "  name: string;\n"
+        "  domain: string;\n"
+        "  version: string;\n"
+        "  tagline: string;\n"
+        "  title: LocaleText;\n"
+        "  pain: LocaleText;\n"
+        "  solution: LocaleText;\n"
+        "  mechanism: { zh: SkillMechanism; en: SkillMechanism };\n"
+        "  liveSample: { zh: SkillLiveSample; en: SkillLiveSample };\n"
+        "  capabilities: { zh: SkillCapabilityRow[]; en: SkillCapabilityRow[] };\n"
+        "  prompts: { zh: string[]; en: string[] };\n"
+        "  trust: { zh: string[]; en: string[] };\n"
+        "  install: string[];\n"
+        "};\n\n"
+        f"export const SKILL_DOCS: readonly SkillDoc[] = {payload};\n",
+        encoding="utf-8",
     )
     print(f"wrote {OUT} with {len(rows)} skills")
 

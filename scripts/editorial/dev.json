@@ -1,0 +1,900 @@
+{
+  "soia-dev-agent-cli-dispatch": {
+    "title": {
+      "zh": "外部 AI CLI 派单与多账号额度管家",
+      "en": "External AI CLI Dispatch & Multi-Slot Quota Manager"
+    },
+    "pain": {
+      "zh": "机器上同时装着 Codex、Pi、Antigravity 好几个外部 CLI，或者同一工具挂了多个账号：想把一段修复或调研派出去，却怕它没查额度直接静默降级、把当前工作区改乱，甚至跑完都不知道实际用了哪个模型、花了多少 Token。",
+      "en": "When you run Codex, Pi, Antigravity or multiple account slots side by side, delegating work blindly risks silent model downgrades, unexpected quota exhaustion, or messy edits in your active workspace without clear usage receipts."
+    },
+    "solution": {
+      "zh": "先只读体检再派单：发任务前先核验目标 CLI 版本、登录态与各个账号槽位的实时剩余额度；再把任务边界、只写目录和权限清单写进隔离文件传给外部进程；执行后比对请求模型与真实回显模型，绝不拿进程退出码 0 冒充高质量交付。",
+      "en": "Inspect before dispatching: verify CLI binary version, auth status, and per-slot remaining quota read-only first; pass explicit task scope and permission flags via an isolated prompt file; then reconcile requested vs. actual model, tokens, and real test outputs."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "查认证与分桶额度", "desc": "先跑只读预检核实登录态与各账号槽位剩余额度（如 agy 5h/7d 桶），不耗额度不猜可用性。" },
+          { "title": "锁定目录与权限边界", "desc": "明确工作目录与 file_write/network/commit 布尔开关，未获批准的权限一律保持关闭。" },
+          { "title": "隔离传递并监控运行", "desc": "把任务书写入隔离临时文件传给指定 CLI，支持 `--slot` 指定账号、`--rotate` 轮转与断点续跑。" },
+          { "title": "模型与产物双重核验", "desc": "核对真实回显模型与分项 Token，缺证据标 `actual_model_unverified`，并在目标目录验真实产物。" }
+        ],
+        "guardrails": [
+          "不抢宿主内置 subagent 的活（只派外部 CLI）",
+          "不拿请求参数或默认值冒充实际运行模型",
+          "不把凭据、账号邮箱或完整对话写进公开 manifest"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Check auth & per-bucket quota", "desc": "Run read-only preflight checks on auth status and per-slot quota before picking any model." },
+          { "title": "Lock workdir & permissions", "desc": "Pass explicit workspace path and boolean permissions; unapproved capabilities stay false." },
+          { "title": "Dispatch via isolated prompt", "desc": "Write task brief to an isolated temp file, supporting `--slot`, `--rotate`, and resumable manifests." },
+          { "title": "Reconcile model & deliverables", "desc": "Compare requested vs. actual model and token breakdown, and independently verify workspace outputs." }
+        ],
+        "guardrails": [
+          "Never replace built-in host subagents",
+          "Never substitute requested model for missing actual-model evidence",
+          "Never write credentials, emails, or raw responses into manifests"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "查下我几个 agy 账号槽位还剩多少额度，然后把这单小修复派给可用账号跑完。",
+        "title": "只读额度预检 & 派单回执示例",
+        "lines": [
+          { "text": "$ python3 scripts/agy_quota.py --pick --model gemini-4-argon-high --rotate", "tone": "muted" },
+          { "text": "slot=work-a   5h: 92%  7d: 84%  model: gemini-4-argon-high  [available]", "tone": "green" },
+          { "text": "slot=work-b   5h:  0%  7d: 41%  reset: 2h14m               [exhausted -> skip]", "tone": "amber" },
+          { "text": "----------------------------------------------------------------------", "tone": "muted" },
+          { "text": "executor: agy (slot=work-a) · actual_model: gemini-4-argon-high · status: passed", "tone": "cyan" },
+          { "text": "tokens: in=12,480 / cache=9,100 / out=1,840 · manifest saved (desensitized)", "tone": "normal" }
+        ],
+        "footer": "先检测可用桶再派单，未验模型与超额账号自动拦截"
+      },
+      "en": {
+        "prompt": "Check remaining quota across my agy slots, then dispatch this fix to an available slot.",
+        "title": "Read-only Quota Preflight & Dispatch Receipt",
+        "lines": [
+          { "text": "$ python3 scripts/agy_quota.py --pick --model gemini-4-argon-high --rotate", "tone": "muted" },
+          { "text": "slot=work-a   5h: 92%  7d: 84%  model: gemini-4-argon-high  [available]", "tone": "green" },
+          { "text": "slot=work-b   5h:  0%  7d: 41%  reset: 2h14m               [exhausted -> skip]", "tone": "amber" },
+          { "text": "----------------------------------------------------------------------", "tone": "muted" },
+          { "text": "executor: agy (slot=work-a) · actual_model: gemini-4-argon-high · status: passed", "tone": "cyan" },
+          { "text": "tokens: in=12,480 / cache=9,100 / out=1,840 · manifest saved (desensitized)", "tone": "normal" }
+        ],
+        "footer": "Quota verified before routing; exhausted buckets and unverified models are blocked"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把编码或审查任务派给外部 CLI", "action": "按执行器规范预检认证、工作目录与权限后隔离启动", "outcome": "请求/实际模型、Token 明细与真实产物验证回执" },
+        { "want": "管理同一 CLI 的多账号槽位", "action": "通过 `--slot` 指定或 `--rotate` 轮转隔离环境", "outcome": "互不串号的登录态与分槽位用量账本" },
+        { "want": "只读查看 agy 各槽位套餐与余量", "action": "运行 `agy_quota.py` 并行列出 5h/7d 百分比与重置时间", "outcome": "零额度消耗的只读余量表，自动跳过耗尽账号" },
+        { "want": "批量或断点续跑多组测试任务", "action": "使用 `run_matrix.py` 串行执行并原子更新脱敏 manifest", "outcome": "中断后可续跑的任务状态与汇总报告" }
+      ],
+      "en": [
+        { "want": "Delegate work to an external CLI", "action": "Preflight auth, workdir, and permissions before isolated launch", "outcome": "Actual model, token breakdown, and verified artifact receipt" },
+        { "want": "Manage multi-account CLI slots", "action": "Isolate login profiles with `--slot` or `--rotate`", "outcome": "Per-slot quota tracking without credential bleed" },
+        { "want": "Inspect agy quota read-only", "action": "Run `agy_quota.py` to list 5h/7d buckets and reset times", "outcome": "Zero-cost quota snapshot skipping exhausted buckets" },
+        { "want": "Run resumable batch matrices", "action": "Execute cases serially via `run_matrix.py` with atomic manifests", "outcome": "Crash-safe resume state and desensitized summary" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "先查下我几个 agy 槽位的剩余额度，别猜，列出每个账号还剩多少。",
+        "把这个小修复派给 Pi：允许改当前项目、禁止提交，跑完单测后回报实际模型和 Token。",
+        "按默认独立性政策把这段 diff 派给异家族外部 CLI 做一次只读审查。"
+      ],
+      "en": [
+        "Check remaining quota on all my agy account slots without spending credits.",
+        "Dispatch this bug fix to Pi in the current repo (file_write=true, commit=false) and report actual model + tokens."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "Python 3 脚本随包自带 `--selftest` 与脱敏 manifest 契约，不把密钥、邮箱或完整对话落盘。",
+        "严格区分 `passed`、`fallback_or_downgrade`、`actual_model_unverified` 与 `blocked_*`，绝不报喜不报忧。",
+        "全仓 MIT 开源于 GitHub `soia-open-dev-skills`，所有支持 CLI 与路由表透明可查。"
+      ],
+      "en": [
+        "Self-contained `--selftest` on every script; state files store desensitized metadata only.",
+        "Explicit state machine separates `passed`, `fallback_or_downgrade`, and `actual_model_unverified`.",
+        "MIT open source in `soia-open-dev-skills` with auditable routing tables."
+      ]
+    }
+  },
+  "soia-dev-audit-ui": {
+    "title": {
+      "zh": "只读 UI 验收：技术证据与体验判断分轨",
+      "en": "Read-Only UI Audit: Technical & UX Track"
+    },
+    "pain": {
+      "zh": "前端页面改完一测，往往要么「截图看着还行」却在 390px 手机上横向溢出、键盘 Tab 进不去弹层；要么审核者把个人审美偏好和真实可用性缺陷混成一锅，开发根本分不清哪条必须修、哪条只是建议。",
+      "en": "UI reviews often blur subjective aesthetic preferences with real accessibility or responsive layout bugs—or approve screenshots without checking 390px overflow, keyboard traps, or async error states."
+    },
+    "solution": {
+      "zh": "全程只读、双轨分开汇报：在真实可运行页面上走完目标用户路径，把「技术验收（多宽度溢出、键盘焦点、语义、Portal 遮罩、对比度）」和「UX / 视觉判断（信息层级、主次动作、跨页一致性）」拆开写清；只有截图时如实标明键盘与交互未验证。",
+      "en": "Strictly read-only and split into two explicit tracks: walk real routes for technical checks (breakpoints, overflow, keyboard focus, portals, contrast) separately from UX/visual hierarchy review—never claiming keyboard pass from static screenshots."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "明确目标与基线", "desc": "对齐受检页面入口、核心用户任务、断点宽度与已批准设计规范。" },
+          { "title": "实操技术验收", "desc": "在真实运行页面测长内容、空/错态、Escape 关闭、焦点恢复与横向溢出。" },
+          { "title": "独立 UX 视觉判断", "desc": "区分「违反设计规范 / 真实使用障碍 / 个人偏好建议」，不把审美当缺陷。" },
+          { "title": "按影响定级交付", "desc": "逐条附位置、状态、复现证据与建议，只报告可定位问题并列出未验证项。" }
+        ],
+        "guardrails": [
+          "全程只读：绝不擅自改页面源码、提交或发布",
+          "只有截图时不宣称键盘、焦点或交互通过",
+          "不编造固定分数或强凑问题数量"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Lock route & baseline", "desc": "Align target URL, user task, viewport widths, and approved design spec." },
+          { "title": "Run live technical checks", "desc": "Test overflow, empty/error states, Tab/Escape focus return, and portals in browser." },
+          { "title": "Separate UX judgment", "desc": "Distinguish spec violations and real usability blockers from subjective taste." },
+          { "title": "Deliver prioritized report", "desc": "List exact selector/state, evidence, impact, and explicitly mark unverified areas." }
+        ],
+        "guardrails": [
+          "Read-only: never edit files, commit, or ship fixes during audit",
+          "Never claim keyboard or interaction pass from screenshots alone",
+          "No arbitrary scores or padded issue counts"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "验收这个页面在 1440px 和 390px 下的布局、键盘弹层退出和视觉层级，只读不要改代码。",
+        "title": "双轨只读验收回执示例",
+        "lines": [
+          { "text": "[技术验收 · 实测 1440px / 390px]", "tone": "cyan" },
+          { "text": "✓ 1440px & 390px: scrollWidth === innerWidth (overflowX = 0)", "tone": "green" },
+          { "text": "✗ Lightbox 弹层: 按 Escape 关闭后焦点未回到原触发按钮 (WCAG 2.4.3)", "tone": "amber" },
+          { "text": "[UX / 视觉判断]", "tone": "cyan" },
+          { "text": "• 阻碍项: 移动端筛选栏与正文间距过近，首屏主动作被次级标签挤压", "tone": "normal" },
+          { "text": "[未验证项] 深色模式对比度未在本轮实测（仅测浅色主题）", "tone": "muted" }
+        ],
+        "footer": "技术证据与主观体验严格分列，修不修交给下一轮授权"
+      },
+      "en": {
+        "prompt": "Audit this page at 1440px and 390px for layout, keyboard modal behavior, and visual hierarchy.",
+        "title": "Dual-Track UI Audit Report Sample",
+        "lines": [
+          { "text": "[Technical Verification · 1440px / 390px]", "tone": "cyan" },
+          { "text": "✓ 1440px & 390px: scrollWidth === innerWidth (overflowX = 0)", "tone": "green" },
+          { "text": "✗ Lightbox modal: focus does not return to trigger button after Escape", "tone": "amber" },
+          { "text": "[UX / Visual Review]", "tone": "cyan" },
+          { "text": "• Usability: mobile filter pills crowd the primary CTA above the fold", "tone": "normal" },
+          { "text": "[Unverified] Dark-mode contrast was not tested in this pass", "tone": "muted" }
+        ],
+        "footer": "Technical evidence separated from UX judgment; zero files modified"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "检查桌面与移动端响应式布局", "action": "在真实视口测试长内容、空态、加载/错误态下的遮挡与溢出", "outcome": "带视口宽度与 DOM/视觉证据的问题清单" },
+        { "want": "验收键盘操作与可访问性", "action": "实操 Tab 焦点顺序、Escape 退出与焦点恢复（非仅扫 DOM）", "outcome": "依据 WCAG 条款与交互路径的实测结论" },
+        { "want": "评审界面信息层级与一致性", "action": "按主次动作、排版节奏与跨页一致性出 UX 判断", "outcome": "分清设计违规、体验障碍与偏好建议的优先级列表" }
+      ],
+      "en": [
+        { "want": "Verify desktop & mobile responsiveness", "action": "Inspect real viewports across empty, loading, error, and long-text states", "outcome": "Exact viewport and visual/DOM evidence per finding" },
+        { "want": "Audit keyboard & accessibility", "action": "Operate Tab order, Escape exit, and focus return in live browser", "outcome": "Actionable findings mapped to WCAG checks" },
+        { "want": "Review hierarchy & visual consistency", "action": "Assess primary actions, rhythm, and cross-page parity", "outcome": "Prioritized UX list separating blockers from taste" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "验收这个界面在 390px 和 1440px 下的布局、溢出和键盘焦点，只读不改文件。",
+        "对照已批准原型图评审这页的视觉体验，技术问题和设计建议分开列。"
+      ],
+      "en": [
+        "Audit this page at 390px and 1440px for overflow and keyboard focus without editing files.",
+        "Review this UI against our approved mockup and separate technical bugs from UX suggestions."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "内置与 `soia-dev-design-ui` 联动的 `ui-threshold` 量化基准检查脚本，阈值透明可核。",
+        "明确区分「已实操」「仅截图未测交互」「未运行」，绝不拿静态源码代替运行验收。"
+      ],
+      "en": [
+        "Shared `ui-threshold` check script synced with `soia-dev-design-ui` craft floors.",
+        "Strictly labels what was operated live vs. screenshot-only vs. unverified."
+      ]
+    }
+  },
+  "soia-dev-design-ui": {
+    "title": {
+      "zh": "面向实现的 UI 结构、状态与设计交接",
+      "en": "Implementation-Ready UI Design & Handoff"
+    },
+    "pain": {
+      "zh": "让 AI 设计一个页面，常见翻车是：只画了一张好看的「理想态」静态图，漏掉加载/空态/失败/窄屏；或者无视项目现有的品牌色和组件体系，自己另起一套完全不搭的风格。",
+      "en": "AI-generated UI designs often show only the happy path while ignoring loading, empty, error, and 390px states—or invent an off-brand visual style instead of respecting your existing design system."
+    },
+    "solution": {
+      "zh": "沿用项目已批准的品牌、组件与 Design Token：先定用户主要任务与状态归属，再规划布局与窄屏折行；补齐加载、空态、失败、重试、权限等完整交互状态，并按量化工艺下限交付可渲染的原型或实现交接单。",
+      "en": "Anchor in your approved design system and tokens: lock the user's primary task and state ownership first, design every interactive/edge state including narrow screens and reduced motion, and deliver rendered prototypes plus exact token handoff."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "定主任务与复用体系", "desc": "先锁定页面主要任务与现有组件/token 边界，不借局部设计顺手重做整站。" },
+          { "title": "补全真实状态矩阵", "desc": "明确触发、结果与返回路径，覆盖加载、空态、失败、长内容与 390px 窄屏。" },
+          { "title": "守住量化工艺下限", "desc": "按 `craft-floor.md` 校验对比度、行宽、触控尺寸与动效时长档。" },
+          { "title": "真实渲染与交接清单", "desc": "可见产物必先实测渲染，交接写清组件/状态/token 对应与待决项。" }
+        ],
+        "guardrails": [
+          "不猜品牌色，缺资产时明确标注占位与影响",
+          "不拿假数据或静态截图冒充后台已接通",
+          "讨论或评审时不擅改已批准设计文件"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Anchor task & system", "desc": "Define primary user actions and reuse approved components and tokens." },
+          { "title": "Specify full state flow", "desc": "Cover loading, empty, failure, retry, permissions, long copy, and narrow viewports." },
+          { "title": "Enforce craft floors", "desc": "Validate contrast, line measure, touch targets, and motion timing against `craft-floor.md`." },
+          { "title": "Render & handoff", "desc": "Actually render visual artifacts and document token mappings and open questions." }
+        ],
+        "guardrails": [
+          "Never guess brand colors; mark missing assets explicitly",
+          "Never present mocked static states as live backend integration",
+          "Do not overwrite approved design files during discussion"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "按现有品牌样式为设置页新增「远程设备管理」交互方案，补齐异常态和交接清单。",
+        "title": "UI 设计交接单结构示例",
+        "lines": [
+          { "text": "1. 主任务与布局：沿用 .missing-article + .agent-matrix-list token", "tone": "cyan" },
+          { "text": "2. 状态归属：loading(骨架) / empty(引导配对) / revoked(禁用态+原因) / error(重试)", "tone": "green" },
+          { "text": "3. 工艺校验：对比度 >= 4.5:1 · 窄屏 390px 单列无截断 · Escape 关闭抽屉", "tone": "normal" },
+          { "text": "4. 待决项：设备解绑二次确认弹窗文案需产品确认（已标占位）", "tone": "amber" }
+        ],
+        "footer": "不另造第二套样式表，状态、Token 与待决边界一次交清"
+      },
+      "en": {
+        "prompt": "Design a 'Remote Devices' section matching our existing design system, covering error states and handoff.",
+        "title": "UI Design Handoff Spec Sample",
+        "lines": [
+          { "text": "1. Layout & Tokens: reuse .missing-article & existing card tokens", "tone": "cyan" },
+          { "text": "2. State Matrix: loading / empty (pair CTA) / revoked / error (retry)", "tone": "green" },
+          { "text": "3. Craft Floor: contrast >= 4.5:1 · 390px single-column · Escape closes", "tone": "normal" },
+          { "text": "4. Open Decision: confirm copy for device-revocation modal", "tone": "amber" }
+        ],
+        "footer": "Preserves existing tokens; states and open decisions mapped cleanly"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把模糊需求变成清晰界面结构", "action": "先定主任务、信息层级与跨端折行方案", "outcome": "可直接进实现的线框/原型与布局说明" },
+        { "want": "梳理复杂流程的所有交互状态", "action": "逐一补齐触发、加载、空态、错误、权限与返回路径", "outcome": "无遗漏的状态转移表与文案规范" },
+        { "want": "做规范的 UI 设计开发交接", "action": "对齐项目组件、CSS token 与 `craft-floor` 下限", "outcome": "组件/token 映射清单与待裁决事项" }
+      ],
+      "en": [
+        { "want": "Turn vague goals into clear UI layout", "action": "Prioritize primary actions, scannability, and responsive flow", "outcome": "Rendered prototype and layout structure" },
+        { "want": "Map full interactive & edge states", "action": "Specify triggers, loading, empty, error, retry, and permission states", "outcome": "Complete state transition and copy spec" },
+        { "want": "Prepare dev handoff", "action": "Map to existing components, tokens, and `craft-floor` thresholds", "outcome": "Component/token table and open decisions" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "沿用我们现在的视觉系统设计一个技能搜索筛选栏，补齐空态和移动端折行。",
+        "梳理这个审批抽屉的交互状态（加载、拒绝、重试、超长文本）并出设计交接。"
+      ],
+      "en": [
+        "Design a skill filter bar matching our current system, including empty state and 390px layout.",
+        "Map all states for this approval drawer and write an implementation handoff."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "量化工艺下限与 `soia-dev-audit-ui` 通过 `check_ui_thresholds.py` 机械校验一致。",
+        "明确区分「设计已渲染」与「生产已验收」，不拿设计稿替代线上验收。"
+      ],
+      "en": [
+        "Quantified craft thresholds synced via `check_ui_thresholds.py` with `audit-ui`.",
+        "Clearly separates rendered prototype checks from production UI audits."
+      ]
+    }
+  },
+  "soia-dev-enforce-coding-protocol": {
+    "title": {
+      "zh": "工程改动守门短协议：范围、复现与验证",
+      "en": "Coding Guardrails: Scope, Repro & Verification"
+    },
+    "pain": {
+      "zh": "让 AI 改一段代码，最怕它「顺手」把周围十几个文件一起重构、把失败的测试断言改松变绿，或者只看了静态检查就自信汇报「全部修复通过」。",
+      "en": "AI coding sessions often drift: touching unrelated files, relaxing failing test assertions to force green builds, or declaring a fix done based on guesses rather than reproducing and verifying the real behavior."
+    },
+    "solution": {
+      "zh": "一条极轻量的工程底线短协议：不另建繁琐流程，直接约束手头的实现、诊断或审查——守住请求范围、改前先找能证伪的复现办法、按风险跑聚焦验证、禁止靠吞错或放松断言变绿，拿到足够证据就停。",
+      "en": "A lightweight engineering floor applied directly to active coding, debugging, or review without extra ceremony: stay strictly within scope, establish a falsifiable repro before editing, verify the real behavior, and stop once evidence is sufficient."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "守住改动与授权边界", "desc": "诊断不顺手改代码，保留他人改动，commit/push/删除各自核对明确授权。" },
+          { "title": "改前先找证伪办法", "desc": "缺陷先复现、重构查行为等价；复现不了如实报缺口，不把猜测当根因。" },
+          { "title": "按风险跑真实验证", "desc": "小改跑聚焦测试；公共接口、迁移或安全边界补查直接消费者与失败路径。" },
+          { "title": "证据足够即收手", "desc": "不做冗余多轮审查，不以吞错、TODO 或放松断言冒充通过。" }
+        ],
+        "guardrails": [
+          "绝不删失败测试、不静默 fallback 骗过检查",
+          "提交只纳入本次改动文件（保留他人工作树修改）",
+          "契约不变的纯文字拼写修正不滥用重流程"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Hold scope & auth", "desc": "Never turn read-only diagnosis into edits; keep others' changes untouched." },
+          { "title": "Falsify before fixing", "desc": "Reproduce bugs (pass→fail→pass) or verify behavior parity before patching." },
+          { "title": "Verify real risk paths", "desc": "Run focused checks; cover consumers and failure paths on shared/security boundaries." },
+          { "title": "Stop on sufficient evidence", "desc": "Never mask failures with TODOs, swallowed errors, or relaxed assertions." }
+        ],
+        "guardrails": [
+          "Never weaken or delete failing tests to turn CI green",
+          "Commit only your own scoped files",
+          "Skip heavy process on trivial typo fixes"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "按编码协议核对这次修复：有没有越界改动，验证证据够不够？",
+        "title": "编码底线核对回执示例",
+        "lines": [
+          { "text": "✓ 范围核对: git diff --stat 仅含 src/auth/token.ts 与 tests/token.test.ts", "tone": "green" },
+          { "text": "✓ 证伪闭环: 修复前复现 test_expired_token (EC=1) -> 修复后通过 (EC=0)", "tone": "green" },
+          { "text": "✗ 越界拦截: 发现顺手格式化了无关文件 README.md，已建议还原", "tone": "amber" },
+          { "text": "结论: 边界清晰，无需另开全仓审查或额外协议报告", "tone": "cyan" }
+        ],
+        "footer": "不另造状态库或繁琐模板，只在真实工作流里守住五条工程底线"
+      },
+      "en": {
+        "prompt": "Check this patch against the coding protocol: is scope clean and verification sufficient?",
+        "title": "Coding Protocol Check Sample",
+        "lines": [
+          { "text": "✓ Scope: git diff --stat touches only src/auth/token.ts & tests/token.test.ts", "tone": "green" },
+          { "text": "✓ Repro loop: test_expired_token failed pre-fix (EC=1) -> passed post-fix (EC=0)", "tone": "green" },
+          { "text": "✗ Scope creep caught: unrelated formatting edit in README.md flagged to revert", "tone": "amber" },
+          { "text": "Verdict: bounded & verified; no redundant review rounds needed", "tone": "cyan" }
+        ],
+        "footer": "Enforces engineering floors in-place without extra process overhead"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "约束代码修复不越界", "action": "核对改动范围、保留他人修改并确认提交/推送边界", "outcome": "干净聚焦的 diff 与明确的风险说明" },
+        { "want": "确保修 bug 不是猜答案", "action": "要求先构建可复现的失败输入再做最小修改", "outcome": "修前失败、修后通过的可证伪验证证据" },
+        { "want": "防止测试被悄悄放松", "action": "按 `falsifiable-guards` 核查断言与失败路径覆盖", "outcome": "真实的通过/未覆盖项汇报" }
+      ],
+      "en": [
+        { "want": "Keep patches strictly bounded", "action": "Constrain edits to requested scope while preserving workspace edits", "outcome": "Clean diff and explicit authorization check" },
+        { "want": "Ensure bug fixes aren't guesses", "action": "Require failing repro before applying minimal fix", "outcome": "Falsifiable pass→fail→pass verification" },
+        { "want": "Prevent relaxed assertions", "action": "Check assertions and failure paths per `falsifiable-guards`", "outcome": "Honest test coverage & gap summary" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "修复这个空指针问题，严格守住编码协议：先复现再改，别顺手重构别的文件。",
+        "核对刚才这组工程改动有没有越界、断言有没有被放水。"
+      ],
+      "en": [
+        "Fix this null pointer strictly under the coding protocol: reproduce first, touch nothing unrelated.",
+        "Check whether these recent edits stayed in scope without relaxing any tests."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "附带 `failure-modes.md` 与 `falsifiable-guards.md` 索引，每条守卫都能追到防什么失效模式。",
+        "不制造额外治理文件或强迫全套回归，节省时间与注意力。"
+      ],
+      "en": [
+        "Backed by `failure-modes.md` and `falsifiable-guards.md` documenting what each rule prevents.",
+        "Zero extra tracking files or wasted full-suite reruns on tiny patches."
+      ]
+    }
+  },
+  "soia-dev-github-ops": {
+    "title": {
+      "zh": "GitHub PR / CI / Release 与协作者权限管家",
+      "en": "GitHub PR, CI, Release & Collaborator Ops"
+    },
+    "pain": {
+      "zh": "查 CI 为什么挂、看 PR 评审意见、发 Release 或加协作者权限时，手敲 `gh` 参数容易查漏字段，更怕 AI 在没问过你的情况下顺手 `gh pr merge`、删分支，或者把协作者权限开太大。",
+      "en": "Checking failing CI jobs, PR review threads, releases, or collaborator roles with raw `gh` commands is tedious—and letting an AI auto-merge, delete branches, or grant repo access without explicit confirmation is dangerous."
+    },
+    "solution": {
+      "zh": "以官方 `gh` CLI 为单一安全入口：查仓库、PR、CI 首个可行动报错全程只读；任何评论、合并、发版、关单或删分支都必须先拿到当次授权并确认目标对象；协作者加减权限更是独立硬门，写前重述用户名与权限级别，写后独立回读核验。",
+      "en": "Operate safely through authenticated `gh` CLI: inspect PRs, CI failures, and releases read-only; require explicit confirmation before any write, merge, release, or branch deletion; and enforce a double-checked hard gate on collaborator permissions."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "定位仓库与一次验 auth", "desc": "优先显式 `--repo`，首次查 `gh auth status`，绝不读取或打印 token 值。" },
+          { "title": "只读诊断失败焦点", "desc": "用 `--json/--jq` 精准抽取字段，定位失败 CI job 的首个可行动报错。" },
+          { "title": "写入与权限双重确认", "desc": "PR 合并、发版、加协作者前重述目标仓库、对象与级别，获确认才执行。" },
+          { "title": "写后只读回读核验", "desc": "操作完另发只读查询核实远端实际状态（mergeable、tag、实际 role）。" }
+        ],
+        "guardrails": [
+          "查询不等于授权修复、评论、合并或删除分支",
+          "不以修改分支保护或削弱检查来绕过 CI 失败",
+          "绝不在配置、命令参数或日志里泄露凭据"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Resolve repo & auth once", "desc": "Prefer explicit `--repo` and check `gh auth status` without reading token values." },
+          { "title": "Extract actionable CI/PR info", "desc": "Query structured `--json`/`--jq` fields to pinpoint the first failing CI step." },
+          { "title": "Explicit gate on writes & access", "desc": "Restate repo, username, and role before granting access, merging, or releasing." },
+          { "title": "Verify remote state read-only", "desc": "Confirm final PR state, release tags, or actual collaborator role after writing." }
+        ],
+        "guardrails": [
+          "Read-only queries never authorize writes, merges, or branch deletes",
+          "Never weaken branch protections to bypass failing checks",
+          "Never log or store tokens in config or receipts"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "查下 soia-open-skills PR #399 的 CI 为什么红，先别改代码也别重跑无关测试。",
+        "title": "GitHub CI 只读定位回执示例",
+        "lines": [
+          { "text": "$ gh pr view 399 --repo soia-team/soia-open-skills --json state,mergeable,statusCheckRollup", "tone": "muted" },
+          { "text": "PR #399: OPEN · mergeable=MERGEABLE", "tone": "cyan" },
+          { "text": "✓ audit / unit-tests (exit 0)", "tone": "green" },
+          { "text": "✗ audit / check_install_sections: skill=soia-meta-find-skill missing WorkBuddy link", "tone": "amber" },
+          { "text": "下一步: 仅定位首个失败根因，等待你授权后再修复或写回 PR", "tone": "normal" }
+        ],
+        "footer": "不靠猜测重跑全仓检查，写入/合并/删分支严格等确认"
+      },
+      "en": {
+        "prompt": "Check why CI failed on soia-open-skills PR #399 without modifying code yet.",
+        "title": "Read-Only GitHub CI Diagnosis Sample",
+        "lines": [
+          { "text": "$ gh pr view 399 --repo soia-team/soia-open-skills --json state,mergeable,statusCheckRollup", "tone": "muted" },
+          { "text": "PR #399: OPEN · mergeable=MERGEABLE", "tone": "cyan" },
+          { "text": "✓ audit / unit-tests (exit 0)", "tone": "green" },
+          { "text": "✗ audit / check_install_sections: skill=soia-meta-find-skill missing WorkBuddy link", "tone": "amber" },
+          { "text": "Next: isolated first actionable error; awaiting confirmation before editing", "tone": "normal" }
+        ],
+        "footer": "Pinpoints exact CI failure without blind reruns or unauthorized writes"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "排查 GitHub PR 状态与 CI 报错", "action": "通过 `gh` 只读提取 checks 与失败 job 日志的首个根因", "outcome": "精准的失败定位、PR 链接与可行动建议" },
+        { "want": "安全合并 PR 或创建 GitHub Release", "action": "核对分支保护、CI 绿灯、tag 与发布摘要，确认后执行并回读", "outcome": "远端已核验的 merge/release 状态与 URL" },
+        { "want": "授予、调整或核查协作者权限", "action": "写前重述仓库、用户名与权限级别并核对 `collaborator-access` 手册", "outcome": "操作后独立查实的最终协作者 role" }
+      ],
+      "en": [
+        { "want": "Diagnose failing PRs & CI runs", "action": "Extract structured `gh` check status and first failing step log", "outcome": "Actionable root cause and exact PR/run URL" },
+        { "want": "Merge PRs or publish releases safely", "action": "Verify branch policy, CI status, and tag details before confirmed write", "outcome": "Verified remote merge/release state" },
+        { "want": "Manage collaborator access", "action": "Confirm repo, handle, and role level before write, then re-query role", "outcome": "Confirmed effective permission audit" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "查下这个 PR 的 CI 挂在哪个 step，把报错摘要贴给我。",
+        "帮我确认下这个仓库现在的协作者权限清单，别做任何修改。",
+        "CI 全绿后合并 PR #62（不删远端分支），并把合并结果核验给我。"
+      ],
+      "en": [
+        "Inspect which CI job failed on this PR and summarize the root error.",
+        "List current collaborators and permission levels on this repo read-only."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "凭据全程留在官方 `gh auth login` 或系统钥匙串，绝不进配置文件或终端回执。",
+        "所有远端写入操作后自动执行只读复查，区分「已提交请求」与「远端已生效」。"
+      ],
+      "en": [
+        "Credentials stay inside official `gh auth login` storage; zero tokens in logs.",
+        "Every write operation is followed by an independent read-only verification query."
+      ]
+    }
+  },
+  "soia-dev-govern-architecture": {
+    "title": {
+      "zh": "跨组件架构决策、方案评审与长期漂移审计",
+      "en": "Architecture Governance, Review & Drift Audit"
+    },
+    "pain": {
+      "zh": "项目演进半年后最常见三件事：跨模块职责越界、同一份状态被两个地方同时写、或者原本说好退役的旧入口还在偷偷被调用——可普通写代码技能一上手就改文件，没法先站高一层看清「谁拥有状态、哪里已经漂移」。",
+      "en": "As systems grow, boundaries erode: duplicate sources of truth appear, unauthorized modules mutate shared state, and retired entrypoints linger—yet standard coding flows jump straight to patching instead of auditing ownership and drift."
+    },
+    "solution": {
+      "zh": "把「设计方案」「评审给定方案」「核对长期漂移」分成三种独立模式：先厘清谁拥有状态、谁有写权、哪个规格文档是权威真源；只出有代码和调用链证据的判断、取舍与迁移次序，默认全程只读，绝不借评审名义擅自改代码或重开架构。",
+      "en": "Separate architecture work into three focused modes—design, review, or rot/drift audit—grounded in who owns state, who can write, and what ADR/contract is authoritative. Delivers evidence-backed decisions and migration boundaries read-only."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先定权威真源与模式", "desc": "分清当前做「设计 / 评审 / 漂移审计」，固定裁决依据（ADR/契约）与现状代码。" },
+          { "title": "追查状态所有权与调用", "desc": "核清谁拥有状态、谁可写、谁消费，不拿「现状代码这样写」推翻有效规范。" },
+          { "title": "输出取舍与迁移次序", "desc": "从最难改回的假设对比可行方案，写明共存窗口、切换条件与回退路径。" },
+          { "title": "只读交割清晰结论", "desc": "每条结论落到具体边界、源码出处和下一步验证，未读未跑项标未验证。" }
+        ],
+        "guardrails": [
+          "默认只读在对话交付，不顺手新建治理目录或状态库",
+          "架构建议不等于实施、迁移或发布授权",
+          "局部缺陷修复不借机重开整套架构"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Lock mode & authority", "desc": "Pick design, review, or rot-audit mode and ground norms in ADRs vs. code reality." },
+          { "title": "Trace state ownership", "desc": "Map who owns state, who writes, and who consumes; never let code bugs redefine specs." },
+          { "title": "Define trade-offs & migration", "desc": "Compare viable options from hardest-to-reverse assumptions with rollback paths." },
+          { "title": "Deliver read-only evidence", "desc": "Cite exact symbols, consumers, and impacts; label unread/unrun parts unverified." }
+        ],
+        "guardrails": [
+          "Read-only by default; never invent new governance trackers",
+          "Design recommendations do not authorize implementation or migration",
+          "Never reopen full architecture for localized bug fixes"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "审计下我们运行时和桌面端之间有没有出现「双份状态真源」或越权写入的架构漂移。",
+        "title": "架构漂移只读审计回执示例",
+        "lines": [
+          { "text": "[权威真源] docs/specs/M1-workspace.md §2.1: Workspace 元数据只由 daemon 写入", "tone": "cyan" },
+          { "text": "✗ 越权写入: desktop/src/store/workspace.ts:84 直接落盘写 workspaces.json", "tone": "amber" },
+          { "text": "✗ 退役未清: legacy/ipc_v1_bridge.rs 仍有 2 处活跃调用 (cli/main.rs:112)", "tone": "amber" },
+          { "text": "✓ 建议收敛: 冻结旧 bridge，桌面端改为调用 daemon RPC；共存期以 feature flag 切换", "tone": "green" }
+        ],
+        "footer": "每条漂移附真源出处、实际消费者与收敛次序，不擅改一行生产代码"
+      },
+      "en": {
+        "prompt": "Audit whether state ownership between our daemon and desktop client has drifted.",
+        "title": "Architecture Drift Audit Sample",
+        "lines": [
+          { "text": "[Authority] docs/specs/M1-workspace.md §2.1: daemon owns workspace writes", "tone": "cyan" },
+          { "text": "✗ Unauthorized write: desktop/src/store/workspace.ts:84 mutates workspaces.json", "tone": "amber" },
+          { "text": "✗ Lingering entrypoint: legacy/ipc_v1_bridge.rs still called at cli/main.rs:112", "tone": "amber" },
+          { "text": "✓ Migration step: freeze v1 bridge, route desktop writes via daemon RPC", "tone": "green" }
+        ],
+        "footer": "Every drift finding cites authoritative spec, callers, and safe cutover order"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "为跨组件方案做选型设计", "action": "从最难改回的假设对比可行方案，写清职责、数据流与恢复语义", "outcome": "含取舍依据与可证伪验证的架构方案" },
+        { "want": "评审已有架构或重构提案", "action": "沿关键调用、状态写入与失败路径核查是否符合约定", "outcome": "规格符合性与工程代价分开的有证据评审" },
+        { "want": "排查长期演进后的架构漂移", "action": "对照有效裁决找重复真源、逆向依赖与名义退役仍被调用的入口", "outcome": "带文件位置、消费者和影响范围的漂移清单" }
+      ],
+      "en": [
+        { "want": "Evaluate cross-component designs", "action": "Compare options from hardest-to-reverse assumptions, data flows, and recovery", "outcome": "Trade-off analysis with falsifiable checks" },
+        { "want": "Review a proposed architecture", "action": "Audit state writes, call paths, and failure semantics against constraints", "outcome": "Evidence-backed compliance & cost review" },
+        { "want": "Detect architectural rot", "action": "Cross-check ADRs vs. code for duplicate truth, reverse deps, and zombie paths", "outcome": "Drift inventory with exact files and consumers" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "这几个模块的职责越界了，帮我对比两种解耦方案的取舍和迁移顺序。",
+        "对照我们的设计契约做一次只读架构漂移核对，列出哪些旧入口还没清理干净。"
+      ],
+      "en": [
+        "Compare two decoupling options for these modules and lay out the migration order.",
+        "Run a read-only architecture drift check against our design spec."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "配套 `authority-model.md` 与 `rot-audit.md` 标准判据，严格区分「规范怎样定」和「现状怎样跑」。",
+        "未读到的文件或未运行的检查如实标注「未验证」，绝不靠脑补画完整架构图。"
+      ],
+      "en": [
+        "Grounded in `authority-model.md` and `rot-audit.md` without conflating current code with spec.",
+        "Unread modules and unrun checks are explicitly marked unverified."
+      ]
+    }
+  },
+  "soia-dev-implement-task": {
+    "title": {
+      "zh": "工程需求落地、缺陷定位与审查修复",
+      "en": "Task Implementation, Bug Fixing & Findings"
+    },
+    "pain": {
+      "zh": "把一个需求或 bug 交给 AI，常见两极分化：要么没先复现根因就东改西改、把无关代码弄坏；要么改完只说「已完成」，却没跑靠近改动的验证，甚至连高风险边界和独立评审都没交代清楚。",
+      "en": "Handing a feature or bug fix to an AI often fails at two extremes: blindly editing before reproducing the root cause, or claiming 'done' without running targeted checks, verifying edge paths, or surfacing remaining risks."
+    },
+    "solution": {
+      "zh": "先锁最小工作边界，沿一条可验证的行为逐段推进：修缺陷先建失败复现回路再做最小改动；处理审查 findings 逐条标 fix / reject / defer；跑通靠近改动的真实测试并核对 diff，有独立评审要求时按策略交付单次评审结论，绝不靠吞错或放松断言变绿。",
+      "en": "Lock a minimal working boundary and advance one verifiable behavior at a time: reproduce bugs before patching, classify findings as fix/reject/defer, run real checks near the change, inspect the final diff, and invoke an independent review when policy requires."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "定边界与可验证行为", "desc": "以相关实现与直接调用方为界，保留他人改动，先明确一个具体验收例。" },
+          { "title": "缺陷先复现再最小改", "desc": "沿数据与调用路径找首个偏离点，建失败回路验证假设，再落最小实现。" },
+          { "title": "跑真实验证并查 diff", "desc": "跑聚焦检查与高风险失败路径，逐行复核最终 diff，绝不靠放松断言过关。" },
+          { "title": "按需独立评审收口", "desc": "项目要求独立评审时由异模型只读复核，未跑的检查如实报未验证。" }
+        ],
+        "guardrails": [
+          "「只诊断」请求绝不顺手改文件",
+          "实现完成不自动获得 commit / push / 发布授权",
+          "不吞错、不留 TODO 假装通过、不删既有失败测试"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Bound scope & behavior", "desc": "Limit edits to relevant callers and specs; pick one concrete acceptance case first." },
+          { "title": "Reproduce before editing", "desc": "Trace data/call path to the first divergence and verify a failing repro first." },
+          { "title": "Run real checks & diff", "desc": "Execute targeted tests and failure paths; review full diff without relaxing assertions." },
+          { "title": "Optional independent review", "desc": "Trigger one read-only independent review if required; report unrun checks honestly." }
+        ],
+        "guardrails": [
+          "Diagnosis-only requests never mutate files",
+          "Completion never implies commit, push, or release approval",
+          "Never swallow errors or weaken test assertions"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "按任务书修好重试退避溢出的 bug，跑通相关单测并给出验收回执，不要擅自 commit。",
+        "title": "工程任务闭环回执示例",
+        "lines": [
+          { "text": "1. 复现根因: retry_delay(attempt=35) 在 src/net/backoff.ts:19 溢出返回 NaN", "tone": "amber" },
+          { "text": "2. 最小修复: 限制指数上限为 30 并补充边界单测 (tests/backoff.test.ts)", "tone": "cyan" },
+          { "text": "3. 定向验证: vitest run tests/backoff.test.ts -> 14 passed, 0 failed (EC=0)", "tone": "green" },
+          { "text": "4. 边界说明: 未跑全仓 e2e；工作区仅改动上述 2 个文件，未 commit", "tone": "normal" }
+        ],
+        "footer": "结论在前、检查真跑、未测范围如实声明"
+      },
+      "en": {
+        "prompt": "Fix the retry backoff overflow bug per the spec, run unit tests, and stop without committing.",
+        "title": "Engineering Implementation Receipt Sample",
+        "lines": [
+          { "text": "1. Repro: retry_delay(attempt=35) overflows to NaN at src/net/backoff.ts:19", "tone": "amber" },
+          { "text": "2. Minimal patch: cap exponent at 30 and add boundary test in tests/backoff.test.ts", "tone": "cyan" },
+          { "text": "3. Verification: vitest run tests/backoff.test.ts -> 14 passed, 0 failed (EC=0)", "tone": "green" },
+          { "text": "4. Residual scope: full e2e not run; only 2 files changed; not committed", "tone": "normal" }
+        ],
+        "footer": "Real repro, minimal diff, real test exit code, honest scope limits"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "按任务书实现新功能或行为变更", "action": "围绕可验证验收例小步推进，沿用已有架构与样式", "outcome": "最小干净 diff 与真实检查回执" },
+        { "want": "定位并修复线上或测试缺陷", "action": "先沿调用链建变红复现回路，确认根因后再最小修复", "outcome": "修前失败→修后通过的可复核证据" },
+        { "want": "逐条处置代码审查 findings", "action": "对照候选实码逐条标 `fix / reject / defer` 并仅修成立项", "outcome": "逐项处置说明与修复验证（不靠编号清零敷衍）" }
+      ],
+      "en": [
+        { "want": "Implement a scoped feature or spec", "action": "Advance incrementally around concrete acceptance checks using existing patterns", "outcome": "Minimal diff and verified test results" },
+        { "want": "Diagnose and fix a bug", "action": "Build a failing repro along the call path before patching", "outcome": "Before/after test proof and root-cause explanation" },
+        { "want": "Resolve review findings", "action": "Verify each finding against live code and mark fix/reject/defer", "outcome": "Itemized resolution and re-verification" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "按任务书实现这个分页参数校验，跑通单测并汇报改动文件，先别提交。",
+        "查一下为什么导入超时后队列卡死，先给我根因和复现证据。"
+      ],
+      "en": [
+        "Implement pagination validation per the task brief, run tests, and leave changes uncommitted.",
+        "Diagnose why the queue stalls after an import timeout and show repro evidence first."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "内置 `diagnosis-loop.md`、`acceptance-line.md` 与 `ai-provider.md` 专项参考，避免误套检查。",
+        "明确区分「实现者自检」与「异模型独立评审」，模型证据不足直接标 `blocked_independence`。"
+      ],
+      "en": [
+        "Includes targeted playbooks (`diagnosis-loop`, `acceptance-line`, `ai-provider`).",
+        "Enforces strict model independence if independent review is requested."
+      ]
+    }
+  },
+  "soia-dev-review-code": {
+    "title": {
+      "zh": "只读代码与技能包独立审查（合规+风险双查）",
+      "en": "Read-Only Code & Skill Package Review"
+    },
+    "pain": {
+      "zh": "让 AI 审代码经常变成两件烦心事：要么只挑缩进和命名等风格毛病、放过真正的越权写入或逻辑漏洞；要么审着审着自己直接动手改起了代码，或者拿旧的运行日志冒充当前版本的验收证据。",
+      "en": "AI code reviews often nitpick formatting while missing real security or state bugs—or start editing files mid-review, or cite stale test runs as proof for the latest commit."
+    },
+    "solution": {
+      "zh": "锁定一个具体候选（commit SHA / PR / 技能目录），全程只读、绝不改文件或代为放行：先查是否满足请求与设计规格，再沿调用边界查正确性、安全、错误处理与测试真伪；跑门严格读项目 CI 配置并区分「本次新红」与「基线既有红」。",
+      "en": "Lock a concrete candidate (SHA, diff, or skill package) and stay strictly read-only: audit spec compliance first, then trace call boundaries for correctness, input safety, error handling, and real test rigor—distinguishing new failures from baseline reds."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "锁定固定审查候选", "desc": "先取齐准确 SHA / diff 与项目规则；材料会漂移就标明范围，绝不瞎猜版本。" },
+          { "title": "查规格符合与工程风险", "desc": "分两层查：是否漏做/越界，以及边界条件、安全与测试断言是否扎实。" },
+          { "title": "回到源码核实反例", "desc": "每个问题回到实际调用上下文核对触发条件；确认不了的入「未验证项」。" },
+          { "title": "按严重度交付停手", "desc": "先给建议（通过/先改/拒绝）与可行动清单，不因审查顺手改代码。" }
+        ],
+        "guardrails": [
+          "全程只读：不修复、不 commit、不替人点击合并",
+          "绝不拿 `cmd | tail` 掩盖真实非零退出码",
+          "不把个人审美偏好包装成阻塞缺陷"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Pin exact candidate", "desc": "Lock commit SHA, diff, and project rules; never guess or review moving targets." },
+          { "title": "Audit spec & engineering", "desc": "Check requirements compliance separately from correctness, safety, and test rigor." },
+          { "title": "Verify trigger & impact", "desc": "Trace concrete failure conditions in code; put uncertain items under unverified." },
+          { "title": "Deliver verdict & stop", "desc": "Give verdict (approve/changes/reject) and actionable list without editing files." }
+        ],
+        "guardrails": [
+          "Strictly read-only: never patch, commit, or approve merges",
+          "Never pipe test runners through `tail` hiding non-zero exit codes",
+          "Never report personal style preferences as blocking bugs"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "只读审查这笔提交的权限校验与 CI 验证情况，给出能不能合的判断。",
+        "title": "独立只读代码审查回执示例",
+        "lines": [
+          { "text": "审查对象: feat/auth-guard @ a91c4e2 · 形态: 独立只读审查", "tone": "cyan" },
+          { "text": "建议: 建议先改（发现 1 处阻塞级授权绕过风险）", "tone": "amber" },
+          { "text": "• [阻塞] src/routes/admin.ts:42 — 仅校验了 token 存在，未核对 role === 'admin'", "tone": "amber" },
+          { "text": "• [验证对拍] 必跑门 typecheck EC=0 · auth 单测 EC=0（基线无新增红项）", "tone": "green" },
+          { "text": "未验证项: 生产环境反向代理 header 透传未在本机复测", "tone": "muted" }
+        ],
+        "footer": "不改源码、不拿基线红项甩锅、只报会改变下一步决策的真实问题"
+      },
+      "en": {
+        "prompt": "Run a read-only review on this commit's auth guard and CI checks.",
+        "title": "Independent Read-Only Review Sample",
+        "lines": [
+          { "text": "Candidate: feat/auth-guard @ a91c4e2 · Mode: Read-only independent review", "tone": "cyan" },
+          { "text": "Verdict: Request changes (1 blocking authorization gap)", "tone": "amber" },
+          { "text": "• [Blocking] src/routes/admin.ts:42 — checks token presence but not role === 'admin'", "tone": "amber" },
+          { "text": "• [CI Baseline] typecheck EC=0 · auth tests EC=0 (no regressions vs. base)", "tone": "green" },
+          { "text": "Unverified: reverse-proxy header forwarding not tested locally", "tone": "muted" }
+        ],
+        "footer": "Zero edits; separates real blockers, verified gates, and unverified scope"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "对指定 PR 或 commit 做独立审查", "action": "按规格符合性与工程边界双维度排查，并回源核实反例", "outcome": "先结论后明细的可行动问题列表" },
+        { "want": "严谨核对 CI 门禁是否真的验过", "action": "从项目 CI 配置读全必跑门、对比基线退出码（禁管道吞错）", "outcome": "逐门真实 EC 对拍与未运行项声明" },
+        { "want": "审查一个 SOIA 技能包改动", "action": "核查正文、脚本入口、授权门、脱敏与前向测试证据", "outcome": "面向客户安全与跨宿主兼容性的包级评审" }
+      ],
+      "en": [
+        { "want": "Review a fixed PR or commit", "action": "Audit spec compliance and engineering risk with verified code evidence", "outcome": "Verdict-first actionable findings list" },
+        { "want": "Verify whether CI gates really ran", "action": "Read exact CI gates, compare baseline exit codes without pipe masking", "outcome": "Per-gate exit code comparison & gap report" },
+        { "want": "Audit a SOIA skill package", "action": "Check SKILL.md, script CLI, auth gates, redaction, and forward tests", "outcome": "Skill safety and cross-host compatibility review" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "只读审查当前分支相对 main 的改动，分开报规格偏差和工程漏洞。",
+        "帮我检查这个技能包的修改：脚本自测跑了没、授权边界有没有漏。"
+      ],
+      "en": [
+        "Review current branch vs. main read-only; separate spec drift from engineering risks.",
+        "Audit this skill package PR for missing auth gates or unverified test claims."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "坚持「同一实际模型换对话不冒充异模型独立评审」，证据不足如实标 `blocked_independence`。",
+        "跑门严格保留 `--check` 只读模式，不改工作树状态、不虚报 `skipped` 为通过。"
+      ],
+      "en": [
+        "Never disguises same-model re-runs as independent reviews.",
+        "Runs gates strictly read-only without mutating worktrees or inflating skipped checks."
+      ]
+    }
+  },
+  "soia-dev-show-task-html": {
+    "title": {
+      "zh": "最小有用视图：按需把调用链与进度画清楚",
+      "en": "Minimal Useful Views for Tasks & Call Flows"
+    },
+    "pain": {
+      "zh": "想看懂一个复杂模块的调用顺序或任务卡在哪一步，最烦两种极端：要么甩给你几千字纯文字绕晕，要么不管三七二十一直接生成一个花里胡哨的 KPI 仪表盘网页，塞满没用的评分卡和进度环。",
+      "en": "When trying to understand a call chain or task status, AIs often swing between a wall of dense prose and an over-engineered HTML dashboard cluttered with fake KPIs and decorative charts."
+    },
+    "solution": {
+      "zh": "按信息密度自动选最小够用的视图：一步事实直接回文字，对应关系用短表格，调用或目录用树，跨组件时序用 Mermaid，改了什么给关键 diff；只有真需要空间布局或交互时才出一页离线 HTML，围绕你要懂的重点组织，绝不强行画图或堆砌假看板。",
+      "en": "Pick the smallest view that clarifies the point: plain text for a single fact, compact table for mappings, ASCII tree for structure, Mermaid for sequence, key diff for changes—and a clean offline single-page HTML only when spatial layout or interaction genuinely helps."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先判值不值得画图", "desc": "一句话能讲清的事不强行出图；普通日常回执不用本技能。" },
+          { "title": "选最小恰当载体", "desc": "表格 / 伪代码 / 目录树 / Mermaid / 关键 diff，图紧贴它解释的结论。" },
+          { "title": "仅按需生成离线 HTML", "desc": "确需空间或交互视图才出单页 HTML，去外部依赖、防 XSS 转义、兼顾窄屏。" },
+          { "title": "渲染核验后再交路径", "desc": "HTML 输出先实际打开核对内容与布局无遮挡，没渲染就直说。" }
+        ],
+        "guardrails": [
+          "不堆砌无意义的 KPI、评分卡或固定统计框",
+          "调用关系必须核实源码，未知部分用普通话标清",
+          "HTML 只写系统临时目录或指定路径，不污染源码仓"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Decide if visual helps", "desc": "Skip diagrams for simple facts; pick the lightest format that clarifies." },
+          { "title": "Match format to shape", "desc": "Table, pseudocode, directory tree, Mermaid sequence, or full relevant diff." },
+          { "title": "Offline HTML on demand", "desc": "Generate self-contained escaped HTML only when spatial/interactive view is needed." },
+          { "title": "Inspect before handing off", "desc": "Open and verify rendered HTML layout on desktop and narrow screens." }
+        ],
+        "guardrails": [
+          "No decorative KPIs, fake scores, or boilerplate widgets",
+          "Verify call paths in code; label unknowns plainly",
+          "Write HTML only to temp or requested output paths"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "画一下消息从桌面端点击发送到最后落盘账本经过了哪几个模块，怎么清晰怎么来。",
+        "title": "最小有用视图输出示例",
+        "lines": [
+          { "text": "[选型判断] 跨 4 个模块有序交互 -> 采用 Mermaid 时序图 + 关键职责边界表", "tone": "cyan" },
+          { "text": "Desktop UI --(IPC invoke)--> Daemon Router --(policy check)--> CapabilityGate", "tone": "normal" },
+          { "text": "CapabilityGate --(allow)--> AgentRun --(append event)--> RunLedger (SQLite)", "tone": "green" },
+          { "text": "[已核对] 4 处入口文件均已在源码确认；未加多余 KPI 与整页 HTML", "tone": "muted" }
+        ],
+        "footer": "不为了显得高级而画一整套图，用最少笔墨把关键关系一次看透"
+      },
+      "en": {
+        "prompt": "Show how a user message travels from the desktop click to the ledger write.",
+        "title": "Minimal Useful View Output Sample",
+        "lines": [
+          { "text": "[Format Choice] 4-module sequential flow -> Mermaid sequence + boundary notes", "tone": "cyan" },
+          { "text": "Desktop UI --(IPC invoke)--> Daemon Router --(policy check)--> CapabilityGate", "tone": "normal" },
+          { "text": "CapabilityGate --(allow)--> AgentRun --(append event)--> RunLedger (SQLite)", "tone": "green" },
+          { "text": "[Verified] All 4 source files checked; skipped unnecessary HTML boilerplate", "tone": "muted" }
+        ],
+        "footer": "Smallest clear representation grounded in real source files"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "快速看懂模块调用链或数据流", "action": "先核对真实源码位置，再选树状图或 Mermaid 呈现关键边界", "outcome": "紧贴结论、标明未知项的清晰结构图" },
+        { "want": "把多维度任务进度或依赖排明白", "action": "按需用短表或一页离线响应式 HTML 展现空间关系", "outcome": "可复制文字、桌面与手机均可读的干净视图" }
+      ],
+      "en": [
+        { "want": "Visualize call chains or data flow", "action": "Verify real code call sites first, then render tree or Mermaid sequence", "outcome": "Focused diagram aligned with source truth" },
+        { "want": "Inspect complex task dependencies", "action": "Render compact table or single-file offline responsive HTML when needed", "outcome": "Clean, copyable view without fake dashboards" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "展示下这个任务当前卡在哪个环节、前面依赖谁，画个最小够用的图。",
+        "帮我梳理一下认证模块到账本模块的数据流怎么走的，顺便标出状态归谁管。"
+      ],
+      "en": [
+        "Show where this task is currently blocked and its upstream dependencies.",
+        "Map the data flow from auth to ledger and mark who owns state at each step."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "不读凭据、不外传源码、不依赖外部 CDN 资源，离线即可打开查看。",
+        "严格校验「已核实源码」与「推断/未知」，绝不在图里把猜测画成实线。"
+      ],
+      "en": [
+        "Offline-safe output with zero external CDN requests or credential reads.",
+        "Clearly marks verified source paths vs. unverified edges."
+      ]
+    }
+  }
+}

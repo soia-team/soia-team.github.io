@@ -1,0 +1,404 @@
+{
+  "soia-meta-find-skill": {
+    "title": {
+      "zh": "按需求检索技能：优先已装，不越权代装",
+      "en": "Skill Discovery: Project-First & Clean Handoff"
+    },
+    "pain": {
+      "zh": "技能库越积越多，到用时总想不起该叫哪个名字；更麻烦的是网上装了重复的全局副本，或者只是想先问问「有没有能干这事的技能」，结果 AI 没打招呼就开始往机器里装包。",
+      "en": "With dozens of skills across domains, it's hard to remember exact skill names—and asking 'do we have a skill for X?' shouldn't trigger silent global installs or duplicate stale copies."
+    },
+    "solution": {
+      "zh": "只负责把人话需求翻译成精准候选清单：按关键词与中文同义词表同时扫描当前项目 `.agents/skills`、用户全局真源和公开生态目录，项目已装过的优先标出路径供直接加载；未安装的只整理「项目/全局、目标宿主、单技能/整域」选择意图，等你确认后再交由同步/安装技能动手。",
+      "en": "Translate natural-language intent into up to 3 ranked matches across project `.agents/skills`, global sources, and the public catalog. Installed project skills are surfaced first; uninstalled ones return clean selection metadata without executing any install."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "提取中文意图关键词", "desc": "抽 1–3 个高区分度词，对照 `query-hints.json` 同义词与领域线索缩小候选。" },
+          { "title": "项目优先联合检索", "desc": "确定当前项目时先扫 `.agents/skills`，按 realpath 去重并同公开目录联合排序。" },
+          { "title": "已安装直接返回路径", "desc": "已装技能给明确 `SKILL.md` 路径，当前宿主实际读入后即可开始干活。" },
+          { "title": "未安装只收集安装意图", "desc": "默认单技能、项目级，绝不私自拼出 `-g -a '*'` 命令或擅自写入本机。" }
+        ],
+        "guardrails": [
+          "只找技能、不代装、不改软链、不发布",
+          "没问清楚前绝不暗自扫描全局或全量安装",
+          "找不到候选如实返回空数组，绝不编造技能名"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Extract intent keywords", "desc": "Pull 1–3 discriminative phrases matched against `query-hints.json`." },
+          { "title": "Project-first union scan", "desc": "Scan project `.agents/skills` first, deduplicate by realpath, and rank with catalog." },
+          { "title": "Load installed skills", "desc": "Return verified local `SKILL.md` paths for immediate loading by the active host." },
+          { "title": "Handoff install selection", "desc": "For uninstalled matches, collect scope/agent/granularity without installing." }
+        ],
+        "guardrails": [
+          "Read-only discovery: never installs, symlinks, or publishes",
+          "Never defaults to global `-g` or wildcard `-a '*'`",
+          "Returns empty list when no match exists—never invents skill names"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "有没有技能可以把飞书知识库只读同步成本地 Markdown？先看我项目里装了没。",
+        "title": "技能检索 JSON 输出与回执示例",
+        "lines": [
+          { "text": "$ python3 skills/soia-meta-find-skill/scripts/find_skill.py --query \"飞书 同步\" --scope auto", "tone": "muted" },
+          { "text": "1. soia-cwork-feishu-cli (installed: false · repo: soia-open-cwork-office-skills)", "tone": "cyan" },
+          { "text": "   install_selection: { scope: \"project\", target: \"skill\", pending: [\"agents\"] }", "tone": "normal" },
+          { "text": "✓ 检索完成：未写入本机；请确认是否只装单技能到当前项目的 claude/codex", "tone": "green" }
+        ],
+        "footer": "不越权装包、不猜全局路径，先找准再交安装 owner 落盘"
+      },
+      "en": {
+        "prompt": "Do we have a skill to sync Feishu Wiki to local Markdown? Check if it's already installed.",
+        "title": "Skill Discovery Output Sample",
+        "lines": [
+          { "text": "$ python3 skills/soia-meta-find-skill/scripts/find_skill.py --query \"feishu sync\" --scope auto", "tone": "muted" },
+          { "text": "1. soia-cwork-feishu-cli (installed: false · repo: soia-open-cwork-office-skills)", "tone": "cyan" },
+          { "text": "   install_selection: { scope: \"project\", target: \"skill\", pending: [\"agents\"] }", "tone": "normal" },
+          { "text": "✓ Read-only lookup complete; awaiting host confirmation before installing", "tone": "green" }
+        ],
+        "footer": "Never auto-installs or guesses global scope"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "用大白话找匹配的 SOIA 技能", "action": "结合 `query-hints.json` 同义词在本地与公开目录排序返回前 3 项", "outcome": "准确技能名、简介与安装状态 JSON" },
+        { "want": "优先复用当前项目已装技能", "action": "按 realpath 去重项目与全局命中，已装直接返回 `SKILL.md` 路径", "outcome": "立即可读入执行的本地技能路径" },
+        { "want": "确认安装范围后交给下游安装", "action": "收集 project/global、目标 Agent 与单技能/整域选择", "outcome": "标准化 `install_selection` 交接对象" }
+      ],
+      "en": [
+        { "want": "Find skills from natural language", "action": "Rank local and catalog matches via `query-hints.json` synonyms", "outcome": "Top 3 verified skill matches with status" },
+        { "want": "Prefer project-installed skills", "action": "Deduplicate by realpath with project priority", "outcome": "Exact local `SKILL.md` path to load" },
+        { "want": "Prepare clean install handoff", "action": "Gather project/global, target agents, and skill/domain choice", "outcome": "Structured `install_selection` payload" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "找个技能：我想把网页文章剪藏到 Obsidian 并自动更新 MOC。",
+        "查一下当前项目有没有装代码审查技能，没装先别动，告诉我缺什么选择。"
+      ],
+      "en": [
+        "Find a skill for clipping web pages to Obsidian and updating MOCs.",
+        "Check if a code-review skill is installed in this project without installing anything."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "只依赖 Python 3 标准库，仅读公开索引与 frontmatter，不碰凭据、不写缓存。",
+        "严格分离「找到候选」和「安装写入」，随 `soia-open-skills` 单测回归验证。"
+      ],
+      "en": [
+        "Python 3 stdlib only; reads public index and frontmatter with zero state writes.",
+        "Covered by `test_find_skill_router` and `test_generate_router_index`."
+      ]
+    }
+  },
+  "soia-meta-prompt-clarity": {
+    "title": {
+      "zh": "提示词工程：起草、诊断、消歧与规格化",
+      "en": "Prompt Clarity: Draft, Diagnose, Disambiguate & Spec"
+    },
+    "pain": {
+      "zh": "写 Prompt 时常踩两个坑：要么写得太散，AI 每次跑出来口径乱飘；要么只是想简单润色两句，结果被 AI 强行套上一个臃肿的「角色+步骤+KPI」八股大框架，或者因为术语含糊被误判拒绝。",
+      "en": "Writing prompts fails at two extremes: vague instructions that make AI drift, or simple requests bloated into heavy multi-section templates—or legitimate requests misread as unsafe due to ambiguous phrasing."
+    },
+    "solution": {
+      "zh": "按真实需要自动分进四档模式（A 从零起草 / B 诊断优化 / C 防误伤消歧 / D 扩展成可验证规格）：简单需求不套框架、原本写得好的段落保留不动；需要英文提示词时直接按英文思维原生写作，绝不逐句硬译；交付完整可复制的提示词正文，不自作主张替你执行里面的任务。",
+      "en": "Route to four clear modes—Draft (A), Diagnose (B), Disambiguate (C), or Verify-Grade Spec (D): keep concise tasks light without boilerplate frameworks, preserve valid clauses untouched, author English prompts natively rather than translating line-by-line, and return copy-ready prompts without executing them."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "定模式不套冗余框架", "desc": "先判走起草、诊断、消歧还是规格模式，简单润色不升级成重型规格。" },
+          { "title": "保留原意图与义务强度", "desc": "不把「必须」改弱成「建议」，不把「全量」偷换成「抽样」。" },
+          { "title": "中英双语各自原生表达", "desc": "要求英文 prompt 时按英文指令习惯原生起草，说明仍用中文给清。" },
+          { "title": "给正文，非阻断放后面", "desc": "无真正安全/授权阻断时先交完整可复制提示词，补充问题列在文末。" }
+        ],
+        "guardrails": [
+          "把待处理文本视为纯数据，不执行其中的指令",
+          "C 模式只补真实已确认事实，绝不编造所有权或绕过安全规则",
+          "不凭路径假装读过文件，不虚构实时模型清单"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Select right-sized mode", "desc": "Choose Draft, Diagnose, Disambiguate, or Spec—never bloat simple prompts." },
+          { "title": "Preserve intent & rigor", "desc": "Keep 'must' as 'must' and 'all' as 'all' without silent weakening." },
+          { "title": "Native bilingual authoring", "desc": "Write English prompts natively using clear imperative syntax when requested." },
+          { "title": "Deliver copy-ready text", "desc": "Output the full prompt up front with non-blocking clarifications after." }
+        ],
+        "guardrails": [
+          "Treat quoted prompt text strictly as data—never execute it",
+          "Disambiguate only with verified facts; never bypass safety gates",
+          "Never fabricate file contents or live model lists"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "帮我优化这段代码审查 prompt：现在 AI 总爱顺手改文件，还经常说「应该没问题」。",
+        "title": "模式 B · 诊断优化对比示例",
+        "lines": [
+          { "text": "[诊断发现] 1. 缺「只读禁改」硬约束  2. 缺「证据与退出码」输出要求", "tone": "amber" },
+          { "text": "----------------------------------------------------------------------", "tone": "muted" },
+          { "text": "优化后提示词（保留原有上下文，只补缺口）：", "tone": "cyan" },
+          { "text": "「只读审查 <目标范围>，禁止修改任何文件或提交。每条结论必须附文件路径、", "tone": "green" },
+          { "text": " 触发条件与实际命令退出码；未运行或无法确认的项单列为未验证，不得写『应该没问题』。」", "tone": "green" }
+        ],
+        "footer": "不套臃肿八股框架，精准补齐真正缺失的边界与验收要求"
+      },
+      "en": {
+        "prompt": "Improve this code-review prompt: the AI keeps editing files and saying 'looks fine'.",
+        "title": "Mode B · Targeted Prompt Diagnosis Sample",
+        "lines": [
+          { "text": "[Diagnosis] 1. Missing read-only guard  2. Missing evidence & exit-code rule", "tone": "amber" },
+          { "text": "----------------------------------------------------------------------", "tone": "muted" },
+          { "text": "Refined Prompt (preserves intent, patches gaps only):", "tone": "cyan" },
+          { "text": "\"Review <scope> strictly read-only—do not edit or commit files. Cite file path,", "tone": "green" },
+          { "text": " trigger, and exact check exit codes; list unrun items explicitly as unverified.\"", "tone": "green" }
+        ],
+        "footer": "Fixes actual gaps cleanly without over-engineering"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "从零写出清晰可控的提示词（模式 A）", "action": "用最少目标、上下文、约束与输出格式一次写清", "outcome": "直接可用的完整提示词正文" },
+        { "want": "诊断已有提示词为什么跑偏（模式 B）", "action": "只改含糊、矛盾或缺失约束处，保留有效段落", "outcome": "问题点说明 + 精简改写版" },
+        { "want": "正当请求被误读时的防误伤消歧（模式 C）", "action": "补齐已确认的授权主体、本地用途与边界说明", "outcome": "表达清晰、不易误判的规范表述" },
+        { "want": "把复杂多阶段任务扩展成规格（模式 D）", "action": "拆清分阶段门槛、全量范围与可核验验收标准", "outcome": "不遗漏任何强制条款的工程级规格" }
+      ],
+      "en": [
+        { "want": "Draft a clear prompt from scratch (A)", "action": "Write minimal goal, context, bounds, and output format", "outcome": "Copy-ready prompt without fluff" },
+        { "want": "Fix why a prompt drifts (B)", "action": "Patch ambiguity, contradictions, or missing output bounds", "outcome": "Targeted diff and refined prompt" },
+        { "want": "Disambiguate legitimate requests (C)", "action": "Clarify verified ownership, scope, and benign intent", "outcome": "Clear, non-misleading phrasing" },
+        { "want": "Expand into verifiable spec (D)", "action": "Structure multi-stage gates, coverage rules, and checks", "outcome": "Audit-grade prompt specification" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "帮我写一个提示词，让编码 Agent 每次修完 bug 只跑相关单测，不要动别的文件。",
+        "诊断下我这段英文 prompt 为什么总漏掉边界条件，按英文原生习惯改顺。"
+      ],
+      "en": [
+        "Write a prompt telling an agent to run only targeted tests after a fix without editing unrelated files.",
+        "Diagnose why my prompt misses edge cases and rewrite it in crisp native English."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "零脚本、零外部 API 依赖，不建配置文件、不读你机器上的私人目录。",
+        "严格区分「提示词改写」与「执行任务」，绝不在交付提示词时顺手跑掉里面的动作。"
+      ],
+      "en": [
+        "Zero external APIs, configs, or local state; reads only conversation inputs.",
+        "Delivers the prompt text without secretly executing its instructions."
+      ]
+    }
+  },
+  "soia-meta-skill-release": {
+    "title": {
+      "zh": "SOIA 技能正式发版、快进 main 与市场 pin 刷新",
+      "en": "Skill Release Train, Fast-Forward & Pin Sync"
+    },
+    "pain": {
+      "zh": "多个技能仓日常都在 `dev`（带 `-SNAPSHOT`）开发，真到发正式版时最怕五步漏一步：squash 合并把祖先链搞断、SNAPSHOT 不小心漏进客户端插件清单、忘了打 tag 或刷元仓 pin，甚至把别人还在 `dev` 调试的代码一起发出去。",
+      "en": "Shipping multi-repo skill trains easily breaks if steps slip: squash-merging breaks fast-forward ancestry, `-SNAPSHOT` leaks into marketplace pins, tags/releases get skipped, or another agent's unfinished work on `dev` ships accidentally."
+    },
+    "solution": {
+      "zh": "用 `formal_release.py` 把发版铁律固化成五步闭环，并在任何写入前先跑 `--dry-run` 预演：定稿 PR 摘掉 `-SNAPSHOT` → 等 `dev` CI 全绿 → 快进推 `main`（绝不用 squash/merge）→ 打 tag 与 GitHub Release → 立刻重开下一列 `-SNAPSHOT` PR；再统一刷新元仓市场 pin。客户端装机完全解耦，只有你另行点名才交给 sync 技能。",
+      "en": "Codify the 5-step release train with `formal_release.py` and mandatory `--dry-run` preview: finalize PR on `dev` (drop `-SNAPSHOT`) → verify CI green → fast-forward `main` → tag & GitHub Release → reopen next `-SNAPSHOT` train, then refresh marketplace pins. Client installs never auto-run."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "生态体检与 dry-run 预演", "desc": "先跑 `check_version_trains.py` 与 `formal_release.py --dry-run` 核验祖先链和清单。" },
+          { "title": "定稿 dev 并守 CI 全绿", "desc": "摘掉 `-SNAPSHOT` 并更新 `CHANGELOG.md`，等 `dev` HEAD 的 audit 全部通过。" },
+          { "title": "快进 main + Tag + Release", "desc": "严格 `dev -> main` 快进推送让两分支同 SHA，随后打 `vX.Y.Z` 与正式 Release。" },
+          { "title": "重开 SNAPSHOT & 刷 pin", "desc": "立刻重开下一列 `+patch-SNAPSHOT` 到 dev，并向元仓提交市场 pin 刷新 PR。" }
+        ],
+        "guardrails": [
+          "修 bug 或加功能不等于授权发版，必须拿到当次明确发版批准",
+          "严禁把 `-SNAPSHOT` 版本交给客户端或元仓清单",
+          "发布完成绝不自动触发本机或全局安装"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Health check & dry-run", "desc": "Run `check_version_trains.py` and `formal_release.py --dry-run` to verify ancestry." },
+          { "title": "Finalize dev & pass CI", "desc": "Drop `-SNAPSHOT`, prepend `CHANGELOG.md`, and wait for green `dev` audit." },
+          { "title": "Fast-forward, tag & release", "desc": "Fast-forward `dev` to `main` (same SHA), tag `vX.Y.Z`, and create GitHub Release." },
+          { "title": "Reopen SNAPSHOT & pin PR", "desc": "Reopen `+patch-SNAPSHOT` on `dev` and refresh marketplace pin in `soia-open-skills`." }
+        ],
+        "guardrails": [
+          "Code changes never authorize a release without explicit release approval",
+          "Marketplace generator rejects any `-SNAPSHOT` manifest",
+          "Releasing never auto-installs onto local machines"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "先只读体检全部开源技能仓的版本列车状态，并预演一遍 soia-open-dev-skills 发版计划。",
+        "title": "版本列车体检与发版预演示例",
+        "lines": [
+          { "text": "$ python3 scripts/check_version_trains.py --repos-root ..", "tone": "muted" },
+          { "text": "✓ soia-open-dev-skills         main=2.12.1  dev=2.12.2-SNAPSHOT  ancestor=ok", "tone": "green" },
+          { "text": "✓ soia-open-pkm-vault-skills   main=1.14.2  dev=1.14.3-SNAPSHOT  ancestor=ok", "tone": "green" },
+          { "text": "✓ soia-open-cwork-office-skills main=1.11.8  dev=1.11.9-SNAPSHOT  ancestor=ok", "tone": "green" },
+          { "text": "$ formal_release.py --repo soia-team/soia-open-dev-skills --dry-run", "tone": "muted" },
+          { "text": "[DRY-RUN] 5 steps planned (finalize -> ff main -> v2.12.2 -> reopen); 0 writes made", "tone": "cyan" }
+        ],
+        "footer": "不破坏祖先链、不让 SNAPSHOT 外泄、只读预演零副作用"
+      },
+      "en": {
+        "prompt": "Check version train health across all skill repos and dry-run a release plan for dev-skills.",
+        "title": "Version Train Audit & Release Dry-Run Sample",
+        "lines": [
+          { "text": "$ python3 scripts/check_version_trains.py --repos-root ..", "tone": "muted" },
+          { "text": "✓ soia-open-dev-skills          main=2.12.1  dev=2.12.2-SNAPSHOT  ancestor=ok", "tone": "green" },
+          { "text": "✓ soia-open-pkm-vault-skills    main=1.14.2  dev=1.14.3-SNAPSHOT  ancestor=ok", "tone": "green" },
+          { "text": "✓ soia-open-cwork-office-skills main=1.11.8  dev=1.11.9-SNAPSHOT  ancestor=ok", "tone": "green" },
+          { "text": "$ formal_release.py --repo soia-team/soia-open-dev-skills --dry-run", "tone": "muted" },
+          { "text": "[DRY-RUN] 5 steps planned (finalize -> ff main -> v2.12.2 -> reopen); 0 writes made", "tone": "cyan" }
+        ],
+        "footer": "Preserves fast-forward ancestry and blocks SNAPSHOT leaks"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "正式发布合并到 dev 的域仓技能", "action": "跑完定稿 PR、CI、快进 main、tag/Release 与重开 SNAPSHOT 五步", "outcome": "版本、SHA、Release URL 与双向 diff 核验回执" },
+        { "want": "刷新元仓技能市场 SHA pin", "action": "重跑市场、路由和文档页生成器并通过 PR 合入元仓", "outcome": "与域仓 main 完全一致的远端 pin SHA" },
+        { "want": "发版前全面体检所有技能仓", "action": "运行 `check_version_trains.py` 与 `check_install_sections.py`", "outcome": "各仓 main/dev 祖先合规性与三宿主安装覆盖报告" }
+      ],
+      "en": [
+        { "want": "Release finalized skill changes", "action": "Run 5-step finalize, CI check, fast-forward main, tag/Release, reopen", "outcome": "Verified version, SHA, and Release receipt" },
+        { "want": "Refresh marketplace SHA pins", "action": "Regenerate marketplaces, router, and skill pages via PR", "outcome": "Remote pin aligned with domain `main` SHA" },
+        { "want": "Audit all repos pre-release", "action": "Run `check_version_trains.py` and `check_install_sections.py`", "outcome": "Ancestry health and 3-host doc coverage report" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "只读跑一遍生态版本列车体检，看看哪个仓的 dev 领先 main 可以发版了。",
+        "先 `--dry-run` 预演一遍 `soia-open-pkm-vault-skills` 的正式发版计划。"
+      ],
+      "en": [
+        "Run a read-only version train health check across all skill repositories.",
+        "Dry-run a formal release plan for `soia-open-pkm-vault-skills`."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "自带 mock `subprocess` 的前向回归测试与 `generate_marketplaces.py` `-SNAPSHOT` 拦截器。",
+        "发版、pin 刷新、本机安装三步状态严格分开汇报，绝不拿计划当完成。"
+      ],
+      "en": [
+        "Tested with mocked subprocess fixtures and hard `-SNAPSHOT` rejection in `generate_marketplaces.py`.",
+        "Separates publish, pin refresh, and client install status in receipts."
+      ]
+    }
+  },
+  "soia-meta-sync-skills": {
+    "title": {
+      "zh": "受控技能同步：先预览影响再建软链",
+      "en": "Controlled Skill Sync: Dry-Run First Symlinks"
+    },
+    "pain": {
+      "zh": "手动把技能目录拷到 Claude Code、Codex 各个配置目录，改一次真源就要全机拷一遍；更危险的是随便跑网上的同步脚本，一不小心把你自己写的第三方技能覆盖删掉，或者全量铺满所有宿主。",
+      "en": "Copying skill folders across Claude Code and Codex directories leads to version drift—and careless sync scripts can overwrite your own custom skills or pollute global directories without asking."
+    },
+    "solution": {
+      "zh": "坚持「范围先行、先预览后软链」：默认不全局、不全宿主、不全量。跑任何写入前先用 `--dry-run` 列出精确的 source、目标目录和将创建/替换/清理的软链接清单；只管理 `soia-*` 命名空间，绝不复制副本、绝不删第三方技能，用户目录里有同名真实文件夹也会完整保留并提示。",
+      "en": "Scope first, dry-run before linking: never defaults to global, all-hosts, or all-skills. Previews exact create/replace/prune actions before touching disk, uses symlinks rather than copies, manages only `soia-*` names, and preserves third-party skills and real directories."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先收集明确范围", "desc": "必须确定 project/global、目标宿主与单技能/整域；缺项返回 `selection_required` 不动盘。" },
+          { "title": "dry-run 预览精确影响", "desc": "展开 hard 依赖闭包（可 `--no-deps`）并扣除 `--exclude-skills`，先看清变更计划。" },
+          { "title": "授权后原子建软链", "desc": "仅在获批后去掉 `--dry-run` 执行，拒绝把 source 自身当作 target。" },
+          { "title": "验证 readlink 与清理悬空", "desc": "只清理 `soia-*` 悬空/退役软链，核对每个目标软链真实指向真源。" }
+        ],
+        "guardrails": [
+          "绝不复制目录（只建软链），绝不触碰非 `soia-*` 第三方技能",
+          "目标处若存在同名真实文件或目录，原样保留不覆盖",
+          "全量全宿主写入需显式 `--confirm-all-targets`"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Require explicit scope", "desc": "Confirm project/global, target agents, and skill/domain; exits `selection_required` if missing." },
+          { "title": "Dry-run impact plan", "desc": "Resolve hard dependencies and per-target excludes, printing every planned link change." },
+          { "title": "Symlink upon approval", "desc": "Run exact approved plan without copying files; blocks self-targeting source." },
+          { "title": "Verify targets & prune stale", "desc": "Prune only dangling/retired `soia-*` symlinks and verify `readlink` resolution." }
+        ],
+        "guardrails": [
+          "Symlinks only; never deletes or overwrites third-party skills",
+          "Preserves any existing real files/directories at target path",
+          "Global all-host sync requires explicit `--confirm-all-targets`"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "先 dry-run 看看把 soia-dev-implement-task 链到当前项目的 codex 目录会影响什么。",
+        "title": "软链同步 Dry-Run 预览示例",
+        "lines": [
+          { "text": "$ python3 scripts/sync_soia_skills.py --source-dir ~/.agents/skills \\", "tone": "muted" },
+          { "text": "  --scope project --project-dir . --agents codex --target-kind skill \\", "tone": "muted" },
+          { "text": "  --skills soia-dev-implement-task --dry-run", "tone": "muted" },
+          { "text": "[PLAN] target=.codex/skills/soia-dev-implement-task -> CREATE symlink", "tone": "cyan" },
+          { "text": "[PRUNE] 0 dangling soia-* links · 3rd-party skills untouched", "tone": "green" }
+        ],
+        "footer": "不改盘、不猜全局，确认影响清单后才会写入软链接"
+      },
+      "en": {
+        "prompt": "Dry-run symlinking soia-dev-implement-task into this project's codex skills dir.",
+        "title": "Skill Sync Dry-Run Preview Sample",
+        "lines": [
+          { "text": "$ python3 scripts/sync_soia_skills.py --source-dir ~/.agents/skills \\", "tone": "muted" },
+          { "text": "  --scope project --project-dir . --agents codex --target-kind skill \\", "tone": "muted" },
+          { "text": "  --skills soia-dev-implement-task --dry-run", "tone": "muted" },
+          { "text": "[PLAN] target=.codex/skills/soia-dev-implement-task -> CREATE symlink", "tone": "cyan" },
+          { "text": "[PRUNE] 0 dangling soia-* links · 3rd-party skills untouched", "tone": "green" }
+        ],
+        "footer": "Zero disk writes until you confirm the exact preview plan"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把共享技能按单技能/整域链到项目", "action": "展开 hard 依赖闭包并先 `--dry-run` 展示链接变更", "outcome": "可核查的 create/replace/prune 计划与 `readlink` 验收" },
+        { "want": "按宿主排除不需要的特定技能", "action": "通过 `--exclude-skills`（可选 `--save-excludes`）按 target 隔离排除", "outcome": "互不干扰的多宿主技能视图" },
+        { "want": "清理已退役或悬空的 SOIA 软链接", "action": "依据 `soia-managed-skills.md` 边界清理失效 `soia-*` 软链", "outcome": "干净无失效入口的技能目录" }
+      ],
+      "en": [
+        { "want": "Symlink skills into a project", "action": "Expand hard dependencies and preview changes with `--dry-run`", "outcome": "Clear link plan and verified `readlink` targets" },
+        { "want": "Exclude skills per host", "action": "Apply `--exclude-skills` with optional per-target config persistence", "outcome": "Tailored skill lists per coding agent" },
+        { "want": "Prune retired or dangling links", "action": "Clean only `soia-*` managed names per `soia-managed-skills.md`", "outcome": "Tidy skill folders with third-party skills safe" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "先把这几个开发技能以 project 模式 `--dry-run` 预览同步到当前项目的 codex 目录。",
+        "帮我把 `soia-pkm-clip-douyin` 从 claude 宿主排除掉，别动我的其他技能。"
+      ],
+      "en": [
+        "Dry-run linking these dev skills into the current project's codex directory.",
+        "Exclude `soia-pkm-clip-douyin` from my claude target without touching other skills."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "写操作记录脱敏审计日志到 `$XDG_STATE_HOME/soia-meta-sync-skills/`（最多保留 20 份），零密钥落盘。",
+        "自带完整 `readlink` 与 `global + all` 阻断前向测试。"
+      ],
+      "en": [
+        "Writes desensitized audit logs (max 20) to XDG state with zero secrets.",
+        "Forward-tested for `readlink` verification and `--confirm-all-targets` safety gate."
+      ]
+    }
+  }
+}

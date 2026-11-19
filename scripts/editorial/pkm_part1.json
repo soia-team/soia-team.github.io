@@ -1,0 +1,1374 @@
+{
+  "soia-pkm-alipan-curator": {
+    "title": {
+      "zh": "阿里云盘馆藏规划、增量索引与学习排期顾问",
+      "en": "Aliyun Drive Curator, Catalogs & Study Plans"
+    },
+    "pain": {
+      "zh": "网盘里塞了几万个视频、电子书和课程文件夹，想大整理一次：直接用 CLI 乱改目录很容易弄丢文件、搞乱编号，或者整理完云端目录和 Obsidian 馆藏总览、Excel 家庭导航各自脱节对不上。",
+      "en": "Organizing tens of thousands of courses, books, and videos on Aliyun Drive risks broken folder numbers, lost files, and out-of-sync Obsidian catalogs and family navigation workbooks."
+    },
+    "solution": {
+      "zh": "作为阿里云盘的高级顾问层（底层调用 `soia-pkm-alipan-drive-ops`），坚持「盘点 → 出分类计划 → 预检审计 → 单写者执行 → 刷新双端索引」闭环：先读透扫描 JSONL 生成迁移清单给你裁定模糊项，迁移只允许 `mkdir/mv/rename` 绝不混入删除；随后同步生成 Obsidian 馆藏树、SHA-256 增量 Excel 总索引与家庭导航，还能按学情排出周学习计划。",
+      "en": "Orchestrate Aliyun Drive inventory, reorganization, catalogs, and study plans on top of `alipan-drive-ops`: generate plan-first classification manifests with strict `mkdir/mv/rename` isolation (no silent deletes), execute serially after preflight gates, and rebuild synced Obsidian Markdown trees plus SHA-256 incremental Excel catalogs."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "盘点与分级方案", "desc": "读取只读 JSONL 快照，按一层一轴规划分类与编号，模糊或待拆包项先列清单等你裁决。" },
+          { "title": "预检与单写者执行", "desc": "过 `preflight_reclass.py` 闸门后先 dry-run，再以 `--max-parallel 1` 单写者执行重命名移动。" },
+          { "title": "同步生成双端馆藏", "desc": "以同一份 release metadata 刷新 Obsidian 折叠树总览、增量 Excel 总索引与家庭导航。" },
+          { "title": "回传上传并终审", "desc": "新索引上传云端后跑 `audit_structure` 与 `audit_catalog_publish --final` 才算闭环。" }
+        ],
+        "guardrails": [
+          "重分类与恢复器严禁混入 `delete`（删除候选须单独授权）",
+          "云端索引未过 `audit_catalog_publish --final` 前绝不宣称整理完成",
+          "学情计划仅用当次提供的信息，不读私有长期个人档案"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Inventory & plan-first", "desc": "Read JSONL scan snapshots, assign numbers, and queue ambiguous packages for confirmation." },
+          { "title": "Preflight & serial execute", "desc": "Pass `preflight_reclass.py`, preview dry-run, then apply moves serially (`--max-parallel 1`)." },
+          { "title": "Build OB & Excel catalogs", "desc": "Refresh Obsidian tree views, SHA-256 incremental Excel workbooks, and family nav together." },
+          { "title": "Final publish verification", "desc": "Upload updated index and pass `audit_catalog_publish.py --final` before closing." }
+        ],
+        "guardrails": [
+          "Reclassification only runs mkdir/mv/rename—never mixes in deletes",
+          "Never declares done until `audit_catalog_publish --final` passes",
+          "Study plans use only session-provided inputs, never private memory"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "根据最新扫描 JSONL 更新 Obsidian 云盘馆藏总览，并增量刷新 Excel 总索引。",
+        "title": "云盘馆藏双端增量刷新回执示例",
+        "lines": [
+          { "text": "$ python3 scripts/gen_catalog.py --scan drive.jsonl --out vault/馆藏总览.md", "tone": "muted" },
+          { "text": "$ python3 scripts/gen_catalog_xlsx.py --out ~/Downloads/soia-pkm-alipan-curator/", "tone": "muted" },
+          { "text": "✓ OB 馆藏树: 12 个分区 · 4,820 条资源链接已对齐 (SHA-256 增量校验通过)", "tone": "green" },
+          { "text": "✓ Excel 总索引 + 家庭导航: release_meta 一致 · 0 漏号 · 0 死链", "tone": "cyan" }
+        ],
+        "footer": "目录重组、Obsidian 视图与 Excel 索引共享同一份发布元数据，绝不脱节"
+      },
+      "en": {
+        "prompt": "Refresh the Obsidian catalog and SHA-256 incremental Excel index from the latest scan JSONL.",
+        "title": "Aliyun Drive Catalog Refresh Sample",
+        "lines": [
+          { "text": "$ python3 scripts/gen_catalog.py --scan drive.jsonl --out vault/catalog.md", "tone": "muted" },
+          { "text": "$ python3 scripts/gen_catalog_xlsx.py --out ~/Downloads/soia-pkm-alipan-curator/", "tone": "muted" },
+          { "text": "✓ Obsidian catalog: 12 partitions · 4,820 resource links aligned", "tone": "green" },
+          { "text": "✓ Excel index & family nav: unified release metadata · 0 numbering gaps", "tone": "cyan" }
+        ],
+        "footer": "Catalogs, Excel workbooks, and cloud structure stay mechanically synced"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "盘点并规划整理阿里云盘目录", "action": "基于只读扫描出分类、编号与迁移 manifest，确认后单写者执行", "outcome": "内容审计表、迁移 manifest 与结构审计报告" },
+        { "want": "刷新 Obsidian 云盘馆藏总览与全文检索", "action": "运行 `gen_catalog.py` 生成折叠树总览与分区清单", "outcome": "Obsidian 馆藏总览、Bases 视图与导出位置" },
+        { "want": "增量构建 Excel 总索引与家庭导航", "action": "调用 `gen_catalog_xlsx.py` / `gen_family_nav_xlsx.mjs` 共享同一 metadata", "outcome": "交付目录 Excel 工作簿与 SHA-256 校验" },
+        { "want": "用网盘已有书/课制定学习计划", "action": "按字数或集数×时长匹配馆藏资源并倒排周计划", "outcome": "匿名命名、带资源映射表的待确认计划" }
+      ],
+      "en": [
+        { "want": "Plan & reorganize Aliyun Drive folders", "action": "Build numbered classification manifests and apply serially after preflight", "outcome": "Audit table, move manifest, and verification report" },
+        { "want": "Update Obsidian catalog & search lists", "action": "Generate collapsible tree overviews and partition indexes via `gen_catalog.py`", "outcome": "Synced Obsidian Markdown & `.base` views" },
+        { "want": "Build incremental Excel & family nav", "action": "Update Excel workbooks incrementally via SHA-256 and shared metadata", "outcome": "Ready-to-share spreadsheets in Downloads output dir" },
+        { "want": "Draft study schedules from drive assets", "action": "Match books/videos by word count or runtime into weekly plans", "outcome": "Anonymized Markdown weekly schedule" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "根据最新扫描 JSONL 为阿里云盘这个分区生成目录重组 dry-run 计划，模糊项先列出来让我拍板。",
+        "增量刷新阿里云盘的 Obsidian 馆藏总览和 Excel 总索引。"
+      ],
+      "en": [
+        "Build a dry-run folder reorg plan from the latest Aliyun Drive JSONL scan for my review.",
+        "Incrementally refresh the Obsidian catalog and Excel index."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "内置 `test_curator_public_safety.py` 与运行包/结构/发布审计全套单测。",
+        "Excel 与导航产物只写用户指定目录或 `~/Downloads/soia-pkm-alipan-curator/`，不污染 vault 控制面。"
+      ],
+      "en": [
+        "Covered by `test_curator_public_safety.py` and full run-bundle audit unit tests.",
+        "Outputs workbooks cleanly to Downloads or custom dir without cluttering vault."
+      ]
+    }
+  },
+  "soia-pkm-alipan-drive-ops": {
+    "title": {
+      "zh": "阿里云盘原子操作层：安全登录、双盘读写与断点扫盘",
+      "en": "Aliyun Drive Atomic Ops, Login & Resumable Scan"
+    },
+    "pain": {
+      "zh": "用 `aliyunpan` CLI 批处理文件经常踩四个暗坑：默认全局切盘在多任务下串盘；非交互终端拿不到登录扫码链接；目录名带尾空格被解析吞掉；全盘扫描中途断网或限流 `429` 就得从头重扫。",
+      "en": "Using raw `aliyunpan` CLI in automation breaks easily: global drive switches bleed across tasks, non-interactive shells lose login QR links, trailing spaces in folder names get stripped, and `429` rate limits abort long full-drive scans."
+    },
+    "solution": {
+      "zh": "把阿里云盘命令行封装成带隔离包装器的原子引擎：每条命令强制显式传 `--driveId` 绝不全局切盘；登录失效时用 pty 保活拉出 5 分钟扫码链接交给你本人扫码；批量读写按 200–300ms 节流并严格退避 `429`；全盘 `scan_drive.py` 输出带 SHA-1、保留尾空格且可 `--resume` 断点续扫的 JSONL，遇同名兄弟目录立刻标歧义并阻断下钻。",
+      "en": "Wrap `aliyunpan` safely inside `run_with_env.py`: pass explicit `--driveId` on every call (never global drive switch), extract 5-minute QR login links via pty keepalive when expired, throttle writes cleanly with `429` backoff, and run resumable multi-threaded JSONL scans (`scan_drive.py`) that preserve trailing spaces and halt on duplicate sibling folder names."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "白名单包装与配置隔离", "desc": "经 `run_with_env.py` 仅放行 `aliyunpan` 可执行文件，隔离配置目录避免串号。" },
+          { "title": "显式双盘与远程扫码", "desc": "备份盘/资源库每条命令自带 `--driveId`；登录失效时由 pty 拉出扫码链接交本人授权。" },
+          { "title": "断点续扫与歧义阻断", "desc": "`scan_drive.py` 保留原始空格与 SHA-1，遇同名目录写 `AMBIGUOUS_NAME` 停钻。" },
+          { "title": "节流写入与只读回读", "desc": "在批准清单内按 200–300ms 节流执行 `mv/rename/download`，完事再独立回读核验。" }
+        ],
+        "guardrails": [
+          "严禁打印或读取 token/cookie，严禁跑 `env`/`printenv` 泄露环境变量",
+          "`rm`/清空/覆盖前必须先列清单并 `ls` 防产生 `(1)` 重名",
+          "只做原子云盘操作，不越权替上层做整理或学习计划决策"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Isolated env wrapper", "desc": "Allowlist only `aliyunpan` binaries via `run_with_env.py` with isolated config dirs." },
+          { "title": "Explicit driveId & QR auth", "desc": "Pass `--driveId` explicitly on every call; surface 5-min QR URLs via pty if expired." },
+          { "title": "Resumable scan & ambiguity halt", "desc": "Preserve trailing spaces and SHA-1 in JSONL; block recursion on duplicate sibling names." },
+          { "title": "Throttled writes & read-back", "desc": "Execute approved ops at 200–300ms pacing with `429` backoff and read-back checks." }
+        ],
+        "guardrails": [
+          "Never print or read tokens, cookies, or raw env dumps",
+          "List targets and check `ls` before `rm` or overwrite to prevent `(1)` dupes",
+          "Atomic layer only—never makes high-level reorg decisions"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "只读全盘扫描阿里云盘备份盘的 `/课程资源` 目录，输出可断点续扫的 JSONL 快照。",
+        "title": "全盘断点 JSONL 扫描与歧义检测示例",
+        "lines": [
+          { "text": "$ python3 scripts/scan_drive.py --drive-id <backup> --root /课程资源 --resume", "tone": "muted" },
+          { "text": "[SCAN] scanned=1,284 files · 94 dirs · rate-limit=0 (300ms pacing)", "tone": "cyan" },
+          { "text": "! [AMBIGUOUS_NAME] /课程资源/数学 (2 siblings share same name) -> halted subtree", "tone": "amber" },
+          { "text": "✓ 已写 snapshot.jsonl + .done sidecar (token/cookie 零回显)", "tone": "green" }
+        ],
+        "footer": "同名目录绝不盲钻、429 自动退避、断网随时 `--resume` 接续"
+      },
+      "en": {
+        "prompt": "Scan `/Courses` in Aliyun Drive read-only and emit a resumable JSONL snapshot.",
+        "title": "Resumable Aliyun Drive JSONL Scan Sample",
+        "lines": [
+          { "text": "$ python3 scripts/scan_drive.py --drive-id <backup> --root /Courses --resume", "tone": "muted" },
+          { "text": "[SCAN] scanned=1,284 files · 94 dirs · rate-limit=0 (300ms pacing)", "tone": "cyan" },
+          { "text": "! [AMBIGUOUS_NAME] /Courses/Math (2 siblings share same name) -> halted subtree", "tone": "amber" },
+          { "text": "✓ Wrote snapshot.jsonl + .done sidecar (zero credentials logged)", "tone": "green" }
+        ],
+        "footer": "Halts on duplicate sibling folders; resumes safely after interruptions"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "检查登录态或远程扫码续期", "action": "经包装器核验账号，失效时用 pty 拉出 5 分钟官方扫码链接", "outcome": "UID、双盘容量配额与脱敏登录态" },
+        { "want": "只读浏览或断点全盘扫盘", "action": "显式传 `--driveId` 列出目录或跑 `scan_drive.py` 生成 JSONL", "outcome": "带 SHA-1 的 JSONL 快照与同名歧义告警" },
+        { "want": "按批准清单安全移动、重命名或下载", "action": "200–300ms 节流执行并在事后独立回读核验", "outcome": "逐项 `✓/✗` 回读账本与交付路径" }
+      ],
+      "en": [
+        { "want": "Check login or renew remotely", "action": "Verify via wrapper; extract 5-min QR link via pty if expired", "outcome": "UID, dual-drive quota, and redacted auth status" },
+        { "want": "Browse or run resumable JSONL scans", "action": "Pass explicit `--driveId` and run `scan_drive.py`", "outcome": "SHA-1 JSONL snapshot + sibling ambiguity sidecars" },
+        { "want": "Execute approved moves & downloads", "action": "Throttle writes at 200–300ms and verify with independent read-back", "outcome": "Per-item `✓/✗` receipt and local paths" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "只读扫描阿里云盘备份盘的 `/某个目录`，输出带 SHA-1 的 JSONL 快照。",
+        "按刚才核对过的清单预览 `mv`/`rename`，不要删除任何文件。"
+      ],
+      "en": [
+        "Scan `/some-folder` on Aliyun backup drive read-only to JSONL.",
+        "Dry-run `mv`/`rename` per the approved list without deleting anything."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "支持单测验证包装器白名单、JSONL 尾空格保留、同名歧义阻断与日志脱敏。",
+        "跨盘移动受限制时如实提示人工操作，绝不硬凑破坏性替代。"
+      ],
+      "en": [
+        "Unit-tested for wrapper allowlists, trailing-space preservation, and ambiguity halts.",
+        "Surfaces cross-drive transfer limits honestly instead of destructive workarounds."
+      ]
+    }
+  },
+  "soia-pkm-baidu-netdisk-ops": {
+    "title": {
+      "zh": "百度网盘原子适配：设备码登录、JSONL 扫盘与安全传输",
+      "en": "Baidu Netdisk Ops, Device Login & JSONL Scan"
+    },
+    "pain": {
+      "zh": "百度网盘官方 `bdpan` 与社区 `baidupan-cli` 参数和 JSON 字段不统一，登录容易卡在无浏览器环境，直接解析人类表格还经常把文件名截断、把权限报错当成空目录。",
+      "en": "Baidu Netdisk CLIs (`bdpan` vs. community `baidupan-cli`) differ in flags and schemas; headless logins stall without QR decoding; and parsing human tables mistakes permission errors for empty folders."
+    },
+    "solution": {
+      "zh": "统一适配官方 `baidu-drive`（`bdpan`）与社区版后端：支持 `--device-code` 生成官方授权链与二维码交你扫码登录；所有命令严禁解析人类表格，只读稳定 JSON 字段，遇 `LIST_FAIL`/权限不足绝不误报空目录；`scan_drive.py` 支持多入口并发只读扫盘与 `.errors`/`.done` 完整收敛。",
+      "en": "Unify official `bdpan` and community backends behind `run_with_env.py`: decode device-code login QR links cleanly, parse strict JSON fields only (never mistaking `LIST_FAIL` for empty dirs), and run multi-worker resumable JSONL scans with explicit `.errors`/`.done` sidecars."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "检测上游与设备码授权", "desc": "核验 `bdpan` 就绪度，需要登录时解码官方授权链接交本人扫码确认。" },
+          { "title": "只读 JSON 列表与扫盘", "desc": "强制 `--json` 解析 `fs_id`/`md5`/`size`，`scan_drive.py` 并发扫描并记 `.errors`。" },
+          { "title": "写操作与分享前先核范围", "desc": "上传/移动/覆盖前核对父目录与冲突策略；`share` 触发潜在计费单独确认。" },
+          { "title": "执行后独立回读验收", "desc": "遇 `errno=-10` 等业务错误停下回读，完成后核对本地大小或远端 `ls`。" }
+        ],
+        "guardrails": [
+          "绝不读取、复制或覆盖 `bdpan` 自有 `config.json`，不用网页 Cookie/BDUSS",
+          "绝不绕过官方刻意禁用的删除能力",
+          "扫盘存在 `.errors` 时如实标注为「部分扫描」，不冒充全量"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Check CLI & device-code auth", "desc": "Verify `bdpan`, and decode device-code QR URLs for safe user authorization." },
+          { "title": "JSON-only list & scan", "desc": "Parse strict JSON fields only; `scan_drive.py` logs any failures to `.errors`." },
+          { "title": "Confirm write/share bounds", "desc": "Verify parent path and collision policy first; confirm separately before `share`." },
+          { "title": "Verify state by read-back", "desc": "Stop on business `errno` errors and confirm transfers via size and `ls` read-back." }
+        ],
+        "guardrails": [
+          "Never copies `~/.config/bdpan/config.json` or uses web Cookie/BDUSS",
+          "Never bypasses official disabled-delete boundaries",
+          "Reports 'partial scan' honestly whenever `.errors` is non-empty"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "只读扫描百度网盘 `/技术资料` 目录，输出标准化 JSONL 并检查有没有报错。",
+        "title": "百度网盘并发 JSONL 扫描回执示例",
+        "lines": [
+          { "text": "$ python3 scripts/scan_drive.py --root /技术资料 --out scan.jsonl --workers 4 --resume", "tone": "muted" },
+          { "text": "[CLI] bdpan · whoami=ok (token redacted)", "tone": "cyan" },
+          { "text": "[RESULT] dirs=48 · files=612 · .errors=0 · .done=present", "tone": "green" },
+          { "text": "✓ 完整扫描完成（未触碰 ~/.config/bdpan/config.json）", "tone": "normal" }
+        ],
+        "footer": "严格 JSON 字段归一化，出错目录绝不悄然当作空目录跳过"
+      },
+      "en": {
+        "prompt": "Scan `/TechDocs` on Baidu Netdisk read-only to normalized JSONL and check for errors.",
+        "title": "Baidu Netdisk JSONL Scan Sample",
+        "lines": [
+          { "text": "$ python3 scripts/scan_drive.py --root /TechDocs --out scan.jsonl --workers 4 --resume", "tone": "muted" },
+          { "text": "[CLI] bdpan · whoami=ok (token redacted)", "tone": "cyan" },
+          { "text": "[RESULT] dirs=48 · files=612 · .errors=0 · .done=present", "tone": "green" },
+          { "text": "✓ Full scan verified (~/.config/bdpan/config.json untouched)", "tone": "normal" }
+        ],
+        "footer": "Normalized JSON schema; permission errors never look like empty folders"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "无头环境扫码登录或查登录态", "action": "检查 `bdpan` 状态并用 `device_login.py` 解出官方授权链接与二维码", "outcome": "官方授权地址与 `whoami` 核对结果" },
+        { "want": "高速只读全盘扫盘与搜索", "action": "通过 `scan_drive.py` 多线程扫盘并输出 `.errors`/`.done` sidecar", "outcome": "标准化 JSONL 清单与错误统计" },
+        { "want": "按授权上传、下载、移动或分享", "action": "写前确认路径与冲突策略，完成后做大小与远端 `ls` 回读核验", "outcome": "操作前范围确认与终态核实回执" }
+      ],
+      "en": [
+        { "want": "Login via device code & check auth", "action": "Verify `bdpan` and decode official device-code QR links", "outcome": "Authorization link and redacted `whoami`" },
+        { "want": "Multi-worker read-only JSONL scan", "action": "Run `scan_drive.py` with `.errors`/`.done` convergence tracking", "outcome": "Normalized JSONL + explicit error status" },
+        { "want": "Confirmed transfer, move, or share", "action": "Confirm target & collision policy first, then verify via read-back", "outcome": "Pre-op plan and post-op verification" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "先查一下百度网盘 `whoami` 登录态，没登录的话把官方二维码授权链接发我。",
+        "用 `scan_drive.py` 并发扫描百度网盘 `/归档资料` 目录，如果有报错单列出来。"
+      ],
+      "en": [
+        "Check Baidu Netdisk `whoami` status or surface the device-code login link.",
+        "Run a multi-worker read-only JSONL scan of `/Archives` and report any errors."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "含 `tests.test_baidupan_scan` 单测覆盖 JSON 字段归一化、sidecar 状态与秘密脱敏。",
+        "对外路径自动隐藏 `/apps/bdpan/` 等前缀，禁止路径逃逸。"
+      ],
+      "en": [
+        "Unit-tested in `test_baidupan_scan` for JSON normalization, sidecars, and secret redaction.",
+        "Blocks `..`/`~` path traversal and hides internal app prefixes."
+      ]
+    }
+  },
+  "soia-pkm-bootstrap-vault-base": {
+    "title": {
+      "zh": "平台中立 AI-Native Markdown 知识库底座初始化",
+      "en": "Platform-Neutral AI-Native Vault Bootstrap"
+    },
+    "pain": {
+      "zh": "想搭一套长期能和 Claude Code、Codex、Obsidian 一起协作的 Markdown 知识库，网上模板一上来就往里塞满 `.obsidian` 插件配置，还会粗暴覆盖你本来就有的笔记和目录。",
+      "en": "Bootstrapping an AI-native Markdown knowledge base with generic templates often pollutes your folder with hard-coded `.obsidian` plugins or overwrites existing notes without previewing."
+    },
+    "solution": {
+      "zh": "严格按「平台中立 + plan-first + create-only 幂等」初始化 `00–90` 知识库骨架与 `AGENTS.md` 多 AI 适配层：默认先输出完整 JSON `plan`（create / skip / conflict / drift）让你过目，确认后才 `--apply` 建目录和模板，绝不创建 `.obsidian/`、绝不静默覆盖已有文件，最后用 `--check` 校验骨架完整性。",
+      "en": "Bootstrap a platform-neutral `00–90` Markdown vault and multi-AI `AGENTS.md` layer strictly plan-first and create-only: inspect the JSON `plan` (create/skip/conflict/drift) before `--apply`, never touch `.obsidian/` (handled separately by `bootstrap-vault-obsidian`), never overwrite existing files, and verify structure with `--check`."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先出 JSON Plan 不动盘", "desc": "默认运行 `init_vault.py <path>` 只计算 create/skip/conflict/drift 清单。" },
+          { "title": "create-only 幂等落骨架", "desc": "确认后 `--apply` 建立 `00` 系统、`10` 工作台、`20` 资料库、`30` 日志、`90` 归档与模板。" },
+          { "title": "支持 Schema v2 自定义扩展", "desc": "可通过 `config.json` 继承默认配置并扩展子目录，严格拦截 `..` 与软链逃逸。" },
+          { "title": "--check 持续校验结构漂移", "desc": "随时跑 `--check` 确认关键目录、规则入口与模板文件未发生意外漂移。" }
+        ],
+        "guardrails": [
+          "绝不在 base 阶段创建 `.obsidian/` 目录（解耦给 Obsidian 消费端技能）",
+          "绝不覆盖已有文件（仅看过逐文件 plan 并明确授权才可 `--force --apply`）",
+          "严格拒绝绝对路径、`..` 与 symlink 逃逸出 vault 根目录"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Emit JSON plan read-only", "desc": "Default `init_vault.py <path>` outputs create/skip/conflict/drift without disk writes." },
+          { "title": "Idempotent create-only apply", "desc": "Run `--apply` after review to create `00–90` zones, `AGENTS.md`, and templates." },
+          { "title": "Schema v2 customization", "desc": "Support custom relative directories via `config.json` while blocking path escapes." },
+          { "title": "Verify structure with `--check`", "desc": "Detect missing or drifted structural files anytime via `--check`." }
+        ],
+        "guardrails": [
+          "Never creates `.obsidian/` in the base layer (kept neutral)",
+          "Never overwrites existing files without explicit `--force --apply` review",
+          "Blocks absolute paths, `..`, and symlink escapes outside the vault"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "在 `~/my-vault` 初始化 AI-native Markdown 知识库，先给我看 JSON plan，不要直接建文件。",
+        "title": "Plan-First 知识库骨架预览示例",
+        "lines": [
+          { "text": "$ python3 scripts/init_vault.py ~/my-vault", "tone": "muted" },
+          { "text": "[PLAN] mode=dry-run · create: 14 dirs, 8 files · skip: 0 · conflict: 0", "tone": "cyan" },
+          { "text": "  + 00_Obsidian系统/  10_工作台/00_Inbox/  20_资料库/{10_主题知识,20_规范与手册,30_学习指南}", "tone": "green" },
+          { "text": "  + 30_日志与思考/  90_系统归档/  AGENTS.md  (.obsidian/ NOT touched)", "tone": "green" },
+          { "text": "下一步: 核对清单无误后执行 `--apply` 与 `--check`", "tone": "normal" }
+        ],
+        "footer": "不锁死 Obsidian、不覆盖旧笔记、随时 `--check` 验真身"
+      },
+      "en": {
+        "prompt": "Initialize an AI-native Markdown vault at `~/my-vault`; show me the JSON plan first.",
+        "title": "Plan-First Vault Bootstrap Sample",
+        "lines": [
+          { "text": "$ python3 scripts/init_vault.py ~/my-vault", "tone": "muted" },
+          { "text": "[PLAN] mode=dry-run · create: 14 dirs, 8 files · skip: 0 · conflict: 0", "tone": "cyan" },
+          { "text": "  + 00_Obsidian系统/  10_工作台/00_Inbox/  20_资料库/{10,20,30}  30/  90/", "tone": "green" },
+          { "text": "  + AGENTS.md  (.obsidian/ NOT created in base layer)", "tone": "green" },
+          { "text": "Next: review plan, then run `--apply` and `--check`", "tone": "normal" }
+        ],
+        "footer": "Vendor-neutral Markdown foundation; zero silent overwrites"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "从零初始化平台中立 PKM 骨架", "action": "按 `00–90` 分区职责建目录、多 AI `AGENTS.md` 与笔记模板", "outcome": "JSON plan、create/skip 清单与 `--check` 校验" },
+        { "want": "在已有笔记目录上安全补齐结构", "action": "create-only 幂等跳过已有文件，冲突或漂移单独标出不覆盖", "outcome": "零数据丢失的结构补齐报告" }
+      ],
+      "en": [
+        { "want": "Bootstrap a neutral PKM vault", "action": "Create `00–90` zone hierarchy, `AGENTS.md`, and templates", "outcome": "JSON plan, create/skip counts, and `--check` pass" },
+        { "want": "Upgrade existing folders safely", "action": "Skip existing files idempotently while surfacing conflicts/drift", "outcome": "Zero-overwrite structural upgrade" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "在指定目录初始化一套 AI-native Markdown 知识库骨架，先看 plan 再应用。",
+        "用 `--check` 检查下我这个知识库的分区骨架有没有结构漂移。"
+      ],
+      "en": [
+        "Bootstrap an AI-native Markdown vault here—show the plan first before applying.",
+        "Run `--check` on my vault to verify there is no structural drift."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯 Python 3 标准库实现，默认零写入、零凭据、零外部网络请求。",
+        "实测验证 `../escape` 路径逃逸拦截、幂等重跑与 `--check` 漂移检测。"
+      ],
+      "en": [
+        "Pure Python 3 stdlib; zero network calls, credentials, or implicit writes.",
+        "Forward-tested against `../escape` traversal and drift detection."
+      ]
+    }
+  },
+  "soia-pkm-bootstrap-vault-obsidian": {
+    "title": {
+      "zh": "为 Markdown 知识库安全接入 Obsidian Bases 与宽页",
+      "en": "Safe Obsidian Bases & Wide-Page Setup"
+    },
+    "pain": {
+      "zh": "已经有一套 Markdown 知识库，想在 Obsidian 里打开 Bases 视图和宽页样式：直接覆盖 `.obsidian/` 里的 JSON 配置，会把你原本辛苦调好的主题、插件、快捷键和自定义片段全洗掉。",
+      "en": "Enabling Obsidian Bases and custom CSS on an existing Markdown vault often wipes out your current theme, community plugins, and personal `.obsidian/*.json` preferences if overwritten blindly."
+    },
+    "solution": {
+      "zh": "以「结构化无损合并 + 自动备份 + 保留未知键」接入 Obsidian 消费端：先 dry-run 预览即将合并的 `core-plugins.json`/`appearance.json`/`app.json`、三个 `.base` 视图及 `wide-page.css`；`--apply` 前自动整批备份到 `.obsidian/.soia-backups/<timestamp>/`，完美保留你原有的主题、插件和第三方配置键。",
+      "en": "Attach Obsidian as a non-destructive consumer layer: preview JSON merges (`core-plugins.json`, `appearance.json`, `app.json`), `.base` views, and `wide-page.css` via dry-run; back up existing configs to `.obsidian/.soia-backups/` before `--apply`; and preserve all existing themes, plugins, snippets, and unknown keys."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先走 dry-run 看合并计划", "desc": "预览 core-plugins、Bases 与 CSS 的 create/update/skip/drift 状态，兼容新旧插件格式。" },
+          { "title": "写入前按批自动备份", "desc": "`--apply` 先把原 `.obsidian/` 关键 JSON 备份进 `.soia-backups/<timestamp>/`。" },
+          { "title": "结构化合并保留未知键", "desc": "只开启 Bases 与约定设置，原有主题、社区插件、snippet 与未知键原封不动。" },
+          { "title": "检查 CSS 漂移并支持回滚", "desc": "已有自定义 CSS 报 drift 不硬覆；需要回滚时按批从备份目录精确恢复。" }
+        ],
+        "guardrails": [
+          "CSS 若与自带版本不同默认跳过并报 `drift`（仅明确授权才 `--force-managed`）",
+          "Markdown 与 Git 仍是唯一内容真源，不依赖 Dataview",
+          "回滚前先关闭 Obsidian，按批恢复绝不粗暴删除整个 `.obsidian`"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Dry-run merge preview", "desc": "Preview create/update/skip/drift across plugins, `.base` files, and CSS snippets." },
+          { "title": "Timestamped pre-write backup", "desc": "Save existing `.obsidian/` configs into `.obsidian/.soia-backups/<timestamp>/`." },
+          { "title": "Merge preserving custom keys", "desc": "Enable Bases and link format while keeping your theme, plugins, and unknown JSON keys." },
+          { "title": "Verify with `--check`", "desc": "Report CSS drift instead of clobbering; rollback cleanly from backups if needed." }
+        ],
+        "guardrails": [
+          "Never overwrites customized CSS without explicit `--force-managed`",
+          "Markdown + Git remain the single source of truth (no Dataview lock-in)",
+          "Clean batch rollback without wiping `.obsidian/`"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "为我的 vault 跑一遍 Obsidian 配置 dry-run，看看启用 Bases 和宽页会不会动我的主题。",
+        "title": "Obsidian 无损合并 Dry-Run 预览示例",
+        "lines": [
+          { "text": "$ python3 scripts/configure_obsidian.py ~/my-vault", "tone": "muted" },
+          { "text": "[DRY-RUN] core-plugins.json: merge enable 'bases' (existing keys preserved)", "tone": "cyan" },
+          { "text": "  + create .base views: 工作台.base · 资料库.base · 历史归档.base", "tone": "green" },
+          { "text": "  ~ appearance.json: keep user theme='Minimal' · enable snippet='wide-page'", "tone": "green" },
+          { "text": "✓ 0 文件写入 · 确认后执行 `--apply`（将先备份至 .obsidian/.soia-backups/）", "tone": "normal" }
+        ],
+        "footer": "不覆盖现有插件与主题，随时可按时间戳备份精准回滚"
+      },
+      "en": {
+        "prompt": "Dry-run Obsidian setup on my vault and check if my existing theme stays untouched.",
+        "title": "Obsidian Safe-Merge Dry-Run Sample",
+        "lines": [
+          { "text": "$ python3 scripts/configure_obsidian.py ~/my-vault", "tone": "muted" },
+          { "text": "[DRY-RUN] core-plugins.json: merge enable 'bases' (existing keys preserved)", "tone": "cyan" },
+          { "text": "  + create .base views: workbench.base · library.base · archive.base", "tone": "green" },
+          { "text": "  ~ appearance.json: keep theme='Minimal' · enable snippet='wide-page'", "tone": "green" },
+          { "text": "✓ 0 writes made · Run `--apply` to backup to .soia-backups/ & apply", "tone": "normal" }
+        ],
+        "footer": "Preserves custom themes & plugins; batch rollback ready"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "安全启用 Obsidian Bases 与三个核心视图", "action": "结构化合并核心插件开关并创建工作台/资料库/历史三个 `.base`", "outcome": "JSON 合并清单与立即可用的 `.base` 视图" },
+        { "want": "启用宽页 CSS 且不弄丢个人配置", "action": "写入 `wide-page.css` 并保留已有主题、snippet 与未知配置键", "outcome": "带备份路径与 `--check` 校验的无损配置" }
+      ],
+      "en": [
+        { "want": "Enable Obsidian Bases & `.base` views", "action": "Merge core plugin flags and create create-only `.base` views", "outcome": "Clean merge plan and ready-to-use Bases views" },
+        { "want": "Add wide-page CSS without wiping setup", "action": "Preserve existing themes, snippets, and unknown JSON keys with backups", "outcome": "Backup path receipt and `--check` verification" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "给这个已经初始化的 vault 预览配置 Obsidian Bases 和宽页样式，先别写文件。",
+        "确认方案没问题，帮我 `--apply` 并跑 `--check` 验收。"
+      ],
+      "en": [
+        "Dry-run enabling Obsidian Bases and wide-page CSS on this existing vault.",
+        "Apply the Obsidian setup with backup and run `--check`."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "强制依赖 `soia-pkm-bootstrap-vault-base` 先立中立底座，确保内容层与软件层解耦。",
+        "无需账号、无需私有 config，回执不泄露完整私有 JSON 配置。"
+      ],
+      "en": [
+        "Depends cleanly on `bootstrap-vault-base` so content stays decoupled from app config.",
+        "Zero credentials needed; receipts never dump private JSON contents."
+      ]
+    }
+  },
+  "soia-pkm-clip-douyin": {
+    "title": {
+      "zh": "单条抖音视频文案归档与本地 MP4 索引",
+      "en": "Douyin Video Clip & Local MP4 Indexing"
+    },
+    "pain": {
+      "zh": "刷到一条干货抖音想收进知识库，分享链接短链难去重、视频文件动辄几十 MB 直接塞进 Git/Obsidian 仓库会把库撑爆，过半年回头找时原视频还可能已经失效下架。",
+      "en": "Saving a useful Douyin video into Obsidian is tricky: short links resist deduplication, huge MP4 binaries bloat your Git vault, and links expire over time."
+    },
+    "solution": {
+      "zh": "采用「轻量笔记进 Vault + 视频本体落本地 Downloads」分离结构：用匿名一次性无头浏览器拦截视频接口，按 `video_id` 精确去重；MP4 流式下载到 `~/Downloads/soia-pkm-clip-douyin/<video_id>/` 并校验 `ftyp` 文件头，Markdown 笔记只记录文案、互动数据、AI 一句摘要与 `media_local_path` 索引（也支持 `--metadata-only` 纯文案归档）。",
+      "en": "Keep your vault lightweight while preserving video locally: intercept the stream in an anonymous one-shot Playwright session, deduplicate strictly by `video_id`, verify downloaded MP4 `ftyp` headers in `~/Downloads/soia-pkm-clip-douyin/<video_id>/`, and write clean Markdown notes with `media_local_path` (or `--metadata-only` for text only)."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "video_id 数字边界去重", "desc": "解析完整 URL 或 `v.douyin.com` 短链，在库内按 `video_id` 查重，已存在自动 SKIP。" },
+          { "title": "匿名一次性拦截与下载", "desc": "不登录不存 Cookie，流式下载 MP4 至本机 Downloads 并校验 `ftyp` box。" },
+          { "title": "落盘结构化笔记", "desc": "写入作者、原文文案、互动数、1 句摘要与 `media_local_path`（`我的看法` 永远留空）。" },
+          { "title": "交接文章生命周期整理", "desc": "落盘后默认随手交 `organize` 同步 MOC 与全库索引。" }
+        ],
+        "guardrails": [
+          "下载全败时非 0 退出且绝不写半成品笔记",
+          "含 `msToken`/`a_bogus` 的临时签名直链严禁写入 vault 或日志",
+          "AI 绝不代填 `## 我的看法`，也不加工篡改视频原文文案"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Deduplicate by video_id", "desc": "Resolve short or full Douyin URLs and skip cleanly if `video_id` already exists." },
+          { "title": "Anonymous capture & MP4 check", "desc": "Intercept stream without cookies, save MP4 to Downloads, and validate `ftyp` header." },
+          { "title": "Write clean Markdown note", "desc": "Record metadata, verbatim copy, metrics, 1-line summary, and `media_local_path`." },
+          { "title": "Hand off to organizer", "desc": "Optionally sync into article MOCs and vault maps via `organize-article-moc`." }
+        ],
+        "guardrails": [
+          "Fails closed without writing half-baked notes if download fails",
+          "Signed URLs containing `msToken`/`a_bogus` never enter vault or logs",
+          "Never fabricates or alters `## 我的看法` or verbatim copy"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "归档这条抖音视频到我的知识库，视频本体保留在本地 Downloads。",
+        "title": "抖音视频归档双产物示例",
+        "lines": [
+          { "text": "$ python3 scripts/archive_douyin.py https://v.douyin.com/xxxx/", "tone": "muted" },
+          { "text": "[INTERCEPT] video_id=73948102... · duration=01:42 · MP4 ftyp box OK (18.4 MB)", "tone": "cyan" },
+          { "text": "✓ 笔记: <articles>/2026/11/2026-11-18-抖音-作者名-核心文案前50字.md", "tone": "green" },
+          { "text": "✓ 视频: ~/Downloads/soia-pkm-clip-douyin/73948102.../video.mp4 (未进 Git)", "tone": "green" }
+        ],
+        "footer": "不登录不留 Cookie、视频不撑爆 Git 仓库、签名直链绝不落盘"
+      },
+      "en": {
+        "prompt": "Clip this Douyin video into my vault with the MP4 stored locally in Downloads.",
+        "title": "Douyin Clip & Local MP4 Output Sample",
+        "lines": [
+          { "text": "$ python3 scripts/archive_douyin.py https://v.douyin.com/xxxx/", "tone": "muted" },
+          { "text": "[INTERCEPT] video_id=73948102... · duration=01:42 · MP4 ftyp box OK (18.4 MB)", "tone": "cyan" },
+          { "text": "✓ Note: <articles>/2026/11/2026-11-18-douyin-author-snippet.md", "tone": "green" },
+          { "text": "✓ Video: ~/Downloads/soia-pkm-clip-douyin/73948102.../video.mp4 (off-repo)", "tone": "green" }
+        ],
+        "footer": "Anonymous capture; heavy MP4 stays out of Git while text stays searchable"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "完整归档单条抖音视频与文案", "action": "校验 `video_id` 去重，下载 MP4 至本机目录并写入规范笔记", "outcome": "vault 笔记、MP4 本地路径与互动/时长元数据" },
+        { "want": "暂不下载大视频，只留文案索引", "action": "加 `--metadata-only` 跳过 MP4 下载并如实标记 `media_fetched: false`", "outcome": "轻量纯文本归档笔记" },
+        { "want": "重抓刷新已归档条目的互动数据", "action": "传 `--force` 更新同时保留人工 `topics`/`people`/`## 摘要`", "outcome": "保留人工字段的刷新笔记" }
+      ],
+      "en": [
+        { "want": "Archive Douyin video & transcript", "action": "Deduplicate by `video_id`, save MP4 to Downloads, write Markdown note", "outcome": "Vault note + verified `media_local_path`" },
+        { "want": "Clip metadata & copy only", "action": "Skip binary download with `--metadata-only` (`media_fetched: false`)", "outcome": "Lightweight text-only archive note" },
+        { "want": "Refresh metrics without losing edits", "action": "Re-fetch with `--force` while keeping manual `topics`/`people`", "outcome": "Updated note preserving manual fields" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "归档这条抖音到知识库：https://www.douyin.com/video/<id>",
+        "先用 `--metadata-only` 只抓这条抖音的文案和作者信息，不下载视频。"
+      ],
+      "en": [
+        "Clip this Douyin video into my vault: https://www.douyin.com/video/<id>",
+        "Capture only the copy and metadata (`--metadata-only`) without downloading the MP4."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "匿名单次无头会话，不读取你的个人抖音 Cookie 或账号密码。",
+        "MP4 落地必验 `ftyp` 容器头，彻底杜绝把 HTML 错误页当成视频保存。"
+      ],
+      "en": [
+        "Anonymous ephemeral browser context; never touches personal cookies.",
+        "Validates MP4 `ftyp` headers so HTML error responses are never saved as video."
+      ]
+    }
+  },
+  "soia-pkm-clip-drive": {
+    "title": {
+      "zh": "云盘/本地文档与受控 PDF URL 文本提取入库",
+      "en": "Local/Drive Docs & Controlled PDF URL Clipping"
+    },
+    "pain": {
+      "zh": "论文 PDF、汇报 PPT 和 Word 文档直接拖进文件夹里根本搜不到里面写了啥；网上收了一堆 arXiv 或论文网页链接想批量下到本地提取文本，又怕覆盖已有原件、把扫描图片误标成「全文已可检索」。",
+      "en": "Dropping PDFs, PPTs, and Word files into folders leaves their text unsearchable—while batch-downloading paper URLs risks overwriting files or pretending scanned images have searchable text without OCR."
+    },
+    "solution": {
+      "zh": "针对本地/云盘文档与受控 PDF 列表做严谨提取：计算原件 SHA-256 留证，抽取 PDF/Office 可检索文本并生成带来源元数据的 Markdown；`archive_pdf.py --deep --extract` 支持从 arXiv 摘要页或 HTML 发现真实 PDF，逐条校验 `%PDF-` 魔数与哈希，并严格区分「仅文件名命中」与「经显式 OCR 后才标正文可检索」。",
+      "en": "Extract searchable text and SHA-256 provenance from PDF, Word, PPT, Excel, and controlled paper URLs (`archive_pdf.py --deep --extract`): discover real PDFs from arXiv/HTML pages, verify `%PDF-` magic bytes, refuse silent overwrites, and separate filename hits from explicit OCR text."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先 dry-run 核验目标列表", "desc": "受控 URL 清单先 `--dry-run` 预检并拒绝默认覆盖已有文件（`--force` 才替）。" },
+          { "title": "魔数与深度发现校验", "desc": "支持 arXiv/HTML PDF 发现，逐条验证 `%PDF-` 魔数与 SHA-256，不包装失败项。" },
+          { "title": "标注提取方法与 OCR 边界", "desc": "笔记必填 `source_sha256` 与 `extraction_method`；图片/扫描件只经显式 OCR 才标 `ocr`。" },
+          { "title": "按分区编号入库并建索引", "desc": "写 `20_资料库` 带唯一编号并重建全库地图，写文章库则增量更新 MOC。" }
+        ],
+        "guardrails": [
+          "绝不直接把二进制文件当 UTF-8 读取，也不向外部上传私有文档",
+          "arXiv 摘要页未拿回真实 `%PDF-` 魔数文件前绝不标为 PDF 已入库",
+          "写入 20 区后必跑 `gen_vault_map.py` 与 `vault_index_verify.py`"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Dry-run & no-overwrite check", "desc": "Preview URL batches with `--dry-run` and block accidental overwrites by default." },
+          { "title": "Deep discovery & `%PDF-` gate", "desc": "Resolve arXiv/HTML PDF links and verify `%PDF-` magic bytes + SHA-256." },
+          { "title": "Track extraction provenance", "desc": "Record `source_sha256` and `extraction_method`; never mark scans searchable without OCR." },
+          { "title": "Sync vault maps & MOCs", "desc": "Rebuild vault maps and verify `.base` paths after `20_资料库/` writes." }
+        ],
+        "guardrails": [
+          "Never uploads private local documents to third-party web converters",
+          "Never claims PDF capture unless `%PDF-` magic header is verified",
+          "Mandatory vault map & `.base` verification after 20-zone writes"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "用 archive_pdf.py 把这批论文链接先 dry-run 检查，再下载提取正文进知识库。",
+        "title": "受控 PDF URL 发现与魔数校验示例",
+        "lines": [
+          { "text": "$ python3 scripts/archive_pdf.py --url-file papers.tsv --deep --extract --dry-run --json", "tone": "muted" },
+          { "text": "✓ arxiv-2401.1234 -> resolved PDF · magic=%PDF-1.5 · sha256=8a9f... · extracted=14,200 chars", "tone": "green" },
+          { "text": "! doi-landing-page -> HTML landing only (no %PDF- magic) -> marked failed (not faked)", "tone": "amber" },
+          { "text": "[INDEX] rebuilt vault map & verified 20_资料库/资料库.base (EC=0)", "tone": "cyan" }
+        ],
+        "footer": "魔数、哈希、OCR 来源与五段入库状态逐项可查"
+      },
+      "en": {
+        "prompt": "Dry-run and extract this paper URL list into the vault using `archive_pdf.py`.",
+        "title": "Controlled PDF Discovery & Extraction Sample",
+        "lines": [
+          { "text": "$ python3 scripts/archive_pdf.py --url-file papers.tsv --deep --extract --dry-run --json", "tone": "muted" },
+          { "text": "✓ arxiv-2401.1234 -> PDF resolved · magic=%PDF-1.5 · sha256=8a9f... · 14,200 chars", "tone": "green" },
+          { "text": "! doi-landing-page -> HTML only (no %PDF-) -> isolated as failed", "tone": "amber" },
+          { "text": "[INDEX] vault map & `.base` verified cleanly (EC=0)", "tone": "cyan" }
+        ],
+        "footer": "Magic bytes, SHA-256, and extraction method tracked per file"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把本地/云盘 PDF、Word、PPT 转成可搜笔记", "action": "算 SHA-256、抽正文并写带元数据的 Markdown 笔记（原件留 `_附件/`）", "outcome": "可全文检索的资料笔记与原件哈希回执" },
+        { "want": "批量下载并提取论文或网页 PDF", "action": "`archive_pdf.py --deep --extract` 验 `%PDF-` 魔数与哈希并抽文本", "outcome": "原 PDF、`-extracted.txt` 与逐条成功/失败状态" },
+        { "want": "规范处理扫描版 PDF 与图片文档", "action": "明确区分文件名命中与显式 OCR 命中，绝不假装可读", "outcome": "带提取工具标注的正文或限制说明" }
+      ],
+      "en": [
+        { "want": "Turn PDFs, Word & PPTs into vault notes", "action": "Hash files with SHA-256, extract text, keep binaries in `_附件/`", "outcome": "Searchable Markdown notes + provenance hash" },
+        { "want": "Batch archive & extract paper URLs", "action": "Discover PDFs, check `%PDF-` magic bytes, and extract `-extracted.txt`", "outcome": "Verified PDFs, text files, and per-URL status" },
+        { "want": "Handle scanned PDFs & images honestly", "action": "Separate filename-only hits from explicit OCR text", "outcome": "Explicit OCR provenance or limitation flag" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把这个文件夹里的 PDF 和 Word 批量提取成知识库笔记，先列出清单让我确认分类。",
+        "用 `archive_pdf.py --deep --extract` 先 dry-run 检查这组论文链接。"
+      ],
+      "en": [
+        "Batch extract these local PDFs and Word docs into vault notes—list the plan first.",
+        "Dry-run `archive_pdf.py --deep --extract` on this list of paper URLs."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "自带本地 HTTP server 回归测试 `test_archive_pdf.py`，覆盖魔数校验、arXiv 发现与失败隔离。",
+        "严格遵循五段入库合同与 `index-sync-contract` 地图验收。"
+      ],
+      "en": [
+        "Includes local HTTP regression suite `test_archive_pdf.py` verifying magic bytes & failures.",
+        "Follows the 5-stage vault intake contract cleanly."
+      ]
+    }
+  },
+  "soia-pkm-clip-github-repo": {
+    "title": {
+      "zh": "GitHub 开源项目归档：项目卡、调研骨架与幂等刷新",
+      "en": "GitHub Repo Archiver: Project Cards & Research Notes"
+    },
+    "pain": {
+      "zh": "收藏了一百个 GitHub 开源项目，全放在浏览器书签里根本想不起来做过哪些调研；想把仓库写进 Obsidian 项目卡，重跑脚本刷新最近提交记录时却很容易把自己辛苦写下的「我的笔记」和评分全覆盖掉。",
+      "en": "Bookmarking GitHub repos leaves you without context later—and naive sync scripts overwrite your personal notes, status tags, and star ratings whenever they refresh repo metadata."
+    },
+    "solution": {
+      "zh": "把源码和知识库彻底解耦：源码只克隆到本机 `upstream` 目录（绝不把代码树塞进 vault），在 Obsidian 里生成项目卡、双链调研笔记骨架和分类索引；重跑刷新时严格区分「自动字段（语言/分类/最近提交）」与「永久保留的人工字段（用途/状态/stars/我的笔记）」，幂等刷新零覆盖风险。",
+      "en": "Keep source trees cleanly out of your vault (`upstream` directory locally) while maintaining Obsidian project cards, linked research note skeletons, and category indexes. Idempotent refreshes update commit/language metadata while strictly preserving your `用途`, `状态`, `stars`, and `## 我的笔记`."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "显式定位 vault 与 upstream", "desc": "按参数/环境变量/config 解析两个目录，缺参直接 fail-closed 报错不乱猜路径。" },
+          { "title": "克隆源码并建双链卡片", "desc": "源码拉到 `upstream`（拉取失败降级建最小卡），在 `60_开源项目` 建项目卡与调研笔记。" },
+          { "title": "自动字段 vs 人工字段隔离", "desc": "刷新语言、分类与最近提交；永久锁定不覆盖 `用途`/`状态`/`stars` 与 `## 我的笔记`。" },
+          { "title": "支持全目录批量幂等刷新", "desc": "扫描 `upstream` 下所有仓批量同步项目卡，非 git 目录留空并在回执标未核实。" }
+        ],
+        "guardrails": [
+          "绝不把开源项目完整源码复制进 Obsidian vault",
+          "严禁覆盖已有调研笔记或人工填写的 `## 我的笔记` 与评价字段",
+          "绝不回显 GitHub token 或私有本机绝对路径"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Fail-closed path resolution", "desc": "Require explicit vault and `upstream` paths via flags, env, or config—never guess." },
+          { "title": "Clone locally & create cards", "desc": "Clone repo to `upstream` (off-vault) and generate project card + research skeleton." },
+          { "title": "Guard manual vs. auto fields", "desc": "Refresh language/category/commits while preserving `## 我的笔记`, status, and stars." },
+          { "title": "Batch-sync upstream repos", "desc": "Re-scan your `upstream` root idempotently without duplicating existing research notes." }
+        ],
+        "guardrails": [
+          "Never dumps cloned source repositories inside your Obsidian vault",
+          "Strictly preserves manual notes and existing research drafts on re-runs",
+          "Never prints GitHub tokens or leaks private directory paths"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "归档 https://github.com/soia-team/soia-open-skills 这个开源项目到我的知识库。",
+        "title": "开源项目双产物归档示例",
+        "lines": [
+          { "text": "$ python3 scripts/gen_repo_catalog.py --add https://github.com/soia-team/soia-open-skills ...", "tone": "muted" },
+          { "text": "[UPSTREAM] cloned to <upstream>/soia-open-skills (commit 182cef1)", "tone": "cyan" },
+          { "text": "✓ 项目卡: 60_开源项目/00_图书馆/项目卡/soia-open-skills.md (自动字段已填)", "tone": "green" },
+          { "text": "✓ 调研笔记: 60_开源项目/10_调研笔记/2026-11-18-调研-soia-open-skills.md (双链已接)", "tone": "green" }
+        ],
+        "footer": "源码留在 upstream，知识库只留轻盈结构化卡片与你的个人研读笔记"
+      },
+      "en": {
+        "prompt": "Archive https://github.com/soia-team/soia-open-skills into my Obsidian project library.",
+        "title": "GitHub Repo Card & Research Note Sample",
+        "lines": [
+          { "text": "$ python3 scripts/gen_repo_catalog.py --add https://github.com/soia-team/soia-open-skills ...", "tone": "muted" },
+          { "text": "[UPSTREAM] cloned to <upstream>/soia-open-skills (commit 182cef1)", "tone": "cyan" },
+          { "text": "✓ Project Card: 60_开源项目/00_图书馆/项目卡/soia-open-skills.md", "tone": "green" },
+          { "text": "✓ Research Note: 60_开源项目/10_调研笔记/2026-11-18-调研-soia-open-skills.md", "tone": "green" }
+        ],
+        "footer": "Code lives in upstream; vault holds clean linked cards & notes"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "一键归档单个 GitHub 开源仓库", "action": "克隆至本地 `upstream` 并生成项目卡、调研笔记骨架与双链", "outcome": "项目卡路径、调研笔记与最新提交元数据" },
+        { "want": "批量刷新几百个已克隆项目的最新动态", "action": "扫描 `upstream` 幂等刷新自动字段，完好保留人工笔记", "outcome": "新增/刷新计数与非 git 目录未核实提醒" }
+      ],
+      "en": [
+        { "want": "Archive a single GitHub repo", "action": "Clone to `upstream` and generate project card + linked research note", "outcome": "Card path, note skeleton, and commit info" },
+        { "want": "Batch-refresh local upstream clones", "action": "Re-scan directory idempotently without overwriting manual notes", "outcome": "Added/refreshed counts and unverified flags" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把这个开源项目归档到我的 Obsidian 项目库：https://github.com/<owner>/<repo>",
+        "扫描我的 upstream 目录，批量刷新所有开源项目卡的最近提交字段，别动我的笔记。"
+      ],
+      "en": [
+        "Archive this GitHub repo into my Obsidian vault: https://github.com/<owner>/<repo>",
+        "Scan my upstream directory and refresh auto-fields on all project cards without touching my notes."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "只依赖 Python 3 标准库与本地 Git，离线 fixture 覆盖去重、字段保留与防覆盖测试。",
+        "清楚区分 `captured` 入库与后续生命周期归位状态。"
+      ],
+      "en": [
+        "Python 3 stdlib + Git only; offline fixtures verify deduplication and manual-field locking.",
+        "Tracks `captured` state cleanly into the vault lifecycle."
+      ]
+    }
+  },
+  "soia-pkm-clip-rednote": {
+    "title": {
+      "zh": "单篇小红书图文与视频笔记归档（含媒体隔离）",
+      "en": "Rednote Post & Video Archiver"
+    },
+    "pain": {
+      "zh": "小红书上存的好笔记、好视频过几天可能就被删帖或搜不到了；手动复制文案漏掉 `#话题#` 和互动数据，直接把视频/原图塞进知识库又会让仓库体积暴涨，还担心乱配置登录态 Cookie 泄露。",
+      "en": "Saved Rednote posts often get deleted or buried later, manual copy-pasting loses hashtags and metrics, putting videos inside Git bloats the repo, and careless scripts risk leaking `XHS_COOKIE` to untrusted domains."
+    },
+    "solution": {
+      "zh": "零依赖纯 Python 标准库安全归档单篇小红书：在发任何网络请求前先校验域名白名单（只放行 `xiaohongshu.com` / `xhslink.com`），绝不向第三方或图片 CDN 发送 Cookie；提取完整正文、`#tag[话题]#` 与互动数写进 Obsidian，视频/图片下载到 `~/Downloads/soia-pkm-clip-rednote/<note_id>/`（也支持 `--metadata-only` 纯文案归档）。",
+      "en": "Pure Python 3 stdlib archiver with strict pre-request domain allowlisting (`xiaohongshu.com` / `xhslink.com` only, never forwarding `XHS_COOKIE` to arbitrary hosts or CDNs): parse `noteDetailMap`, preserve hashtags and metrics, store media in Downloads (or `--metadata-only`), and keep `## 我的看法` empty for your own thoughts."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先验域名防 Cookie 泄露", "desc": "解析 URL 前先锁定官方白名单域名，下载媒体请求绝不携带登录态 Cookie。" },
+          { "title": "提取 note_id 去重与解析", "desc": "按 `note_id` 去重默认 SKIP，带 `xsec_token` 解析正文、标签与互动数据。" },
+          { "title": "媒体隔离或纯文案归档", "desc": "视频按 `h264->h265->av1` 存本地 Downloads；失败不写半成品，`--force` 保旧视频路径。" },
+          { "title": "补摘要双链并交整理", "desc": "归档后 AI 补 1 句摘要与双链，保留空置 `## 我的看法`，随手同步 MOC。" }
+        ],
+        "guardrails": [
+          "遇到非官方白名单域名（如恶意跳转）在发请求前立即拒绝",
+          "页面状态缺失时不写半成品笔记，明确提示 token 失效或需登录态",
+          "环境变量与日志脚本对 Cookie/Secret 全自动脱敏"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Pre-request domain allowlist", "desc": "Allow only official Rednote domains before requesting; strip cookies from media CDN fetches." },
+          { "title": "Deduplicate & parse state", "desc": "Deduplicate by `note_id`; extract prose, hashtags, and metrics via `xsec_token`." },
+          { "title": "Isolate media to Downloads", "desc": "Download video (`h264->h265->av1`) locally or keep direct links via `--metadata-only`." },
+          { "title": "Summarize & sync MOC", "desc": "Add 1-line summary + wiki-links, leave `## 我的看法` blank, and pass to organizer." }
+        ],
+        "guardrails": [
+          "Rejects non-allowlisted domains before making any network call",
+          "Never writes broken partial notes when `xsec_token` or state is missing",
+          "Auto-redacts cookies and secrets from env scripts and receipts"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "归档这条小红书图文笔记（带完整 xsec_token 分享链）到我的知识库。",
+        "title": "小红书笔记安全归档回执示例",
+        "lines": [
+          { "text": "$ python3 scripts/archive_rednote.py 'https://www.xiaohongshu.com/explore/...' ", "tone": "muted" },
+          { "text": "[DOMAIN CHECK] xiaohongshu.com allowed · note_id=66b2... (new)", "tone": "cyan" },
+          { "text": "✓ 笔记: <articles>/2026/11/2026-11-18-rednote-作者-标题.md (含 #话题#)", "tone": "green" },
+          { "text": "✓ 媒体: ~/Downloads/soia-pkm-clip-rednote/66b2.../ (0 cookie 写入日志)", "tone": "green" }
+        ],
+        "footer": "白名单前置拦截 + 媒体不进库 + 我的看法永远留给你自己"
+      },
+      "en": {
+        "prompt": "Clip this Rednote post (with `xsec_token`) into my Obsidian vault.",
+        "title": "Rednote Safe Archive Receipt Sample",
+        "lines": [
+          { "text": "$ python3 scripts/archive_rednote.py 'https://www.xiaohongshu.com/explore/...' ", "tone": "muted" },
+          { "text": "[DOMAIN CHECK] xiaohongshu.com allowed · note_id=66b2... (new)", "tone": "cyan" },
+          { "text": "✓ Note: <articles>/2026/11/2026-11-18-rednote-author-title.md", "tone": "green" },
+          { "text": "✓ Media: ~/Downloads/soia-pkm-clip-rednote/66b2.../ (0 cookies logged)", "tone": "green" }
+        ],
+        "footer": "Pre-request domain check; media isolated outside Git"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "完整归档小红书单篇图文或视频", "action": "校验官方域名并带 `xsec_token` 解析正文/标签/互动数，媒体落 Downloads", "outcome": "带原标签和本地媒体路径的 Markdown 笔记" },
+        { "want": "只要文案和候选链接（不占磁盘）", "action": "使用 `--metadata-only` 跳过二进制下载并保留媒体候选直链", "outcome": "轻量纯文本笔记与可重下候选列表" },
+        { "want": "防重复归档或保留笔记刷新", "action": "按 `note_id` 去重默认 SKIP，`--force` 更新但保留 `topics`/`people`", "outcome": "幂等去重或保留人工字段的更新" }
+      ],
+      "en": [
+        { "want": "Clip Rednote posts & videos", "action": "Verify domain, parse copy/hashtags/metrics, save media to Downloads", "outcome": "Clean Markdown note + local media folder" },
+        { "want": "Capture copy & links only", "action": "Use `--metadata-only` to skip binary downloads and save candidate URLs", "outcome": "Lightweight note + retryable media URLs" },
+        { "want": "Deduplicate or safely refresh", "action": "Skip existing `note_id`, or `--force` while keeping `topics`/`people`", "outcome": "Idempotent archive preserving manual tags" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "归档这条小红书笔记：<App 复制的完整带 xsec_token 链接>",
+        "先用 `--metadata-only` 只存这篇小红书的文案和标签，不用下视频。"
+      ],
+      "en": [
+        "Archive this Rednote share URL (with xsec_token) into my vault.",
+        "Use `--metadata-only` to clip only the text and hashtags of this Rednote post."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯 Python 3 标准库实现，公开笔记零配置即可跑通。",
+        "经安全前向测试验证：非白名单域名（如 `evil.example`）在发起 HTTP 请求前即被拒绝。"
+      ],
+      "en": [
+        "Pure Python 3 stdlib; public notes require zero external packages or config.",
+        "Security-tested to block non-allowlisted domains before any HTTP request."
+      ]
+    }
+  },
+  "soia-pkm-clip-web": {
+    "title": {
+      "zh": "网页、博客、外文长文与公开播客单集归档",
+      "en": "Web, Blog, Bilingual Longform & Podcast Clipper"
+    },
+    "pain": {
+      "zh": "网上好文章和好播客太多：普通网页剪藏插件经常把「请先登录 / Cloudflare 人机验证」的拦截页直接存成一篇空壳笔记；外文长文存下来后看不顺手；公开播客分享链接带着一堆跟踪参数，想顺便把音频也留成本地备份更是无从下手。",
+      "en": "Generic web clippers often silently save 'Please log in' or Cloudflare challenge shells as full notes, leave foreign articles untranslated, and can't strip podcast tracking queries or archive local MP3 audio alongside shownotes."
+    },
+    "solution": {
+      "zh": "集「网页抽取 + 拦截页质检 + 外文意译 + 公开播客音频归档」于一体：抓完网页正文后强制亲读复核，绝不交付拦截壳；非中文长文在文末自动附自然意译 `## 中文译文`（保留命令与专有名词英文）；播客单集用 `archive_podcast.py` 去跟踪参数、收 shownotes、原子下载音频进 `_attachments/podcasts/` 并嵌入 `![[...]]` 播放器，归档完默认交 `organize` 同步更新 MOC。",
+      "en": "Combine web extraction, anti-paywall quality inspection, natural Chinese translation for foreign articles, and public podcast archiving (`archive_podcast.py`): strip tracking params, save shownotes, atomically download audio to `_attachments/podcasts/` with `![[...]]` embeds, inspect fetched body text to reject challenge pages, and hand off to `organize-article-moc`."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "多通道抽取与去参数", "desc": "网页走 `trafilatura`/`readability`（必要时回退 `r.jina.ai`）；播客先剥离分享 query。" },
+          { "title": "强制亲读内容质量门", "desc": "写前必检正文是否命中登录墙、人机验证或几十字截断，绝不交付拦截废页。" },
+          { "title": "双语意译或播客嵌入", "desc": "外文长文自动补 `## 中文译文`；播客下载音频后嵌 `![[相对路径]]` 与 SHA-256。" },
+          { "title": "随手五段闭环整理", "desc": "除非明确说「仅归档」，否则默认交 `organize` 增量更新两级 MOC 与地图。" }
+        ],
+        "guardrails": [
+          "绝不把带临时签名的媒体直链写入 vault 或日志",
+          "绝不跳过内容检查把几十字的登录提示页标为归档完成",
+          "`## 我的看法` 永远留空，不替读者代写观点"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Clean extract & URL strip", "desc": "Use `trafilatura`/`readability` (or `r.jina.ai` fallback); strip podcast query params." },
+          { "title": "Inspect fetched body quality", "desc": "Verify real prose was captured—reject login walls, captchas, and stub nav pages." },
+          { "title": "Bilingual & podcast embed", "desc": "Add natural `## 中文译文` for foreign text; save audio atomically with `![[...]]`." },
+          { "title": "Incremental MOC handoff", "desc": "Pass directly to `organize-article-moc` unless told 'clip only'." }
+        ],
+        "guardrails": [
+          "Signed media URLs are used in-memory only and never written to vault/logs",
+          "Never marks challenge pages or truncated stubs as complete",
+          "`## 我的看法` always stays blank for your own reflections"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "存一下这期小宇宙播客节目，保留 shownotes 并把音频下载到本地附件目录。",
+        "title": "网页/播客归档与五段入库回执示例",
+        "lines": [
+          { "text": "$ python3 scripts/archive_podcast.py 'https://www.xiaoyuzhoufm.com/episode/...' ", "tone": "muted" },
+          { "text": "[CHECK] clean URL normalized · PodcastEpisode JSON-LD parsed · 0 paywall flags", "tone": "cyan" },
+          { "text": "✓ 笔记: <articles>/2026/11/2026-11-18-播客-单集标题.md (含 shownotes)", "tone": "green" },
+          { "text": "✓ 音频: _attachments/podcasts/ep123/audio.m4a (SHA-256 OK · audio_embedded=true)", "tone": "green" },
+          { "text": "✓ 五段闭环: captured -> organized -> moc_synced -> map_synced -> base_verified", "tone": "normal" }
+        ],
+        "footer": "不存拦截废页、音频原子落盘可离线播放、MOC 增量随手同步"
+      },
+      "en": {
+        "prompt": "Archive this podcast episode with its shownotes and download the audio locally.",
+        "title": "Podcast & Web Clipping Receipt Sample",
+        "lines": [
+          { "text": "$ python3 scripts/archive_podcast.py 'https://...' ", "tone": "muted" },
+          { "text": "[CHECK] clean URL normalized · PodcastEpisode JSON-LD parsed · 0 blockers", "tone": "cyan" },
+          { "text": "✓ Note: <articles>/2026/11/2026-11-18-podcast-title.md (with shownotes)", "tone": "green" },
+          { "text": "✓ Audio: _attachments/podcasts/ep123/audio.m4a (SHA-256 OK · embedded=true)", "tone": "green" },
+          { "text": "✓ Intake: captured -> organized -> moc_synced -> map_synced -> base_verified", "tone": "normal" }
+        ],
+        "footer": "Rejects login walls; atomic audio downloads; incremental MOC sync"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "归档网页、博客或外文技术长文", "action": "抓取标题/作者与完整正文，外文自动补自然意译并默认增量整理 MOC", "outcome": "按年月归位的 Markdown 笔记与分步入库回执" },
+        { "want": "归档小宇宙/Apple Podcasts 公开单集", "action": "`archive_podcast.py` 去跟踪参数、收 shownotes 并原子下载音频嵌播放器", "outcome": "播客笔记、音频本地路径/SHA-256 与嵌入播放" },
+        { "want": "归档后顺便导出 Obsidian 原生 PDF", "action": "完成入库整理后按参考流程走 Obsidian 原生导出", "outcome": "同目录可阅读 PDF 产物" }
+      ],
+      "en": [
+        { "want": "Clip web pages, blogs, & foreign essays", "action": "Extract full prose, check quality, translate foreign text, and update MOC", "outcome": "Monthly-filed Markdown note + intake receipt" },
+        { "want": "Archive public podcast episodes", "action": "Strip share queries, save shownotes, and download audio atomically", "outcome": "Podcast note + embedded `![[...]]` audio + SHA-256" },
+        { "want": "Export clipped articles to PDF", "action": "Follow Obsidian native PDF export after archival completes", "outcome": "Adjacent PDF document" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "归档这个网页链接到知识库，并同步更新文章 MOC。",
+        "存一下这期播客节目，保留 shownotes 并下载本地音频。"
+      ],
+      "en": [
+        "Clip this web article into my vault and sync the topic MOC.",
+        "Archive this podcast episode with its shownotes and local audio file."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "播客脚本仅用 Python 3 标准库，自带 `test_archive_podcast.py` 回归覆盖 URL 去参、命名与 SSRF 防护。",
+        "严格区分 `.part` 临时下载与原子落盘，失败自动清理残留临时文件。"
+      ],
+      "en": [
+        "Podcast archiver uses Python 3 stdlib only, tested in `test_archive_podcast.py` for SSRF & naming.",
+        "Atomic `.part` downloads clean up automatically on failure."
+      ]
+    }
+  },
+  "soia-pkm-clip-wechat-account": {
+    "title": {
+      "zh": "批量同步你自己管理的公众号历史文章",
+      "en": "Batch Sync Your Own WeChat Official Account"
+    },
+    "pain": {
+      "zh": "自己经营公众号写了上百篇原创，想把历史文章全量沉淀进 Obsidian 知识库做整理和复盘：一篇篇复制粘贴做到天黑，官方 API 对未认证号又拿不到全量，还怕多账号混在一起把 Secret/Cookie 搞串或一次性拉爆接口。",
+      "en": "Backing up hundreds of articles from your own WeChat Official Account by hand is grueling—while mixing multiple accounts risks credential mix-ups, unofficial-API ToS surprises, or partial scrapes."
+    },
+    "solution": {
+      "zh": "严守「只同步你自己管理的公众号」底线，提供三条通道按账号灵活路由：路 A 官方 API（免确认，限已认证号）、路 C MP 后台接口（推荐拉历史，仅需地址栏 `token + Cookie`）、路 B 登录态 Cookie 备选；多账号按 alias 隔离配置并默认 fail-closed 防串号，先跑 `--dry-run --limit 3` 探路并按 `url` 递归去重后再写入。",
+      "en": "Strictly scoped to your own WeChat accounts with three clean routes: Official API (A, verified accounts), MP backend `appmsgpublish` (C, recommended for history), and Cookie fallback (B). Accounts are isolated by alias (fail-closed if unspecified), gated by explicit consent for unofficial routes and `--dry-run` preview before batch-writing with URL deduplication."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "多账号脱敏盘点", "desc": "`--list-accounts` 列出各 alias 与 A/B/C 三条路线就绪态，无默认账号时拒绝猜测。" },
+          { "title": "风险声明与干跑探路", "desc": "非官方 B/C 路线首次需确认 `consent.json`；正式拉取前先 `--dry-run --limit 3` 探量。" },
+          { "title": "按 URL 递归去重落盘", "desc": "只抓取缺口文章写进 `Inbox/gzh-articles/<年>/`，`--force` 才允许覆盖已有条目。" },
+          { "title": "补摘要标签再归位", "desc": "AI 补 30–80 字摘要与 `topics`，随后交由 `organize-article-moc` 归位。" }
+        ],
+        "guardrails": [
+          "绝不用于批量抓取他人公众号（抓单篇公开文章请用 `clip-wechat-article`）",
+          "未设 `default_account` 且未传 `--account` 时立刻报错停下防串号",
+          "异常与日志全自动脱敏 `secret` 与 `access_token`"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "List desensitized accounts", "desc": "Check `--list-accounts` across A/B/C routes; fail-closed if account alias is ambiguous." },
+          { "title": "Consent & dry-run probe", "desc": "Record explicit ToS consent for unofficial B/C routes and probe via `--dry-run --limit 3`." },
+          { "title": "Deduplicate & save to Inbox", "desc": "Skip existing URLs recursively and write new posts to `Inbox/gzh-articles/<year>/`." },
+          { "title": "Summarize & organize", "desc": "Add 30–80 char summaries + `topics` and pass to `organize-article-moc`." }
+        ],
+        "guardrails": [
+          "Strictly for accounts you manage yourself (use `clip-wechat-article` for public single posts)",
+          "Fail-closed if multi-account config has no default and no `--account` flag",
+          "Automatically redacts secrets and access tokens from errors and logs"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "先 `--list-accounts` 看看我配的公众号，再用 `--dry-run` 探一下主号还有几篇没同步。",
+        "title": "多账号脱敏状态与 Dry-Run 探路示例",
+        "lines": [
+          { "text": "$ python3 scripts/fetch_mp.py --list-accounts", "tone": "muted" },
+          { "text": "  alias=main-blog  display='半山札记'  routes: API=off  MP=ready  Cookie=off", "tone": "cyan" },
+          { "text": "$ python3 scripts/fetch_mp.py --account main-blog --dry-run --limit 3", "tone": "muted" },
+          { "text": "[DRY-RUN] total_remote=64 · already_in_vault=59 · new_to_clip=5 (0 files written)", "tone": "green" }
+        ],
+        "footer": "不串号、先探总量再同步、全自动按 URL 去重"
+      },
+      "en": {
+        "prompt": "List my configured WeChat accounts and dry-run how many posts are missing for my main account.",
+        "title": "WeChat Account Status & Dry-Run Sample",
+        "lines": [
+          { "text": "$ python3 scripts/fetch_mp.py --list-accounts", "tone": "muted" },
+          { "text": "  alias=main-blog  display='MainBlog'  routes: API=off  MP=ready  Cookie=off", "tone": "cyan" },
+          { "text": "$ python3 scripts/fetch_mp.py --account main-blog --dry-run --limit 3", "tone": "muted" },
+          { "text": "[DRY-RUN] total_remote=64 · already_in_vault=59 · new_to_clip=5 (0 files written)", "tone": "green" }
+        ],
+        "footer": "Alias-isolated, URL-deduplicated, and dry-run verified"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "脱敏查看多公众号与通道就绪态", "action": "运行 `--list-accounts` 检查各 alias 的 API / MP 后台 / Cookie 可用性", "outcome": "脱敏账号清单与就绪状态" },
+        { "want": "预览还有多少历史文章未同步", "action": "执行 `--dry-run` 比对 vault 已有 `url` 做去重预估", "outcome": "待新增篇数、日期与标题预览" },
+        { "want": "批量同步历史原创进 Obsidian", "action": "按选定账号与路线抓取落盘 `Inbox/gzh-articles/<年>/` 并接整理", "outcome": "新增/跳过/失败统计与归档路径" }
+      ],
+      "en": [
+        { "want": "Inspect multi-account route readiness", "action": "Run `--list-accounts` to check API/MP/Cookie status safely", "outcome": "Redacted alias & route status list" },
+        { "want": "Preview unsynced historical articles", "action": "Run `--dry-run` against existing vault `url` frontmatter", "outcome": "Exact new vs. skipped article preview" },
+        { "want": "Batch archive your own account history", "action": "Fetch missing posts into `Inbox/gzh-articles/<year>/` and organize", "outcome": "Created/skipped counts and file paths" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "先 `--list-accounts` 看看我配置了哪些公众号账号，哪条路线通着。",
+        "用 `--dry-run` 检查我主号最近还有几篇已发文章没同步进知识库。"
+      ],
+      "en": [
+        "Run `--list-accounts` to check which WeChat Official Account routes are ready.",
+        "Dry-run checking how many recent posts from my account are missing from the vault."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯 Python 3 标准库实现，凭据按 `0600` 权限存放在 `~/.config/soia-skills/`，永不进库。",
+        "自带 `tests.test_clip_wechat_account` 单测验证 fail-closed 阻断、脱敏与去重。"
+      ],
+      "en": [
+        "Pure Python 3 stdlib; credentials live in `0600` user config outside the vault.",
+        "Tested in `test_clip_wechat_account` for fail-closed isolation and redaction."
+      ]
+    }
+  },
+  "soia-pkm-clip-wechat-article": {
+    "title": {
+      "zh": "单篇微信公众号文章静态抓取与入库闭环",
+      "en": "Single WeChat Article Clipper & Intake Loop"
+    },
+    "pain": {
+      "zh": "想把微信里看到的一篇好公众号文章存进 Obsidian，分享链接经常挂着 `?scene=...&poc_token=...` 跟踪尾巴导致同一篇文章重复入库两遍；有时遇到临时失效或反爬提示页，普通爬虫直接把空壳塞进文件夹里。",
+      "en": "WeChat article URLs carry noisy `?scene=...&poc_token=...` tracking params that break deduplication—and naive scrapers happily save empty anti-bot challenge pages instead of failing cleanly."
+    },
+    "solution": {
+      "zh": "用 `archive_wechat.py` 先把链接规范化去重（保留 `__biz=&mid=&idx=&sn=` 核心参数，剥除跟踪尾巴），强制先跑 `--dry-run` 过正文质量门（验明 `#js_content`、正文字数与图片数，命中反爬直接拒写报原因）；落盘按 `<年>/<月>/YYYY-MM-DD-公众号-<作者>-<标题>.md` 归位并默认随手交 `organize` 同步 MOC 与全库地图。",
+      "en": "Normalize WeChat links to prevent duplicate saves (keeping `__biz/mid/idx/sn` while stripping tracking noise), inspect `#js_content` and `body_chars` via `--dry-run` to block anti-bot stubs before writing, file cleanly into `<year>/<month>/`, and hand off to `organize-article-moc` for incremental MOC sync."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "URL 剥尾与精确去重", "desc": "保留 `__biz/mid/idx/sn` 剔除 `scene`/`click_id`/`poc_token`，杜绝同文重复。" },
+          { "title": "dry-run 过正文质量门", "desc": "写盘前先查 `#js_content`、正文字数与反爬提示，异常即拒写报 `block_reason`。" },
+          { "title": "规范落盘并留空思考区", "desc": "写入标题、作者、发布日期、正文与 `content_complete`，`## 我的看法` 留空。" },
+          { "title": "默认五段闭环增量同步", "desc": "单篇随手调 `rebuild_moc.py --article` 同步 MOC 与地图（也可指定只停在 clip）。" }
+        ],
+        "guardrails": [
+          "缺 `#js_content` 或遇验证码拦截页绝不落盘写入（仅客户明确接受才加 `--allow-incomplete`）",
+          "单篇归档严禁触发全量重建 `_MOC/`",
+          "公开链接抓取无需账号 Cookie 或 API key"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Normalize URL & deduplicate", "desc": "Strip tracking parameters while keeping canonical `__biz/mid/idx/sn` identity." },
+          { "title": "Enforce `#js_content` gate", "desc": "Dry-run checks author, title, and `body_chars`; blocks anti-bot pages with `block_reason`." },
+          { "title": "Write structured Markdown", "desc": "Save metadata, prose, and blank `## 我的看法` into `<articles>/<YYYY>/<MM>/`." },
+          { "title": "Incremental MOC sync", "desc": "Call `rebuild_moc.py --article` to close the 5-stage vault intake loop." }
+        ],
+        "guardrails": [
+          "Never saves captcha or empty stub pages unless `--allow-incomplete` is explicit",
+          "Never runs `--full-rebuild` on `_MOC/` for a single clipped article",
+          "Zero cookies or API keys needed for public WeChat URLs"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "归档这篇公众号文章到知识库，并同步更新文章 MOC。",
+        "title": "单篇公众号质量门与五段入库示例",
+        "lines": [
+          { "text": "$ python3 scripts/archive_wechat.py 'https://mp.weixin.qq.com/s/...' --dry-run --json", "tone": "muted" },
+          { "text": "[GATE] #js_content OK · body_chars=4,820 · images=6 · block_reason=null", "tone": "cyan" },
+          { "text": "✓ 落盘: <articles>/2026/11/2026-11-18-公众号-作者-标题.md", "tone": "green" },
+          { "text": "✓ 五段闭环: captured -> organized -> moc_synced -> map_synced -> base_verified", "tone": "green" }
+        ],
+        "footer": "不靠浏览器重型依赖、拦截页绝不写废稿、MOC 增量随手更新"
+      },
+      "en": {
+        "prompt": "Archive this WeChat article into my vault and update the topic MOC.",
+        "title": "WeChat Article Quality Gate & Intake Sample",
+        "lines": [
+          { "text": "$ python3 scripts/archive_wechat.py 'https://mp.weixin.qq.com/s/...' --dry-run --json", "tone": "muted" },
+          { "text": "[GATE] #js_content OK · body_chars=4,820 · images=6 · block_reason=null", "tone": "cyan" },
+          { "text": "✓ Saved: <articles>/2026/11/2026-11-18-wechat-author-title.md", "tone": "green" },
+          { "text": "✓ Intake: captured -> organized -> moc_synced -> map_synced -> base_verified", "tone": "green" }
+        ],
+        "footer": "Pure stdlib; blocks anti-bot stubs; updates MOCs incrementally"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "归档单篇公众号文章并进 MOC", "action": "规范 URL 去重、过 `#js_content` 质量门写 Markdown，随后增量更新 MOC", "outcome": "年月归位笔记与五段入库回执" },
+        { "want": "归档后顺手导出 PDF 留存", "action": "完成 Markdown 归档与月份归位后按参考走 Obsidian 原生 PDF 导出", "outcome": "Markdown 原件与同目录 PDF" }
+      ],
+      "en": [
+        { "want": "Clip single WeChat article & sync MOC", "action": "Normalize URL, pass `#js_content` check, write Markdown, sync MOC", "outcome": "Monthly note + 5-stage intake receipt" },
+        { "want": "Archive and export to PDF", "action": "Run Obsidian native PDF export right after archival finishes", "outcome": "Markdown note + adjacent PDF" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "归档这篇公众号文章到我的知识库：https://mp.weixin.qq.com/s/...",
+        "帮我存下这篇微信文章（仅归档不要整理 MOC），顺便转出一份 PDF。"
+      ],
+      "en": [
+        "Clip this WeChat article into my vault: https://mp.weixin.qq.com/s/...",
+        "Archive this WeChat post (clip only, skip MOC) and export it to PDF."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯 Python 3 标准库即可运行，自带 `tests/` 覆盖 URL 归一化与反爬拦截测试。",
+        "走 `Articles/` 兜底目录时明确告警提示配置正式目录，绝不静默写错地方。"
+      ],
+      "en": [
+        "Pure Python 3 stdlib; unit-tested for URL normalization and anti-bot blocking.",
+        "Warns explicitly if falling back to default `Articles/` directory."
+      ]
+    }
+  },
+  "soia-pkm-clip-x": {
+    "title": {
+      "zh": "单条 X 推文、Thread、Article 与电报收藏归档",
+      "en": "X Tweet, Thread, Article & Telegram Sync"
+    },
+    "pain": {
+      "zh": "X 上一条干货 Thread 动辄十几条回复，手动复制粘贴不仅丢图丢链接，里面的 `t.co` 短链过阵子还不知道指向哪；英文长贴归档下来更是堆着吃灰，或者电报「我的收藏」里攒了几百条 X 链接一直没同步进知识库。",
+      "en": "Saving multi-post X threads or X Articles by hand breaks reply order, leaves `t.co` links unresolved, skips natural Chinese translations—and hundreds of X links piled in Telegram Saved Messages stay buried."
+    },
+    "solution": {
+      "zh": "免登录走 FxTwitter API（故障兜底 syndication）：自动向上/向下回溯同作者完整 Thread 与 X Article 正文，用 facet 精确展开 `t.co` 还原真实目标链接；非中文贴自动补自然中文意译段 `## 中文译文`；还能解析 Telegram 导出的 JSON 或按授权走 MTProto 先 `--dry-run` 预览再去重导入收藏的 X 链接。",
+      "en": "No login required via FxTwitter API (with syndication fallback): trace same-author threads and X Articles, expand `t.co` facets cleanly, add natural `## 中文译文` for foreign posts, export native Obsidian PDFs, and batch-import X links from Telegram Saved Messages (`--dry-run` first)."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "URL 去重与免密抽取", "desc": "`archive_x.py` 按 `url:` 查重，回溯同作者 thread/Article 并展开 `t.co` 真实链接。" },
+          { "title": "AI 补摘要与自然意译", "desc": "补 1 句话摘要与 `topics`/`people` 双链；非中文自动补完整 `## 中文译文`。" },
+          { "title": "规范落盘并留空看法区", "desc": "按 `<年>/<月>/YYYY-MM-DD-X-<handle>-<标题>.md` 落盘，论文附件链接转交 `clip-drive`。" },
+          { "title": "扩展电报收藏同步", "desc": "支持解析电报 JSON 导出或 MTProto 增量拉取收藏链接，先预览再批量归档。" }
+        ],
+        "guardrails": [
+          "`## 我的看法` 永远留空；纯转推无正文时明确告警不伪造内容",
+          "404 失效推文如实报告并建议查 archive.org，绝不编造原帖",
+          "Telegram 凭据仅留在私有配置，绝不写入 vault 或回执"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Deduplicate & trace thread", "desc": "Check vault `url:` frontmatter, reconstruct author threads/Articles, and expand `t.co`." },
+          { "title": "Summarize & translate", "desc": "Add 1-line summary, `topics`/`people`, and full `## 中文译文` for non-Chinese posts." },
+          { "title": "File & hand off attachments", "desc": "Save cleanly into `<articles>/<YYYY>/<MM>/`; route embedded PDF URLs to `clip-drive`." },
+          { "title": "Optional Telegram sync", "desc": "Preview and import X links from Telegram Saved Messages JSON or MTProto." }
+        ],
+        "guardrails": [
+          "Leaves `## 我的看法` empty; warns on empty quote/retweets without inventing text",
+          "Reports 404s honestly with archive.org fallback advice",
+          "Telegram credentials stay isolated in local config—never in vault or logs"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "归档这条英文 X thread 到知识库，展开 t.co 链接并附带中文意译。",
+        "title": "X Thread 展开与双语归档示例",
+        "lines": [
+          { "text": "$ python3 scripts/archive_x.py https://x.com/builder/status/1859...", "tone": "muted" },
+          { "text": "[TRACE] thread=7 tweets · expanded 4 t.co links · 2 media URLs", "tone": "cyan" },
+          { "text": "✓ 笔记: <articles>/2026/11/2026-11-18-X-builder-Agent-OS-Notes.md", "tone": "green" },
+          { "text": "✓ 已补 ## 摘要 + ## 中文译文（保留专有名词英文）+ 增量 MOC 同步", "tone": "green" }
+        ],
+        "footer": "免 X 登录态、完整回溯 Thread 脉络、译文与原文双段并存"
+      },
+      "en": {
+        "prompt": "Archive this English X thread with expanded t.co links and a Chinese translation.",
+        "title": "X Thread Bilingual Archive Sample",
+        "lines": [
+          { "text": "$ python3 scripts/archive_x.py https://x.com/builder/status/1859...", "tone": "muted" },
+          { "text": "[TRACE] thread=7 tweets · expanded 4 t.co links · 2 media URLs", "tone": "cyan" },
+          { "text": "✓ Note: <articles>/2026/11/2026-11-18-X-builder-Agent-OS-Notes.md", "tone": "green" },
+          { "text": "✓ Added summary, natural translation & incremental MOC sync", "tone": "green" }
+        ],
+        "footer": "Zero X login needed; full thread reconstruction & link expansion"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "归档单条推文、长 Thread 或 X Article", "action": "走免密 API 回溯上下文、展开 `t.co` 短链并提取 `content.blocks[]`", "outcome": "带摘要、双链与 MOC 更新的规范笔记" },
+        { "want": "外文推文顺手意译或导出 PDF", "action": "补自然 `## 中文译文`（保留专有名词），按需走 Obsidian 原生 PDF 导出", "outcome": "双语对照归档或同目录 PDF" },
+        { "want": "批量同步电报「我的收藏」X 链接", "action": "解析 JSON 导出或 MTProto，先 `--dry-run` 再按 `url` 去重归档", "outcome": "新增/跳过篇数与异常链接清单" }
+      ],
+      "en": [
+        { "want": "Clip tweets, threads, or X Articles", "action": "Fetch via login-free FxTwitter API, expand `t.co`, and sync MOC", "outcome": "Clean Markdown note with full context" },
+        { "want": "Translate foreign posts & export PDF", "action": "Append `## 中文译文` and run Obsidian native PDF export when requested", "outcome": "Bilingual note or local PDF" },
+        { "want": "Sync X links from Telegram Saved", "action": "Parse JSON export or MTProto with `--dry-run` and URL dedup", "outcome": "Created/skipped counts and error list" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "归档这条 X thread：https://x.com/<handle>/status/<id>",
+        "先用 `--dry-run` 预览同步我 Telegram 收藏导出 JSON 里的 X 链接。"
+      ],
+      "en": [
+        "Clip this X thread into my Obsidian vault: https://x.com/<handle>/status/<id>",
+        "Dry-run importing X links from my Telegram Saved Messages JSON export."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "单条抓取仅靠 Python 3 标准库，自带 `test_archive_x.py` 回归校验 `t.co` 展开与译文去重。",
+        "遇到未展开短链或缺失字段在回执中标「未核实」，不靠猜补全。"
+      ],
+      "en": [
+        "Single-post capture needs only Python 3 stdlib; tested in `test_archive_x.py`.",
+        "Explicitly flags any unresolved links or unverified metadata."
+      ]
+    }
+  },
+  "soia-pkm-clip-x-profile": {
+    "title": {
+      "zh": "公开 X 账号有限窗口检索、主题研究与导出",
+      "en": "Public X Profile Scoped Research & Filtering"
+    },
+    "pain": {
+      "zh": "想系统研究某个 AI 博主最近三个月发过哪些画图提示词或技术观点：一条条手动翻时间线翻到怀疑人生；直接用全网爬虫不仅慢，还经常分不清是只想要研究摘要，还是要把 Prompt 交给下游出图。",
+      "en": "Researching what an X creator posted about a topic over the last quarter by scrolling timelines is exhausting—and unconstrained scraping mixes up research summaries with downstream prompt exports."
+    },
+    "solution": {
+      "zh": "走 L0–L3 渐进式有限窗口研究流水线：先锁定目标账号、CST 时间窗口、关键词/媒体/ALT 等筛选条件；再以 `--dry-run` 有限分页采集公开帖子，输出可审计的 `summary.md`、`filtered.json` 与分类清单 `classification.yml`；默认停在研究结论，仅当你明确要求时才导出 `image-prompts` 交给生图技能。",
+      "en": "Run a bounded L0–L3 research pipeline over public X timelines: lock exact handle, CST date window, and keyword/media/ALT filters; preview with `--dry-run` and bounded pagination; emit auditable `summary.md`, `filtered.json`, and `classification.yml`; and hand off `image-prompts` downstream only when explicitly requested."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "L0 锁定四项研究范围", "desc": "明确账号/候选、CST 日期窗口、关键词/媒体筛选条件与目标产物类型。" },
+          { "title": "L1 有限分页采集预览", "desc": "先 `--dry-run` 有限分页采集公开帖子，每页汇报数量与停止原因。" },
+          { "title": "L2 产出可审计研究包", "desc": "生成 `summary.md`、`filtered.json` 与 `classification.yml`，每条保留原贴 URL 与时间。" },
+          { "title": "L3 按需转交下游出图", "desc": "仅明确选择 `image-prompts` 时才导出提示词交给 `generate-article-image`。" }
+        ],
+        "guardrails": [
+          "绝不读取 X Cookie、登录态或任何私密内容",
+          "`latest-window` 采样绝不冒充账号历史全量，分页受 `--max-pages` 严格约束",
+          "把导出 Prompt 绝不冒充成「图片生成与视觉验收通过」"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "L0 Lock scope & filters", "desc": "Confirm handle, CST dates, query/media/ALT filters, and desired output mode." },
+          { "title": "L1 Bounded pagination", "desc": "Dry-run and paginate safely with explicit `page/received/added/total` logs." },
+          { "title": "L2 Auditable research bundle", "desc": "Output `summary.md`, `filtered.json`, and `classification.yml` with post URLs." },
+          { "title": "L3 Optional prompt export", "desc": "Export `image-prompts` downstream only when explicitly requested." }
+        ],
+        "guardrails": [
+          "Zero X cookies, logins, or private DMs/protected posts accessed",
+          "Never claims `latest-window` represents full account history",
+          "Compiling prompts never counts as verified image generation"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "查下这个公开 X 账号在 2026-10-01 到 11-18 期间关于 Agent OS 的推文并输出研究摘要。",
+        "title": "X 账号窗口检索与研究包回执示例",
+        "lines": [
+          { "text": "$ python3 scripts/profile_x.py https://x.com/<handle> --since 2026-10-01 --until 2026-11-18 --query \"Agent OS\" --output-mode summary", "tone": "muted" },
+          { "text": "[PAGE 1..3] fetched=84 · matched=11 · stop_reason=until_window_reached", "tone": "cyan" },
+          { "text": "✓ 产物: summary.md + filtered.json + classification.yml (11 条均含原贴 URL)", "tone": "green" },
+          { "text": "[BOUNDARY] 仅做研究摘要，未编译或触发下游生图", "tone": "normal" }
+        ],
+        "footer": "不碰登录态、不写进公共仓、分页覆盖率与停止原因全透明"
+      },
+      "en": {
+        "prompt": "Research this public X account's posts about 'Agent OS' between 2026-10-01 and 11-18.",
+        "title": "X Profile Scoped Research Sample",
+        "lines": [
+          { "text": "$ python3 scripts/profile_x.py https://x.com/<handle> --since 2026-10-01 --until 2026-11-18 --query \"Agent OS\" --output-mode summary", "tone": "muted" },
+          { "text": "[PAGE 1..3] fetched=84 · matched=11 · stop_reason=until_window_reached", "tone": "cyan" },
+          { "text": "✓ Output: summary.md + filtered.json + classification.yml (all with URLs)", "tone": "green" },
+          { "text": "[BOUNDARY] Summary mode only; downstream image prompts not compiled", "tone": "normal" }
+        ],
+        "footer": "Zero cookies; transparent pagination coverage & stop reasons"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "对已知公开 X 账号做时间/主题总结", "action": "按起止日期与多关键词条件有限采集并归类", "outcome": "`summary.md`、`filtered.json` 与分类清单" },
+        { "want": "筛选含配图/ALT/模型线索的帖子研究", "action": "支持 `--has-media`/`--has-alt`/`--category` 与离线 `--source-json` 复算", "outcome": "带原贴 URL 和证据字段的可审计结果" },
+        { "want": "把筛选出的提示词交给下游生图", "action": "仅显式传 `--output-mode image-prompts` 导出规范目录", "outcome": "可直接喂给 `generate-article-image` 的导出包" }
+      ],
+      "en": [
+        { "want": "Summarize public X posts by date/topic", "action": "Filter bounded windows with CST dates and multi-term queries", "outcome": "`summary.md`, `filtered.json`, and `classification.yml`" },
+        { "want": "Analyze media/ALT/prompt patterns", "action": "Filter via `--has-media`/`--has-alt` or re-run offline via `--source-json`", "outcome": "Auditable findings tied to exact post URLs" },
+        { "want": "Export filtered prompts downstream", "action": "Use `--output-mode image-prompts` only when explicitly requested", "outcome": "Structured prompt bundle for image generation" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "研究下 `https://x.com/<handle>` 最近 30 天发过的提示词帖子，给我出一份 `summary.md`。",
+        "用离线模式重新按 `--query-mode all` 筛选这份已采到的 `filtered.json`。"
+      ],
+      "en": [
+        "Summarize public posts about prompts from `https://x.com/<handle>` over the last 30 days.",
+        "Re-filter this offline `--source-json` snapshot with `--query-mode all`."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯 Python 3 标准库实现，不碰任何私有 Cookie 或账号抓取密钥。",
+        "内置三场景真实前向回归测试标准与完整研究契约。"
+      ],
+      "en": [
+        "Pure Python 3 stdlib; zero private cookies or auth secrets required.",
+        "Backed by a 3-scenario forward test suite and explicit research contract."
+      ]
+    }
+  }
+}

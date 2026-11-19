@@ -13,7 +13,32 @@
 .tutorial-meta, .showcase-card-foot { display: flex; justify-content: space-between; gap: 12px; color: var(--ink-mute); font-size: 13px; }
 .tutorial-meta span:last-child, .showcase-card-foot a { color: var(--ink); font-weight: 600; text-decoration: none; }
 .tutorial-detail-hero { margin: 0 0 44px; border: 1px solid var(--line); background: #f1f2ee; }
-.tutorial-detail-hero img { width: 100%; max-height: 560px; object-fit: cover; display: block; }
+.tutorial-detail-hero img { width: 100%; height: auto; max-height: none; object-fit: contain; display: block; }
+.zoomable-figure { position: relative; cursor: zoom-in; overflow: hidden; }
+.zoomable-figure img { transition: transform .22s ease; }
+.zoomable-figure:hover img { transform: scale(1.01); }
+.zoomable-hint { position: absolute; right: 12px; bottom: 12px; padding: 5px 10px; border-radius: 999px; background: rgba(15, 20, 24, .74); color: #fff; font: 12px var(--mono); pointer-events: none; backdrop-filter: blur(4px); }
+.lightbox-backdrop { position: fixed; inset: 0; z-index: 9999; background: rgba(12, 16, 20, .88); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 20px; backdrop-filter: blur(6px); }
+.lightbox-close { position: fixed; top: 18px; right: 22px; width: 40px; height: 40px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25); background: rgba(20, 24, 28, .82); color: #fff; font-size: 22px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+.lightbox-close:hover { background: rgba(255,255,255,.16); }
+.lightbox-img { max-width: 94vw; max-height: 84vh; width: auto; height: auto; object-fit: contain; border: 1px solid rgba(255,255,255,.16); background: #fff; box-shadow: 0 24px 64px rgba(0,0,0,.45); }
+.lightbox-caption { margin-top: 12px; color: rgba(255,255,255,.86); font-size: 14px; text-align: center; }
+.agent-matrix-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin: 18px 0 8px; padding: 0; list-style: none; }
+.agent-matrix-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); background: var(--paper); border-radius: 8px; }
+.agent-matrix-name { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.agent-matrix-name strong { font-size: 14px; color: var(--ink); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agent-matrix-name code { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.agent-matrix-proto { font-family: var(--mono); font-size: 11px; padding: 2px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-soft); background: #f6f7f3; white-space: nowrap; }
+.skill-workflow-card { margin: 22px 0; padding: 20px; border: 1px solid var(--line); background: #f8f9f5; border-radius: 10px; }
+.skill-workflow-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 14px 0 16px; }
+.skill-workflow-step { padding: 12px 14px; border: 1px solid var(--line); background: var(--paper); border-radius: 8px; }
+.skill-workflow-step .step-no { display: block; font: 11px var(--mono); color: #0891b2; margin-bottom: 4px; }
+.skill-workflow-step strong { display: block; font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+.skill-workflow-step small { display: block; font-size: 12.5px; line-height: 1.5; color: var(--ink-soft); }
+.skill-deliverable-box { padding: 14px 16px; border: 1px dashed var(--line); background: var(--paper); border-radius: 8px; }
+.skill-deliverable-box .label { display: block; margin-bottom: 6px; font: 11px var(--mono); color: var(--ink-mute); text-transform: uppercase; letter-spacing: .08em; }
+.skill-deliverable-box pre { margin: 8px 0 0; padding: 10px 12px; background: #161b22; color: #e6edf3; border-radius: 6px; font: 12px/1.55 var(--mono); overflow-x: auto; }
+@media (max-width: 720px) { .skill-workflow-steps { grid-template-columns: 1fr; } }
 .tutorial-detail-layout { display: grid; grid-template-columns: 180px minmax(0, 680px); gap: 48px; justify-content: center; }
 .missing-toc { display: flex; flex-direction: column; gap: 12px; position: sticky; top: 120px; align-self: start; font-size: 14px; }
 .missing-toc span { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; }
@@ -53,3 +78,36 @@
 .enterprise-sent strong { color: var(--ink); }
 @media (max-width: 880px) { .tutorial-grid, .showcase-grid-local { grid-template-columns: repeat(2, minmax(0, 1fr)); } .enterprise-layout { grid-template-columns: 1fr; gap: 42px; } .tutorial-detail-layout { grid-template-columns: 1fr; gap: 24px; } .missing-toc { position: static; flex-direction: row; flex-wrap: wrap; } .missing-toc span { width: 100%; } }
 @media (max-width: 560px) { .tutorial-grid, .showcase-grid-local { grid-template-columns: 1fr; } .showcase-note, .enterprise-note { grid-template-columns: 1fr; gap: 10px; } .craft-row { grid-template-columns: 42px 1fr 24px; gap: 10px; } .craft-row strong { font-size: 19px; } }
+.plugin-detail-columns > article, .plugin-detail-columns > aside { min-width: 0; max-width: 100%; }
+.plugin-detail-columns pre.agent-code { max-width: 100%; overflow-x: auto; box-sizing: border-box; }
+.skill-table-wrap { width: 100%; max-width: 100%; overflow-x: auto; margin: 16px 0 24px; -webkit-overflow-scrolling: touch; }
+.skill-cap-table { width: 100%; min-width: 520px; border-collapse: collapse; margin: 0; font-size: 14px; border: 1px solid var(--line); background: var(--paper); }
+.skill-cap-table th, .skill-cap-table td { padding: 11px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; line-height: 1.55; }
+.skill-cap-table th { background: #f5f6f2; color: var(--ink); font-weight: 600; font-size: 13px; }
+.skill-cap-table td { color: var(--ink-soft); }
+.skill-cap-table tr:last-child td { border-bottom: none; }
+.skill-hero-card { margin: 0 0 42px; border: 1px solid #1e293b; border-radius: 14px; background: #0e1526; box-shadow: 0 18px 40px rgba(14, 21, 38, .12); }
+.skill-hero-card img { width: 100%; height: auto; display: block; }
+.skill-row-tech { display: inline-block; margin-left: 10px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); background: #f6f7f3; font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--ink-soft); vertical-align: middle; }
+.plugin-detail-columns article .skill-prose { font-size: 16px; line-height: 1.75; color: var(--ink-soft); }
+.skill-inline-code { font-family: var(--mono); font-size: 0.88em; padding: 1px 6px; border-radius: 4px; background: #f1f3ee; color: #181b1f; border: 1px solid #e3e5de; word-break: break-word; }
+.skill-mechanism-card { margin: 22px 0 30px; padding: 22px; border-radius: 14px; background: #0e1526; background-image: linear-gradient(rgba(148, 163, 184, .06) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, .06) 1px, transparent 1px); background-size: 28px 28px; border: 1px solid #24324d; color: #f8fafc; }
+.skill-mech-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #1e293b; }
+.skill-mech-kicker { font: 600 12px var(--mono); letter-spacing: .08em; color: #38bdf8; }
+.skill-mech-head code { font: 12px var(--mono); color: #4ade80; background: rgba(74, 222, 128, .1); padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(74, 222, 128, .28); max-width: 100%; overflow-wrap: anywhere; }
+.plugin-detail-columns article ol.skill-mech-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.plugin-detail-columns article li.skill-mech-step { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 14px; border-radius: 10px; background: rgba(15, 23, 42, .9); border: 1px solid #24324d; color: #f8fafc; }
+.skill-mech-num { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; background: rgba(74, 222, 128, .16); color: #4ade80; font: 700 15px var(--mono); border: 1px solid rgba(74, 222, 128, .34); }
+.skill-mech-step strong { display: block; font-size: 15px; color: #f8fafc; margin-bottom: 4px; }
+.plugin-detail-columns article .skill-mech-step p { margin: 0; font-size: 13.5px; line-height: 1.6; color: #cbd5e1; }
+.skill-mech-step .skill-inline-code { background: rgba(30, 41, 59, .95); color: #f1f5f9; border-color: #334155; }
+.skill-mech-guard { margin-top: 14px; padding: 14px 16px; border-radius: 10px; background: rgba(251, 146, 60, .1); border: 1px solid rgba(251, 146, 60, .45); }
+.skill-mech-guard-title { display: block; font: 700 12px var(--mono); letter-spacing: .06em; color: #fb923c; margin-bottom: 8px; }
+.plugin-detail-columns article .skill-mech-guard ul { margin: 0; padding-left: 18px; display: grid; gap: 5px; }
+.plugin-detail-columns article .skill-mech-guard li { font-size: 13.5px; line-height: 1.6; color: #ffedd5; }
+.skill-mech-guard .skill-inline-code { background: rgba(124, 45, 18, .55); color: #ffedd5; border-color: rgba(251, 146, 60, .4); }
+.plugin-detail-columns article ul.skill-prompt-list { list-style: none; padding: 0; margin: 14px 0 24px; display: grid; gap: 10px; }
+.plugin-detail-columns article li.skill-prompt-item { display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: #f8f9f5; color: var(--ink); font-size: 15px; line-height: 1.6; }
+.skill-prompt-mark { font: 700 20px/1 Georgia, serif; color: #0891b2; margin-top: 2px; }
+@media (max-width: 680px) { .plugin-detail-columns { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .skill-row-tech { display: block; margin: 6px 0 0; width: fit-content; } .skill-mechanism-card { padding: 14px; } }

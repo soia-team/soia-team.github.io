@@ -1,0 +1,1266 @@
+{
+  "soia-pkm-distill-article-opinion": {
+    "title": {
+      "zh": "苏格拉底式追问：把文章炼成你自己的看法",
+      "en": "Socratic Opinion Distiller for Vault Notes"
+    },
+    "pain": {
+      "zh": "文章存了几百篇，「我的看法」那一栏永远是空的；如果直接叫 AI 帮写读后感，它吐出来的全是四平八稳、毫无温度的假感悟，既不是你自己的真实立场，写进文章里也完全没有辨识度。",
+      "en": "Hundreds of clipped articles sit in your vault with empty `## 我的看法` sections—and letting an AI ghostwrite reflections for you yields generic, soulless platitudes that aren't actually your stance."
+    },
+    "solution": {
+      "zh": "守住「绝不代笔」铁律，用苏格拉底式逐问帮你把真想法榨出来：先读原文用 1–2 句对齐骨架，再按「买不买账 / 经验检验 / 对你的意义」一次只抛一个大白话问题（带回答示例，绝不用十道题淹没你），等你回答后再忠实整理进原文的 `## 我的看法`；还能跨同主题 MOC 多篇文章把你的零散看法聚合成主题观点综述，直通成文草稿。",
+      "en": "Enforces a strict no-ghostwriting rule using Socratic questioning: align briefly on the article's core argument, ask ONE plain-language question at a time (with a short example, never a wall of questions), distill only your actual replies into `## 我的看法` without altering the rest of the file, or aggregate your opinions across a topic MOC into a synthesis draft ready for `compose`."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先对齐原文骨架", "desc": "读取 `## 原文` 用 1–2 句确认文章主旨，不动原摘抄也不看空壳。" },
+          { "title": "每次只抛一个大白话问题", "desc": "按立场、经验与个人意义提问，附带简短回答示例，等你说完再问下一句。" },
+          { "title": "第一人称落盘不篡改全文", "desc": "只整理你表达过的判断写入 `## 我的看法`，其余 frontmatter 与原文纹丝不动。" },
+          { "title": "跨多篇聚合为主题综述", "desc": "读取 `_MOC/<分类>/<主题>.md` 下各篇看法，素材足够后合成观点综述草稿。" }
+        ],
+        "guardrails": [
+          "绝不代写或加入用户从未表达过的判断与金句",
+          "严禁一次抛出五六个问题或大表格淹没思考注意力",
+          "原文已有非占位看法时先问追加还是替换，绝不静默覆盖"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Align on source text", "desc": "Read `## 原文` and align in 1–2 crisp sentences without modifying source text." },
+          { "title": "Ask one question at a time", "desc": "Probe stance, lived experience, and personal takeaway—one plain question per turn." },
+          { "title": "Write only your words", "desc": "Format your actual answers into `## 我的看法` while keeping all other sections intact." },
+          { "title": "Synthesize across a MOC", "desc": "Aggregate your notes across a topic MOC into a draft ready for `compose-article-draft`." }
+        ],
+        "guardrails": [
+          "Never ghostwrites opinions or adds unexpressed judgments",
+          "Never overwhelms you with multi-question surveys in a single turn",
+          "Asks append vs. replace if `## 我的看法` already has real content"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "帮我给《为什么 Agent OS 需要不可篡改账本》补「我的看法」，一次问一个问题引导我。",
+        "title": "苏格拉底式单问引导与落盘示例",
+        "lines": [
+          { "text": "[对齐骨架] 原文核心主张：只有把每次工具调用记进账本，长跑 Agent 才可回放、可审计。", "tone": "cyan" },
+          { "text": "[第 1 问] 你在自己项目里跑编码 Agent 时，最认同它哪个痛点，还是觉得哪块太重了？", "tone": "normal" },
+          { "text": "  (例：「我认同权限账本必须留证，但单人小脚本没必要强上全套网关。」)", "tone": "muted" },
+          { "text": "✓ 收到你 2 轮回答后 -> 仅更新原文 `## 我的看法`，frontmatter/摘要/原文 0 改动", "tone": "green" }
+        ],
+        "footer": "不替你思考、不堆表轰炸，把你零碎的真实直觉变成可复用的创作骨料"
+      },
+      "en": {
+        "prompt": "Help me fill `## 我的看法` for this Agent OS essay—ask me one question at a time.",
+        "title": "Socratic Single-Question Opinion Distillation Sample",
+        "lines": [
+          { "text": "[Aligned] Core thesis: long-running agents need an immutable ledger to be auditable.", "tone": "cyan" },
+          { "text": "[Question 1] In your own coding workflows, where does this match or feel overbuilt?", "tone": "normal" },
+          { "text": "  (e.g. 'Permission logs are essential, though solo scripts don't need a full gateway.')", "tone": "muted" },
+          { "text": "✓ After 2 turns -> updates ONLY `## 我的看法`; frontmatter & prose untouched", "tone": "green" }
+        ],
+        "footer": "100% your real stance—zero AI ghostwriting"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "给单篇剪藏文章补「我的看法」", "action": "一次抛一个白话问题引导思考，忠实整理为第一人称写入", "outcome": "仅更新 `## 我的看法`，其余原文保持零改动" },
+        { "want": "把同一主题多篇看法汇成文章素材", "action": "读取 MOC 下各篇观点（不足先补单篇），聚合为观点综述", "outcome": "可直接交给 `compose` 成文的主题综述草稿" }
+      ],
+      "en": [
+        { "want": "Fill `## 我的看法` on one article", "action": "Guide with one plain question per turn and record your voice", "outcome": "Updated `## 我的看法` section only" },
+        { "want": "Synthesize views across a topic MOC", "action": "Collect opinions across linked articles into a synthesis draft", "outcome": "Topic synthesis ready for `compose-article-draft`" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "帮我给这篇剪藏补『我的看法』，一次只问我一个问题。",
+        "把 MOC 里『Agent 架构』下面这几篇我的看法汇成一份主题观点综述。"
+      ],
+      "en": [
+        "Help me distill my own take on this clipped note—one question at a time.",
+        "Synthesize my opinions across the articles in this topic MOC into a summary draft."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯本地对话工作流，不联网、不读凭据，未收到你的回答前绝不动文件。",
+        "无缝承接上游 `clip-*` 笔记并直通下游 `compose-article-draft`。"
+      ],
+      "en": [
+        "Local-only LLM workflow; never touches files until you respond.",
+        "Bridges upstream `clip-*` notes directly into `compose-article-draft`."
+      ]
+    }
+  },
+  "soia-pkm-extract-vault-knowledge": {
+    "title": {
+      "zh": "从历史语料与审计报告提炼 20 区长期知识",
+      "en": "Distill Long-Term Knowledge from Vault History"
+    },
+    "pain": {
+      "zh": "工作台任务、冻结审计报告、项目调研和历史导入区里堆满了宝贵经验，但里面混着过时的 `status`/`owner`、个人环境路径甚至敏感信息；直接把整份报告搬进 `20_资料库` 会污染长期知识，全靠手重写又太耗时。",
+      "en": "Valuable insights sit trapped inside old task trackers, frozen audit logs, and historical imports—mixed with stale `status` fields, local paths, and sensitive details that shouldn't be copied raw into permanent knowledge."
+    },
+    "solution": {
+      "zh": "在绝对保留 `30/40/60/90` 原始证据不动的前提下，把经验「去状态、去敏化、查重后」提炼成干净的 `20_资料库` 长期知识（create-only 新建）：先用 `query-vault` 查重，经 `knowledge_manifest.py` 走计划与校验写进 `10_主题知识`/`20_规范与手册`/`30_学习指南`，正文必答「是什么/适用与边界/依据/如何复用/风险」，写完立刻同步全库地图与 `.base`。",
+      "en": "Distill stateless, reusable permanent notes into `20_资料库` (`create-only`) while leaving `30/40/60/90` evidence untouched: deduplicate via `query-vault`, strip ephemeral task status and sensitive strings, validate via `knowledge_manifest.py`, require clear source wikilinks, and immediately update the vault map and `.base`."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先查重与分流判断", "desc": "用 `query-vault` 查同主题是否已存在（历史区用 `--no-snippets`），分出提炼/迁移/仅留证。" },
+          { "title": "去状态与敏感信息剥离", "desc": "过滤账号、token、绝对路径和个人身份，剥离 `owner`/`status`/`next_action`。" },
+          { "title": "create-only manifest 校验", "desc": "跑 `knowledge_manifest.py plan/verify` 写入 `20_资料库` 唯一编号子目录并留来源双链。" },
+          { "title": "强制同步全库地图与 Base", "desc": "写完 20 区立即跑 `gen_vault_map.py` 与 `vault_index_verify.py` 确保索引闭环。" }
+        ],
+        "guardrails": [
+          "绝不搬走、删除或改写 30/40/60/90 原有历史证据文件",
+          "超过 3 篇批量提炼、重名或涉敏内容必须先列清单确认",
+          "PDF/Word/图片仅在有明确文本提取或 OCR 证据时才引用正文结论"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Deduplicate & triage", "desc": "Check existing `20_资料库` via `query-vault` (with `--no-snippets` on history zones)." },
+          { "title": "Strip state & sensitive data", "desc": "Remove ephemeral `status`/`next_action`, local paths, and personal identifiers." },
+          { "title": "Create-only manifest verify", "desc": "Plan & verify via `knowledge_manifest.py` with canonical source `[[wikilink]]`." },
+          { "title": "Sync vault map & `.base`", "desc": "Rebuild map and run `vault_index_verify.py` right after any 20-zone creation." }
+        ],
+        "guardrails": [
+          "Never moves, deletes, or edits original 30/40/60/90 evidence notes",
+          "Requires list confirmation for >3 sources, duplicate topics, or sensitive inputs",
+          "Never cites PDF/image prose unless extracted or OCR-verified"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "把这份 30 区的发布故障复盘报告里的方法沉淀成 20 区的长期规范手册，保留原报告不动。",
+        "title": "长期知识提炼与 Manifest 校验示例",
+        "lines": [
+          { "text": "$ python3 scripts/knowledge_manifest.py plan --source 30_审计/incident.md --target 20_资料库/20_规范与手册/发版检查规范.md", "tone": "muted" },
+          { "text": "[SANITIZE] 已剥离 3 处一次性任务状态与本机目录；保留精确来源 [[incident]]", "tone": "cyan" },
+          { "text": "✓ verify EC=0 (create-only · 原证据文件哈希未变) · 已补齐边界/复用/风险五节", "tone": "green" },
+          { "text": "✓ gen_vault_map + vault_index_verify (20_资料库/资料库.base) 通过", "tone": "green" }
+        ],
+        "footer": "旧证据安然留档，新知识干净去状态、可长期复用"
+      },
+      "en": {
+        "prompt": "Distill the reusable engineering rules from this 30-zone incident report into a permanent 20-zone handbook.",
+        "title": "Stateless Knowledge Distillation Sample",
+        "lines": [
+          { "text": "$ python3 scripts/knowledge_manifest.py plan --source 30_audit/incident.md --target 20_library/20_guides/release-checks.md", "tone": "muted" },
+          { "text": "[SANITIZE] Stripped 3 ephemeral task statuses & local paths; kept source [[incident]]", "tone": "cyan" },
+          { "text": "✓ verify EC=0 (create-only · original evidence unchanged)", "tone": "green" },
+          { "text": "✓ Vault map & `.base` verification passed", "tone": "green" }
+        ],
+        "footer": "Evidence preserved in place; permanent knowledge stays clean & indexed"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把工作台/审计报告沉淀成长期知识", "action": "查重、剥离任务状态与敏感信息，create-only 新建带来源双链笔记", "outcome": "候选清单、`manifest` 校验与新建文件路径" },
+        { "want": "从历史导入语料中抽方法又不泄密", "action": "用 `--no-snippets` 筛选路径并过滤身份/凭据，仅保留抽象方法", "outcome": "脱敏长期知识与全库地图更新回执" }
+      ],
+      "en": [
+        { "want": "Turn audit reports into lasting handbooks", "action": "Deduplicate, strip status/secrets, create-only note with source wikilink", "outcome": "Manifest verification & new 20-zone path" },
+        { "want": "Extract methods safely from legacy imports", "action": "Filter paths with `--no-snippets` and redact private details", "outcome": "Clean reusable note + synced vault map" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "从这份 30 区的架构审计报告里提炼出可复用的规范，新建到 20 区规范目录。",
+        "帮我看看这组历史日志里哪些经验值得提炼进 20 区，先列候选去向清单让我确认。"
+      ],
+      "en": [
+        "Distill reusable architecture rules from this 30-zone audit report into `20_资料库`.",
+        "Review these historical logs and propose a candidate list of permanent notes to extract."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "强制依赖 `soia-pkm-query-vault` 查重，自带 create-only 与来源防漂移 fail-closed 前向验证。",
+        "回执明确汇报来源 SHA-256、剥离敏感项、原件保留状态与 `.base` 根校验。"
+      ],
+      "en": [
+        "Requires `query-vault` deduplication and fail-closed `knowledge_manifest` verification.",
+        "Reports source SHA-256, redacted items, source preservation, and `.base` checks."
+      ]
+    }
+  },
+  "soia-pkm-interpret-article-analysis": {
+    "title": {
+      "zh": "长文/论文独立 AI 解读：选读判断，绝不代写观点",
+      "en": "Independent AI Article & Paper Analysis"
+    },
+    "pain": {
+      "zh": "剪藏了一篇两万字的英文长文或论文，不确定值不值得花半小时精读；如果叫 AI 直接在原笔记里写总结，既怕它弄脏原文件、又怕它越俎代庖把「我的看法」写满。",
+      "en": "When deciding whether a 10,000-word paper deserves a deep read, asking an AI to summarize inside the original note risks corrupting your clip or overwriting `## 我的看法` with AI opinions."
+    },
+    "solution": {
+      "zh": "作为纯客观的「选读决策辅助层」，永远在同目录单独产出 `<原文件名>-AI解读.md` 并双链回原文，**绝对不碰原文件一字一行（更不读不改 `## 我的看法`）**：默认给「快读」五段式帮你快速判断值不值得深挖；要求「精读」时逐节核查论证链与逻辑跳跃，原文没交代的绝不脑补，老老实实标出「原文未明确/需核对」。",
+      "en": "Act strictly as an AI read-triage assistant by creating a separate `<stem>-AI解读.md` file linked back to the original—never reading or modifying the source file's `## 我的看法`. Supports 2–3 sentence `quick` triage or section-by-section `deep` argument verification, marking missing premises transparently instead of inventing."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "严守不碰原文件红线", "desc": "只读原文正文（仅摘要时明示低置信度），另建 `<stem>-AI解读.md` 绝不改原稿。" },
+          { "title": "快读 / 精读两档切换", "desc": "快读每段 2–3 句定价值；精读逐节核对「论点 / 证据 / 逻辑跳跃 / 未交代前提」。" },
+          { "title": "固定五段式交付结构", "desc": "内容总览 → 核心要点（带出处）→ 关键启发 → 批判视角 → 延伸阅读双链。" },
+          { "title": "超过 3 篇先列清单确认", "desc": "单篇直出；>3 篇批量解读先报清单给你挑选，同名已存在先问覆盖。" }
+        ],
+        "guardrails": [
+          "严禁写入或修改原文章的 `## 我的看法`（个人观点请用 `distill`）",
+          "原文未提及的证据绝不编造，强制标「原文未明确/需核对」",
+          "不顺手做外文翻译（交 `translate`）或 PPT 转图（交 `transform`）"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Leave source note untouched", "desc": "Create a standalone `<stem>-AI解读.md` without touching the original file or `## 我的看法`." },
+          { "title": "Quick triage or deep audit", "desc": "Default `quick` (2–3 sentences/section); `deep` checks per-section claims and logic jumps." },
+          { "title": "Structured 5-part output", "desc": "Overview, sourced highlights, actionable takeaways, critical gaps, and vault links." },
+          { "title": "Batch confirmation (>3 docs)", "desc": "List candidate articles first before batch-running >3 notes or overwriting existing files." }
+        ],
+        "guardrails": [
+          "Strictly forbidden from editing `## 我的看法` (use `distill` for your own stance)",
+          "Never fabricates missing evidence—marks `[Unstated in source / verify]` explicitly",
+          "Does not substitute for `translate-article-zh` or `transform-*`"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "精读这篇长论文并逐节核查论证链，帮我判断值不值得深挖，不要改动原笔记。",
+        "title": "独立 AI 解读文件结构回执示例",
+        "lines": [
+          { "text": "✓ 产出独立文件: <articles>/2026/11/Agent-Memory-Survey-AI解读.md (depth: deep)", "tone": "cyan" },
+          { "text": "  • 核心要点 (6条均附原文节号) · 关键启发 (3条: 是什么->为何重要->怎么用)", "tone": "normal" },
+          { "text": "  • 批判视角: 第 4.2 节基准测试样本量未披露 -> 已标 [原文未明确/需核对]", "tone": "amber" },
+          { "text": "✓ 原文件（含 ## 我的看法）0 改动 · 建议：可切至 distill 沉淀个人判断", "tone": "green" }
+        ],
+        "footer": "AI 观点和你的个人观点物理隔离，绝不篡改原文"
+      },
+      "en": {
+        "prompt": "Deep-analyze this paper's argument chain without modifying the original note.",
+        "title": "Standalone AI Analysis Output Sample",
+        "lines": [
+          { "text": "✓ Created standalone file: Agent-Memory-Survey-AI解读.md (depth: deep)", "tone": "cyan" },
+          { "text": "  • Sourced takeaways + 3 actionable insights (what / why / how)", "tone": "normal" },
+          { "text": "  • Critique: Sec 4.2 benchmark sample size omitted -> flagged [Verify in source]", "tone": "amber" },
+          { "text": "✓ Original note untouched · Ready for `distill-article-opinion` if worth digging in", "tone": "green" }
+        ],
+        "footer": "Physical separation between AI analysis and your personal reflections"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "快读判断一篇长文值不值得深挖", "action": "生成每段 2–3 句的五段式独立解读并双链回原文", "outcome": "同目录 `<原文件名>-AI解读.md`" },
+        { "want": "精读论文并逐节核查论证漏洞", "action": "逐节核对论点/证据/逻辑跳跃，标出「原文未明确/需核对」", "outcome": "含批判视角的深度解读文档" },
+        { "want": "对某个 MOC 下多篇文章做筛选", "action": "超 3 篇先出清单确认范围，再按选定篇目逐篇落盘", "outcome": "待确认清单 + 逐篇解读回执" }
+      ],
+      "en": [
+        { "want": "Quick-triage whether a long read is worth it", "action": "Generate a concise 5-section `<stem>-AI解读.md` linked to source", "outcome": "Standalone quick-read summary file" },
+        { "want": "Deep-audit a paper's logic & premises", "action": "Verify section claims vs. evidence and flag unstated assumptions", "outcome": "Deep critical analysis with gaps flagged" },
+        { "want": "Triage a multi-article MOC batch", "action": "Present checklist for >3 articles before writing selected files", "outcome": "Confirmed selection + batch analysis receipt" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "快读解读这篇《xxx》，帮我判断值不值得精读，不要改原文件。",
+        "精读这篇技术论文，逐节核查它的论证链和未交代前提。"
+      ],
+      "en": [
+        "Give me a quick AI analysis of this note to see if it's worth reading closely.",
+        "Run a deep analysis on this paper and audit each section's evidence chain."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯本地文本工作流，绝不把私有笔记上传外部服务。",
+        "和 `distill-article-opinion` 严格职责分离：AI 写外挂解读、人写 `## 我的看法`。"
+      ],
+      "en": [
+        "Pure local workflow—never uploads private notes externally.",
+        "Cleanly decoupled from `distill`: AI writes sidecar analysis; you own `## 我的看法`."
+      ]
+    }
+  },
+  "soia-pkm-library-book-catalog": {
+    "title": {
+      "zh": "纯本地 Obsidian 书库总览、阅读记录补建与 Base 校验",
+      "en": "Local Book Library Catalog & Reading Record Sync"
+    },
+    "pain": {
+      "zh": "书库里建了几百张书卡和七个状态的阅读记录（想读/在读/完成等），时间一长：有些书卡忘了建阅读记录、图书馆总览和按类型分馆目录过期了，或者 `.base` 视图漏写路径过滤把不相干的文件也扫进来。",
+      "en": "Maintaining hundreds of Obsidian book cards and 7-state reading records by hand leads to orphaned book cards, stale genre/library overviews, and misconfigured `.base` filters."
+    },
+    "solution": {
+      "zh": "100% 纯本地、幂等运行，完全不依赖微信读书或任何外部 API：自动为缺记录的书卡补建「待读」条目（已有则跳过）；一键重新生成图书馆总览、7 态阅读记录总览与按分类书库视图（支持 `--output` 先预览再写回）；最后重建全库地图并用 `vault_index_verify.py` 核验每个 `.base` 的 `file.inFolder` 根路径约束。",
+      "en": "100% local, idempotent Python 3 stdlib tooling with zero network or WeRead API dependencies: backfill missing reading records safely (`backfill_reading_records.py`), regenerate library, 7-state reading, and genre overviews (`--output` preview supported), and enforce `file.inFolder(...)` `.base` integrity via `vault_index_verify.py`."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "幂等补建缺失阅读记录", "desc": "`backfill_reading_records.py` 扫描书卡，只为缺记录的书新建待读条，已有跳过。" },
+          { "title": "先预览三份书库总览", "desc": "可传 `--output` 预览图书馆、7 态阅读记录与按类型总览，确认后再省略写回。" },
+          { "title": "严守 .base 双重过滤门禁", "desc": "校验 `图书馆.base` 与 `阅读记录.base` 必须在 `filters.and` 同时带路径与标签过滤。" },
+          { "title": "重建地图与根路径验证", "desc": "结构变动后更新全库地图并用 `vault_index_verify.py` 验证全部 Base 根路径。" }
+        ],
+        "guardrails": [
+          "完全离线本地运行，绝不调用微信读书 API 或网络请求",
+          "严禁 `.base` 使用无文件夹限定的 tag-only 裸过滤",
+          "绝不拿脚本退出码 0 冒充内容统计与 Base 根路径校验通过"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Idempotent record backfill", "desc": "Create missing `待读` records for book cards while skipping existing records." },
+          { "title": "Preview & build 3 overviews", "desc": "Generate library, 7-state reading, and genre overviews (with `--output` preview)." },
+          { "title": "Enforce `.base` folder + tag filter", "desc": "Ensure `.base` views require both `file.inFolder(...)` and tag filters." },
+          { "title": "Rebuild map & verify Bases", "desc": "Run `vault_index_verify.py` after any library additions or moves." }
+        ],
+        "guardrails": [
+          "Strictly offline; zero dependency on WeRead API or `WEREAD_API_KEY`",
+          "Bans tag-only `.base` filters missing `file.inFolder(...)`",
+          "Always verifies title counts and `.base` roots—not just exit code 0"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "为我的 Obsidian 书库补齐缺失的待读记录，并重新生成图书馆与阅读记录总览。",
+        "title": "本地书库整理与 Base 校验回执示例",
+        "lines": [
+          { "text": "$ python3 scripts/backfill_reading_records.py --vault ~/vault", "tone": "muted" },
+          { "text": "[BACKFILL] created=4 · skipped=182 (existing preserved) · failed=0", "tone": "cyan" },
+          { "text": "$ python3 scripts/gen_library_md.py --vault ~/vault && python3 scripts/gen_records_md.py --vault ~/vault", "tone": "muted" },
+          { "text": "✓ 已刷新 图书馆-总览.md (186本) & 阅读记录-总览.md (在读6/完成94)", "tone": "green" },
+          { "text": "✓ vault_index_verify.py: 图书馆.base & 阅读记录.base file.inFolder 校验通过", "tone": "green" }
+        ],
+        "footer": "不联网、不覆盖已有笔记、重复跑一百次依然幂等安全"
+      },
+      "en": {
+        "prompt": "Backfill missing reading records and regenerate my Obsidian library & reading overviews.",
+        "title": "Local Book Catalog & Base Check Sample",
+        "lines": [
+          { "text": "$ python3 scripts/backfill_reading_records.py --vault ~/vault", "tone": "muted" },
+          { "text": "[BACKFILL] created=4 · skipped=182 (existing preserved) · failed=0", "tone": "cyan" },
+          { "text": "$ python3 scripts/gen_library_md.py --vault ~/vault && python3 scripts/gen_records_md.py --vault ~/vault", "tone": "muted" },
+          { "text": "✓ Updated library overview (186 books) & 7-state reading overview", "tone": "green" },
+          { "text": "✓ vault_index_verify.py: all `.base` `file.inFolder` root checks passed", "tone": "green" }
+        ],
+        "footer": "100% offline & idempotent; preserves existing notes"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "补建有书卡却漏掉的待读记录", "action": "`backfill_reading_records.py` 幂等新建缺失记录并跳过已有条目", "outcome": "新建/跳过/失败精确计数" },
+        { "want": "重生成图书馆/阅读状态/分类总览", "action": "跑 `gen_library_md` / `gen_records_md` / `gen_genre_library_md`（可预览）", "outcome": "三大 Markdown 书库视图与统计" }
+      ],
+      "en": [
+        { "want": "Backfill missing reading records", "action": "Create missing `待读` entries idempotently without touching existing ones", "outcome": "Exact created/skipped/failed counts" },
+        { "want": "Regenerate library & genre views", "action": "Run `gen_library_md`, `gen_records_md`, and `gen_genre_library_md`", "outcome": "Synced Markdown overviews (with `--output` preview)" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "给我补建一下书库里缺失的待读记录，然后重新生成图书馆和阅读记录总览。",
+        "先用 `--output` 预览一下按类型分类的书库总览效果，确认后再写回。"
+      ],
+      "en": [
+        "Backfill missing reading records and rebuild my library & reading overviews.",
+        "Preview the genre library overview via `--output` before writing it back."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯 Python 3 标准库本地执行，不创建网络缓存或外部状态。",
+        "自带 `--output` 预览参数与 `audit_skills.py --strict` 及库单测校验。"
+      ],
+      "en": [
+        "Pure Python 3 stdlib with zero network caches or external state.",
+        "Supports `--output` dry previews and passes strict library unit tests."
+      ]
+    }
+  },
+  "soia-pkm-library-weread-sync": {
+    "title": {
+      "zh": "微信读书书架、划线想法同步与单书详情补全",
+      "en": "WeRead Shelf, Highlights & Book Metadata Sync"
+    },
+    "pain": {
+      "zh": "在微信读书里读了几十本书、划了几千条高光和想法，全锁在 App 里搜不到也联不上自己的笔记库；更怕下次同步微信读书划线时，把自己在 Obsidian 里手写的感悟和批注给覆盖清零了。",
+      "en": "Bookshelves, highlights, and notes inside WeRead stay siloed from your Markdown vault—and naive sync tools overwrite your handwritten reflections inside Obsidian notes on the next run."
+    },
+    "solution": {
+      "zh": "对接官方 `weread-skills` 与 `WEREAD_API_KEY`，把「机器同步段」和「用户手写区」物理分区隔离：一键幂等同步书架书卡与阅读状态、拉取每本书的划线与想法（默认先预览前 30 本再 `--all` 全量），并且只刷新机器段而完好保留你在 `### 用户笔记` 子区块下的所有手写批注；还能调用 API 补充单本书的简介、目录章节与进度。",
+      "en": "Sync WeRead bookshelves, reading status, highlights, and book details via `weread-skills` and `WEREAD_API_KEY` while physically isolating machine blocks from your handwritten `### 用户笔记` subsections—previewing top-30 highlight books before `--all` and failing closed if keys or vault paths are missing."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先验上游与 Bearer Key", "desc": "检查 `weread-skills` 与 `WEREAD_API_KEY` 就绪度，缺依赖立即 fail-closed 指引获取。" },
+          { "title": "幂等同步书架与阅读态", "desc": "`sync_weread_to_library.py` 新建/更新书卡与状态记录，按 `bookId` 绑定关系。" },
+          { "title": "分区隔离同步划线与想法", "desc": "先预览前 30 本再 `--all`；只重写机器同步段，永久保留 `### 用户笔记` 手写区。" },
+          { "title": "按需补书详情再交总览", "desc": "`enrich_book_details.py` 拉简介目录章节；本地总览刷新交给 `book-catalog`。" }
+        ],
+        "guardrails": [
+          "绝不拿旧 Cookie 冒充官方 Bearer `WEREAD_API_KEY`",
+          "绝不回显 API Key 或把凭据写进公共仓库和日志",
+          "手写内容必须在 `### 用户笔记` 下，机器段绝不越界覆盖用户笔记"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Verify key & `weread-skills`", "desc": "Fail closed with setup instructions if `weread-skills` or `WEREAD_API_KEY` is missing." },
+          { "title": "Idempotent shelf & state sync", "desc": "Create/update book cards and reading states cleanly matched by `bookId`." },
+          { "title": "Preserve `### 用户笔记` on highlights", "desc": "Preview top 30 books before `--all`; overwrite only machine-managed highlight blocks." },
+          { "title": "Enrich metadata & hand off", "desc": "Fetch synopses and chapters on demand; leave overview rebuilding to `book-catalog`." }
+        ],
+        "guardrails": [
+          "Never substitutes legacy cookies for official Bearer `WEREAD_API_KEY`",
+          "Never prints API keys or credentials in logs or receipts",
+          "Strictly preserves user notes inside `### 用户笔记` subsections"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "把微信读书最近读的书同步进 Obsidian 书库，然后预览需要同步划线的书。",
+        "title": "微信读书书架与划线同步示例",
+        "lines": [
+          { "text": "$ python3 sync_weread_to_library.py --vault ~/vault", "tone": "muted" },
+          { "text": "[SHELF] created: 3 · updated: 12 · skipped: 148 · failed: 0", "tone": "cyan" },
+          { "text": "$ python3 sync_weread_highlights.py   # 默认仅预览 noteCount 前 30 本", "tone": "muted" },
+          { "text": "[PREVIEW] 《系统之美》 42 条划线待更新 (已保护 ### 用户笔记 2 段手写批注)", "tone": "green" }
+        ],
+        "footer": "机器段与手写区严格分界，再怎么同步也不会冲掉你的批注"
+      },
+      "en": {
+        "prompt": "Sync my WeRead shelf to Obsidian and preview books with new highlights.",
+        "title": "WeRead Shelf & Highlight Sync Sample",
+        "lines": [
+          { "text": "$ python3 sync_weread_to_library.py --vault ~/vault", "tone": "muted" },
+          { "text": "[SHELF] created: 3 · updated: 12 · skipped: 148 · failed: 0", "tone": "cyan" },
+          { "text": "$ python3 sync_weread_highlights.py   # previews top 30 by noteCount", "tone": "muted" },
+          { "text": "[PREVIEW] 'Thinking in Systems': 42 highlights ready (2 ### 用户笔记 blocks safe)", "tone": "green" }
+        ],
+        "footer": "Handwritten notes preserved safely alongside synced highlights"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "同步微信读书书架与阅读进度", "action": "`sync_weread_to_library.py` 幂等建/更书卡与阅读记录", "outcome": "新增/更新/跳过/失败统计" },
+        { "want": "同步划线与想法而不丢手写笔记", "action": "`sync_weread_highlights.py` 先预览前 30 本，仅刷新机器段保留 `### 用户笔记`", "outcome": "逐本进度与手写区完好确认" },
+        { "want": "补充单本书详情、目录与相似书", "action": "运行 `enrich_book_details.py` 调用微信读书 API 回填信息", "outcome": "API 阶段、更新数量与失败原因" }
+      ],
+      "en": [
+        { "want": "Sync WeRead shelf & reading status", "action": "Idempotently create/update book cards and state notes", "outcome": "Created/updated/skipped/failed summary" },
+        { "want": "Sync highlights keeping manual notes", "action": "Preview top 30 books and refresh only machine blocks", "outcome": "Synced highlights with `### 用户笔记` safe" },
+        { "want": "Enrich single-book synopsis & TOC", "action": "Run `enrich_book_details.py` for book metadata and chapters", "outcome": "API stage and updated field summary" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "同步一下我的微信读书已读书目到知识库，然后再预览待同步划线的书。",
+        "用 `enrich_book_details.py` 帮我把《xxx》这本书的简介和章节目录补全。"
+      ],
+      "en": [
+        "Sync my WeRead shelf to the vault and preview books ready for highlight sync.",
+        "Enrich book details and chapter outline for `<book title>` from WeRead."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "`WEREAD_API_KEY` 仅存在 `~/.config/soia-skills/` 私有配置或进程环境变量中，全程脱敏。",
+        "复杂同步支持先单本或前 30 本试跑验证，绝不盲目全库覆盖。"
+      ],
+      "en": [
+        "`WEREAD_API_KEY` stays strictly in private config or env with zero echo.",
+        "Supports single-book and top-30 dry previews before `--all` syncs."
+      ]
+    }
+  },
+  "soia-pkm-log-agent-sessions": {
+    "title": {
+      "zh": "为本地编码 Agent 接入最小化 Vault 改动快照",
+      "en": "Minimal Session Change Snapshots for Coding Agents"
+    },
+    "pain": {
+      "zh": "每天用 Claude Code 或 Codex 跑完十几个会话，过两天根本记不清哪个会话改过哪些地方；可如果直接把整段对话和完整 diff 全倒进知识库，不仅瞬间把 vault 塞满噪声，还会把密钥和冗余终端日志一起存进去，甚至把你原本配好的 `notify` hook 给覆盖掉。",
+      "en": "Tracking what Claude Code or Codex actually changed across daily sessions is hard—yet dumping raw transcripts and diffs pollutes your vault with noise and secrets, while sloppy hook installers clobber existing `notify` hooks."
+    },
+    "solution": {
+      "zh": "为会话结束接入克制的「最小改动快照」：改 `.claude/settings.json` 或 Codex `config.toml` 前先展示合并片段并备份，无损保留你原有的其他 hook/notify；快照只记录时间、Agent、变更计数和分区统计，并用 `diff + untracked` 哈希自动去重（没改动报 `deduplicated` 不写空账），而且提供干净的一键安全卸载。",
+      "en": "Attach lightweight post-session change snapshots cleanly: preview & backup `.claude/settings.json` or Codex `config.toml` while preserving existing hooks/notifiers; record only timestamp, agent, change counts, and zone stats (no raw prompts, diffs, or secrets); deduplicate repeated no-op runs via diff hashes; and support clean uninstall."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "备份并无损合并宿主配置", "desc": "先展示配置片段获同意再备份修改，保留原有的其他 `SessionEnd`/`notify`。" },
+          { "title": "先 dry-run 检验工作树根", "desc": "校验 `--vault` 必须是独立 Git worktree 根（嵌套子目录拒绝误写入）。" },
+          { "title": "哈希去重只记最小统计", "desc": "用 diff+未追踪哈希去重，只写时间、agent 与计数，默认不泄露路径或正文。" },
+          { "title": "支持预览体量与干净卸载", "desc": "旧快照清理只预览数量与大小不擅删；卸载后恢复原 hook 完好无损。" }
+        ],
+        "guardrails": [
+          "绝不存储完整 prompt、对话记录、raw diff、JSON 事件流或凭据",
+          "绝不越权执行 `git add / commit / push`",
+          "去重状态存 `$XDG_STATE_HOME`，不污染 `.git` 目录"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Backup & merge host hooks", "desc": "Show exact config patch, backup first, and preserve existing `SessionEnd`/`notify` hooks." },
+          { "title": "Validate independent git root", "desc": "Dry-run and verify `--vault` is a standalone Git worktree root (blocks nested subdirs)." },
+          { "title": "Hash-dedup minimal snapshots", "desc": "Store only timestamp, agent, and change counts; skip no-ops as `deduplicated`." },
+          { "title": "Safe volume check & uninstall", "desc": "Preview old log sizes without auto-deleting; uninstall cleanly preserving original hooks." }
+        ],
+        "guardrails": [
+          "Never stores full prompts, conversation transcripts, diffs, or secrets",
+          "Never triggers `git add`, `commit`, or `push`",
+          "Stores dedup state in `$XDG_STATE_HOME` without touching `.git`"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "帮我检查把 Codex 会话快照接到当前 vault 要改哪几行 config.toml，先 dry-run 测试一次。",
+        "title": "会话快照接入与哈希去重示例",
+        "lines": [
+          { "text": "$ python3 scripts/session_log.py --vault ~/vault --agent codex --dry-run", "tone": "muted" },
+          { "text": "[CONFIG] config.toml notify: preserved existing hook + appended session_log.py", "tone": "cyan" },
+          { "text": "✓ Snapshot 1 (1 file edited): 30_日志与思考/.../2026-11-18-codex-01.md (0 secrets)", "tone": "green" },
+          { "text": "✓ Snapshot 2 (no changes): status=deduplicated (skipped duplicate write)", "tone": "green" }
+        ],
+        "footer": "零密钥零正文冗余、原有 hook 无损保留、无改动绝不重复刷屏"
+      },
+      "en": {
+        "prompt": "Preview the config merge for Codex session snapshots on my vault and run a dry-run test.",
+        "title": "Agent Session Snapshot & Dedup Sample",
+        "lines": [
+          { "text": "$ python3 scripts/session_log.py --vault ~/vault --agent codex --dry-run", "tone": "muted" },
+          { "text": "[CONFIG] config.toml notify: preserved existing hook + appended session_log.py", "tone": "cyan" },
+          { "text": "✓ Snapshot 1 (1 edit): 30_logs/.../2026-11-18-codex-01.md (0 secrets)", "tone": "green" },
+          { "text": "✓ Snapshot 2 (no-op): status=deduplicated (skipped duplicate note)", "tone": "green" }
+        ],
+        "footer": "Zero raw diffs or secrets; existing hooks preserved; deduplicated"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "给 Claude Code / Codex 接会话改动快照", "action": "展示合并片段、备份并无损合并现有 hook，写入最小统计快照", "outcome": "轻量快照路径与无损配置确认" },
+        { "want": "防止重复空会话刷屏并支持随时卸载", "action": "基于 diff+未追踪哈希返回 `deduplicated`，卸载完整保留原 hook", "outcome": "去重验收与安全卸载回执" }
+      ],
+      "en": [
+        { "want": "Attach change snapshots to Claude/Codex", "action": "Preview & merge hooks safely while backing up existing config", "outcome": "Lightweight snapshot note + preserved hooks" },
+        { "want": "Deduplicate no-ops & uninstall cleanly", "action": "Hash git diff + untracked state to skip duplicates and unhook cleanly", "outcome": "Verified `deduplicated` status & clean uninstall" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "给我展示把 Claude Code `SessionEnd` 日志接到我这个 vault 要改什么配置，先不写入。",
+        "用 `--dry-run` 测试一次会话快照写入和无改动 `deduplicated` 去重。"
+      ],
+      "en": [
+        "Show me the exact config merge needed to hook Claude Code `SessionEnd` logs to my vault.",
+        "Test session snapshot creation and no-op `deduplicated` behavior via `--dry-run`."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "天然兼容 `git worktree` 环境，绝不写入 `.git` 内部目录或泄露路径。",
+        "验收明确核对「原有 hook 完好」「无改动去重」「日志零秘密与正文」。"
+      ],
+      "en": [
+        "Git-worktree compatible without touching `.git` internals.",
+        "Verified against existing-hook preservation, deduplication, and zero secret leaks."
+      ]
+    }
+  },
+  "soia-pkm-maintain-vault-health": {
+    "title": {
+      "zh": "知识库只读体检：死链、重名、编号审计与地图重建",
+      "en": "Read-Only Vault Health Audit & Map Rebuild"
+    },
+    "pain": {
+      "zh": "Obsidian 笔记存到上千篇后，最怕悄无声息坏掉：死链越来越长、不同文件夹出现同名笔记引起双链歧义、20 区/50 区编号漂移、或者 `OB知识库地图.md` 早就过时；可普通整理脚本一扫就顺手帮你改名删文件，吓得不敢跑。",
+      "en": "Once an Obsidian vault grows past a thousand notes, broken wikilinks, ambiguous duplicate filenames, zone numbering drift, and stale vault maps pile up—while aggressive cleanup tools risk silently renaming or deleting notes."
+    },
+    "solution": {
+      "zh": "坚守「诊断归诊断、搬家归搬家」：健康检查与周维护默认 100% 只读零写盘，用 `lint_vault.py` 一次性扫出死链（含附件与 `.base`）、同名歧义、主标签漂移、过期候选与 20/50 区编号漂移，明确分出「确定结构问题」和「待人工裁决项」；仅当你确认「重建地图」时，才先 `--output` 预览再写回地图并校验 `.base`。",
+      "en": "Separate read-only diagnostics from mutations cleanly: `lint_vault.py` audits broken links (including attachments & `.base`), filename collisions, tag policy drift, stale files, and zone 20/50 numbering without changing a single file. Rebuilding `OB知识库地图.md` previews first via `--output` and verifies `.base` roots afterward."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "A · 纯只读六类健康体检", "desc": "`lint_vault.py --json` 扫死链、重名歧义、标签、过期与 20/50 编号，文件树零改动。" },
+          { "title": "智能防误报规则", "desc": "正确识别 `[[持续交付2.0]]` 小数点命名；`topics`/`people` 词表不硬造占位页。" },
+          { "title": "B · 先预览再重建全库地图", "desc": "`gen_vault_map.py --output <tmp>` 预览确认后落盘，再跑 `vault_index_verify.py`。" },
+          { "title": "C · 7 日变更周维护简报", "desc": "结合 git/mtime 盘点近 7 天变化与归档版本链，只报不删交由你裁决。" }
+        ],
+        "guardrails": [
+          "绝不擅自移动、改名或删除任何笔记（迁移交给 `manage-vault-lifecycle`）",
+          "跳过 `.git`/`.obsidian`/`.trash` 与 symlink，拒绝逃逸写盘",
+          "报告严禁输出笔记正文或环境变量，仅报结构与计数"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "A · 6-point read-only audit", "desc": "`lint_vault.py` detects broken links, collisions, tag drift, staleness, and zone 20/50 numbering." },
+          { "title": "Noise-free link matching", "desc": "Handles dotted filenames like `[[v2.0]]` and skips vocabulary tags without fake stubs." },
+          { "title": "B · Preview-first map rebuild", "desc": "Preview `gen_vault_map.py --output <tmp>` before writing, then verify `.base` roots." },
+          { "title": "C · 7-day weekly digest", "desc": "Summarize recent git/mtime changes and archive chains read-only without deleting." }
+        ],
+        "guardrails": [
+          "Never moves, renames, or deletes notes (hands off moves to `manage-vault-lifecycle`)",
+          "Skips `.git`/`.obsidian`/`.trash` and rejects symlink escapes",
+          "Never leaks note body text or environment variables in reports"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "只读检查我整个 Obsidian 知识库的健康状态，看看有没有死链、重名和 20/50 区编号漂移。",
+        "title": "只读知识库体检 JSON 回执示例",
+        "lines": [
+          { "text": "$ python3 scripts/lint_vault.py --vault ~/vault --json", "tone": "muted" },
+          { "text": "[SCAN] scanned=1,420 notes · excluded=.git/.obsidian · unreadable=0", "tone": "cyan" },
+          { "text": "! broken_links=2 (含 1 处附件失效) · ambiguous_names=1 · 20_structure=ok · 50_structure=1 drift", "tone": "amber" },
+          { "text": "✓ 文件树哈希对比: 100% 一致（0 个文件被修改）", "tone": "green" }
+        ],
+        "footer": "纯只读真跑验真伪：不误造空页、不顺手改名、发现先摆在你面前"
+      },
+      "en": {
+        "prompt": "Run a read-only health check across my entire Obsidian vault for broken links and numbering drift.",
+        "title": "Read-Only Vault Health Audit Sample",
+        "lines": [
+          { "text": "$ python3 scripts/lint_vault.py --vault ~/vault --json", "tone": "muted" },
+          { "text": "[SCAN] scanned=1,420 notes · excluded=.git/.obsidian · unreadable=0", "tone": "cyan" },
+          { "text": "! broken_links=2 (1 attachment) · ambiguous_names=1 · 20_structure=ok · 50_structure=1 drift", "tone": "amber" },
+          { "text": "✓ File-tree hash before == after (0 files modified)", "tone": "green" }
+        ],
+        "footer": "100% non-destructive diagnostics before any lifecycle edits"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "全库或指定模块只读健康体检", "action": "跑 `lint_vault.py` 审计死链、重名、标签漂移与 20/50 区编号", "outcome": "六类发现清单与零修改保证" },
+        { "want": "安全预览并重建 `OB知识库地图.md`", "action": "先 `--output` 预览，确认后落盘并复核 `.base` `file.inFolder` 根路径", "outcome": "地图统计与 `.base` 校验通过证明" },
+        { "want": "做每周一次的知识库周维护简报", "action": "统计近 7 天变更并单列版本链与待裁决项（仅明确要求才保存）", "outcome": "结构问题与人工裁决建议表" }
+      ],
+      "en": [
+        { "want": "Read-only full or module health check", "action": "Audit broken links, collisions, tags, and zone 20/50 numbering", "outcome": "6-category findings with zero file mutations" },
+        { "want": "Preview & rebuild `OB知识库地图.md`", "action": "Preview via `--output`, write on approval, and verify `.base` roots", "outcome": "Map stats + `.base` verification" },
+        { "want": "Weekly vault maintenance digest", "action": "Summarize 7-day git/mtime changes and archive chains read-only", "outcome": "Actionable review digest (saved only if asked)" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "只读跑一遍我的知识库健康检查，重点看死链、同名冲突和 20/50 区编号。",
+        "先 `--output` 预览一下重建后的 `OB知识库地图.md`，没问题再覆盖写入并验 `.base`。"
+      ],
+      "en": [
+        "Run a read-only health audit on my vault checking broken links, duplicates, and numbering.",
+        "Preview a rebuilt `OB知识库地图.md` via `--output`, then apply and verify `.base`."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "纯 Python 3 标准库，运行前后文件树哈希严格一致。",
+        "未配 `--tags` 白名单时诚实标注 `tag_policy_configured=false`，绝不胡乱报错。"
+      ],
+      "en": [
+        "Pure Python 3 stdlib; verifiable identical file-tree hash before and after audit.",
+        "Flags `tag_policy_configured=false` honestly rather than generating false tag warnings."
+      ]
+    }
+  },
+  "soia-pkm-manage-vault-lifecycle": {
+    "title": {
+      "zh": "知识库生命周期治理：Manifest 搬迁、改名、修链与验 Base",
+      "en": "Vault Lifecycle: Manifest Moves, Renames & Link Repair"
+    },
+    "pain": {
+      "zh": "想把散落在收件箱或旧目录里的几百篇笔记整理归位、规范编号、把过期文档归档进 90 区：用普通 `mv` 或 `rm` 一动手，Obsidian 里的 `[[双链]]` 全断成死链，而且一旦搬错目录连怎么回滚恢复都找不到记录。",
+      "en": "Reorganizing hundreds of vault notes with raw `mv` or `rm` shatters Obsidian `[[wikilinks]]`, breaks zone numbering, leaves zero SHA-256 rollback trail, and risks deleting notes that still have incoming references."
+    },
+    "solution": {
+      "zh": "用严格可审计、可回滚的 manifest 流水线管理知识库全生命周期（10 工作台 / 20 资料库 / 30 冻结证据 / 90 归档）：任何搬迁、重命名或编号规范化都先生成带每文件 SHA-256 的 `plan` 清单给你确认，再无覆盖 `apply`、`verify` 并自动修复 `incoming_refs` 反向链接（有入链的空笔记自动阻断删除）；凡路径变动立刻联动重建地图并过 `vault_index_verify.py`。",
+      "en": "Manage 10/20/30/90 vault lifecycles through SHA-256 manifests (`vault_lifecycle.py` & `vault_structure_plan.py`): generate a file-by-file `plan` for approval first, apply without overwrites, support deterministic `rollback`, repair exact `incoming_refs` wikilinks (blocking deletion of linked notes), and verify updated maps + `.base` views."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先盘点生成 SHA-256 清单", "desc": "按 10/20/30/90 职责与唯一编号规则生成 `plan` manifest，标出冲突与入链。" },
+          { "title": "确认后无覆盖执行与回滚键", "desc": "跑 `apply` 与 `verify` 校验哈希守恒；开放项或未知状态须获明确授权。" },
+          { "title": "精确修复反向 wikilink", "desc": "修复受影响笔记的 `incoming_refs`，同时保持历史日志里的纯文本路径快照原样。" },
+          { "title": "联动重建地图与验证 Base", "desc": "路径变化后立即重跑全库地图与 `vault_index_verify.py`，缺验证不宣称完成。" }
+        ],
+        "guardrails": [
+          "绝不用裸 `rm` 或 `find -delete`，有入链的无正文笔记自动阻断清理",
+          "需要提炼成稳定知识的 30/90 材料不直接硬搬进 20 区（交给 `extract` 提炼）",
+          "严禁在客户真库上演示 `rollback`，回滚验收只在临时 fixture 完成"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Generate SHA-256 move plan", "desc": "Route across 10/20/30/90 zones with unique numbers and check incoming refs." },
+          { "title": "Apply & verify without overwrites", "desc": "Execute approved manifest via `apply` + `verify` ensuring content hash parity." },
+          { "title": "Repair exact incoming links", "desc": "Update `incoming_refs` across active notes while keeping historical logs immutable." },
+          { "title": "Rebuild map & verify `.base`", "desc": "Close the 5-stage contract with map rebuild + `vault_index_verify.py`." }
+        ],
+        "guardrails": [
+          "Never runs raw `rm` or `find -delete`; blocks cleanup of any note with incoming links",
+          "Never dumps raw 30/90 evidence straight into `20_资料库` without `extract`",
+          "Rollback logic is verified strictly in temporary fixtures—never on live user vaults"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "把这批已结项的 10 区项目文档按规则归档到 90 区，先出 manifest 计划让我确认。",
+        "title": "Manifest 迁移规划与五段收口示例",
+        "lines": [
+          { "text": "$ python3 scripts/vault_lifecycle.py plan --vault ~/vault --manifest move-90.json ...", "tone": "muted" },
+          { "text": "[PLAN] 18 moves · 0 collisions · 6 incoming_refs queued for link-repair · SHA-256 locked", "tone": "cyan" },
+          { "text": "✓ apply & verify: 18/18 哈希守恒 · 6 处反向链接已修复 · 0 死链新增", "tone": "green" },
+          { "text": "✓ vault_index_verify.py: 地图已重建 + 资料库.base 校验通过", "tone": "green" }
+        ],
+        "footer": "先看清单再动手、哈希锁死防丢文、双链与地图同步跟进"
+      },
+      "en": {
+        "prompt": "Archive these finished 10-zone project docs to zone 90—show me the manifest plan first.",
+        "title": "Manifest Lifecycle Move & Verification Sample",
+        "lines": [
+          { "text": "$ python3 scripts/vault_lifecycle.py plan --vault ~/vault --manifest move-90.json ...", "tone": "muted" },
+          { "text": "[PLAN] 18 moves · 0 collisions · 6 incoming_refs queued for link-repair · SHA-256 locked", "tone": "cyan" },
+          { "text": "✓ apply & verify: 18/18 hashes intact · 6 wikilinks updated · 0 broken links", "tone": "green" },
+          { "text": "✓ vault_index_verify.py: map rebuilt + `.base` checks passed", "tone": "green" }
+        ],
+        "footer": "Plan-first manifests, SHA-256 parity, and automatic wikilink repair"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "批量分流迁移工作台/证据/归档文件", "action": "生成带 SHA-256 与入链检查的 manifest，确认后无覆盖执行并修双链", "outcome": "去向计划、apply/verify 状态与入链修复数" },
+        { "want": "规范目录编号与安全清理 `.DS_Store`/空壳", "action": "`vault_structure_plan.py` 统一编号并阻断有入链对象误删", "outcome": "逐项编号清单与前后统计" },
+        { "want": "闭环完成五段入库验收", "action": "联动重建全库地图并用 `vault_index_verify.py` 校验 `.base` 根范围", "outcome": "地图统计与五段状态完整回执" }
+      ],
+      "en": [
+        { "want": "Move & archive notes across zones", "action": "Build SHA-256 manifests, apply without overwrites, repair incoming links", "outcome": "Plan, verify status, and repaired link count" },
+        { "want": "Standardize numbering & clean empty stubs", "action": "Run `vault_structure_plan.py` while blocking deletion of linked files", "outcome": "Audited folder plan and counts" },
+        { "want": "Verify 5-stage intake completion", "action": "Rebuild vault map and verify `.base` root paths via `vault_index_verify.py`", "outcome": "Verified map + `.base` receipt" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "帮我规划整理 `10_工作台/某已完结项目` 到归档区，先出 manifest 清单我看一眼。",
+        "用 `vault_structure_plan.py` 预览一下 `20_资料库` 目录编号规范化计划。"
+      ],
+      "en": [
+        "Plan archiving this completed `10_工作台` project to zone 90—show the manifest first.",
+        "Preview normalizing directory numbering in `20_资料库` via `vault_structure_plan.py`."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "manifest 仅存相对路径与 SHA-256，不把你的私人文件名带进公开技能仓。",
+        "严格遵循五段入库合同（`captured → organized → MOC → map → Base`），缺步绝不虚报完成。"
+      ],
+      "en": [
+        "Manifests record only relative paths and SHA-256 hashes.",
+        "Enforces the full 5-stage vault intake contract before declaring completion."
+      ]
+    }
+  },
+  "soia-pkm-organize-article-moc": {
+    "title": {
+      "zh": "文章库规范整理：元数据、按月归位与两级 MOC 同步",
+      "en": "Article Metadata, Monthly Filing & 2-Tier MOC Sync"
+    },
+    "pain": {
+      "zh": "剪藏来的文章越攒越多：有的缺摘要和主题标签，有的堆在年份根目录没按月份文件夹归位；如果每次加一篇文章都要手动翻新两级主题目录（MOC），或者重跑全量脚本把自定义分类抹掉，实在太折腾。",
+      "en": "Clipped articles pile up with missing summaries, unfiled year-root clutter, and out-of-date Topic MOCs—while brute-force full rebuilds risk breaking custom category links or clobbering manual metadata."
+    },
+    "solution": {
+      "zh": "把文章整理拆成「单篇默认增量」与「批量先盘点后原子重建」两档：`clip` 新收进来的一篇文章，直接补齐摘要、`topics`、`captured_at` 并按月归位，随后跑 `rebuild_moc.py --article` 只增量刷新受影响的一/二级 MOC 与全库地图（遇到未收录的新 topic 自动停下阻断，绝不乱建野分类）；需要全库大盘点时则先 `--full-rebuild --dry-run` 给你审核后再同盘原子替换 `_MOC/`。",
+      "en": "Split article organization cleanly into incremental single-article sync and audited full rebuilds: fill summaries, `topics`, and monthly filing on new clips and run `rebuild_moc.py --article` to update only affected 1st/2nd-tier MOCs (halting on unknown topics rather than inventing stray categories); run `--full-rebuild --dry-run` first for batch audits before atomic replacement."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "补全元数据并复用已有分类", "desc": "补摘要、日期与 `topics`；优先复用 `_MOC/` 现有分类，无人物笔记的 `people` 留纯文本。" },
+          { "title": "SHA-256 清单安全按月归位", "desc": "把 `<年>/` 下文章移入 `<年>/<月>/` 前先建逐文件 SHA-256 清单，不用裸 `mv`。" },
+          { "title": "增量刷新受影响两级 MOC", "desc": "单篇只跑 `rebuild_moc.py --article`，未知 topic 先阻断等你更新 `.categories.json`。" },
+          { "title": "同步更新全库地图与 Base", "desc": "路径或数量变化后立即按契约刷新 `OB知识库地图` 并验证 `.base`。" }
+        ],
+        "guardrails": [
+          "单篇整理严禁调用 `--full-rebuild` 清空重建整个 `_MOC/`",
+          "批量移动或改名先只读盘点确认计划，不擅自大规模挪文件",
+          "绝不给仅出现在属性里的陌生人名硬造空人物占位页"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Enrich metadata & reuse topics", "desc": "Fill summary and `topics` reusing existing `_MOC/` taxonomy without creating stub people pages." },
+          { "title": "Safe monthly filing via SHA-256", "desc": "Generate a file-hash list before filing `<YYYY>/` notes into `<YYYY>/<MM>/`." },
+          { "title": "Incremental 2-tier MOC sync", "desc": "Run `rebuild_moc.py --article`; fail closed on unknown topics until categorized." },
+          { "title": "Sync vault map & `.base`", "desc": "Trigger vault map rebuild and `.base` checks whenever paths change." }
+        ],
+        "guardrails": [
+          "Strictly forbids `--full-rebuild` during single-article organization",
+          "Batch moves require read-only inventory and confirmation before executing",
+          "Never creates empty placeholder notes for `people` or `topics` strings"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "把刚剪藏的这篇 X 长文整理归位，并增量同步对应的两级 MOC。",
+        "title": "单篇增量整理与两级 MOC 同步示例",
+        "lines": [
+          { "text": "$ python3 scripts/rebuild_moc.py --article Articles/2026/11/2026-11-18-X-AgentOS.md", "tone": "muted" },
+          { "text": "[META] filled summary (38 chars) · topics=[Agent架构, 工程规范] · path=2026/11/", "tone": "cyan" },
+          { "text": "✓ MOC 增量更新: _MOC/技术工程/Agent架构.md (+1) · _MOC/技术工程/_索引.md (synced)", "tone": "green" },
+          { "text": "✓ OB知识库地图已更新 · 0 未知 topic · 0 死链", "tone": "green" }
+        ],
+        "footer": "只刷新受影响的几页 MOC，既快又绝不误伤全库分类结构"
+      },
+      "en": {
+        "prompt": "Organize this newly clipped X post by month and incrementally sync its 2-tier MOCs.",
+        "title": "Incremental Article MOC Sync Sample",
+        "lines": [
+          { "text": "$ python3 scripts/rebuild_moc.py --article Articles/2026/11/2026-11-18-X-AgentOS.md", "tone": "muted" },
+          { "text": "[META] filled summary (12w) · topics=[AgentArch, Engineering] · filed=2026/11/", "tone": "cyan" },
+          { "text": "✓ Incremental MOC: _MOC/Engineering/AgentArch.md (+1) & tier-1 index synced", "tone": "green" },
+          { "text": "✓ Vault map updated · 0 unknown topics · 0 broken links", "tone": "green" }
+        ],
+        "footer": "Updates only affected MOCs atomically; unknown topics fail closed"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "单篇新剪藏文章随手归位同步 MOC", "action": "补摘要与 `topics`、按月归位并调 `--article` 增量刷新两级 MOC", "outcome": "文章终路径、受影响 MOC 与地图校验回执" },
+        { "want": "盘点或全量重建整个文章库 `_MOC/`", "action": "先跑 `--full-rebuild --dry-run` 报告未知 topic，确认后同盘原子替换", "outcome": "总篇数、主题分布与未知 topic 清单" }
+      ],
+      "en": [
+        { "want": "Organize a newly clipped article", "action": "Fill metadata, file by month, and run incremental `--article` MOC sync", "outcome": "Final path, updated MOCs, and map check" },
+        { "want": "Audit or rebuild all `_MOC/` indexes", "action": "Preview via `--full-rebuild --dry-run` before atomic same-disk swap", "outcome": "Article counts, topic tree, and unknown topics" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把刚归档的这篇长文整理归位，并增量同步对应的一二级 MOC。",
+        "先用 `--full-rebuild --dry-run` 查一下文章库里有没有未分类的 topic 或没按月归位的文件。"
+      ],
+      "en": [
+        "File this newly clipped article by month and incrementally sync its 2-tier MOCs.",
+        "Run `rebuild_moc.py --full-rebuild --dry-run` to spot uncategorized topics or unfiled notes."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "全量重建采用同盘暂存成功后原子替换，中途失败绝不留半截损坏目录。",
+        "整理任一步骤失败如实报告，绝不把「仅归档」包装成「已整理完成」。"
+      ],
+      "en": [
+        "Full rebuilds stage on the same disk and swap atomically on success.",
+        "Reports partial failures honestly—never confuses `captured` with `organized`."
+      ]
+    }
+  },
+  "soia-pkm-query-vault": {
+    "title": {
+      "zh": "只读知识库分层检索：按权威度排序与防泄密",
+      "en": "Read-Only Tiered Vault Search & Evidence Lookup"
+    },
+    "pain": {
+      "zh": "在几千篇笔记的 Obsidian 里问一个问题，普通全文搜索按关键词命中次数排序，结果最先蹦出来的往往是 90 区已经作废的历史导入废稿，甚至把历史日志里的旧状态当成现在还在进行的工作；而且一不小心还会把扫描版 PDF 仅文件名命中当成已经读过全文。",
+      "en": "Plain keyword search ranks stale historical imports above current truth because they repeat a keyword more often—and mistakes PDF filename matches for verified document content."
+    },
+    "solution": {
+      "zh": "把检索做成「严格只读 + 按权威层级排序 + 附件真伪分清」的证据引擎：`query_vault.py` 支持按文件名、正文、frontmatter、标签、反向链接与目录盘点搜索；默认按 `10 工作台现态 → 20 精选稳定知识 → 30 冻结证据 → 90 历史归档` 排序（先排除 `历史导入` 噪声）；对敏感区默认启用 `--no-snippets` 防正文泄密，且严格区分 `filename_hit` 与 `content_hit`。",
+      "en": "A strictly read-only tiered retrieval layer (`query_vault.py`): search by filename, content, frontmatter, tag, backlinks, or folder inventory; rank results by source authority (`10 active -> 20 stable -> 30 frozen -> 90 archived`, excluding noisy legacy imports by default); protect sensitive scopes with `--no-snippets`; and distinguish `filename_hit` vs. `content_hit`."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先窄路径再多模检索", "desc": "支持 `all/filename/content/tag/frontmatter/backlinks/inventory` 与 `--path-prefix` 收窄。" },
+          { "title": "按层排序不按词频拼", "desc": "优先 10 现态与 20 精选（标 `stable`），历史区明标 `superseded_by` 防旧账顶替现状。" },
+          { "title": "敏感语料 `--no-snippets`", "desc": "历史导入、账号、安全等范围默认只返路径与计数，不直接打印正文片段。" },
+          { "title": "附件命中真伪严分界", "desc": "PDF/DOCX/图片无全文索引后端只报 `filename_hit`，绝不拿二进制当 UTF-8 读。" }
+        ],
+        "guardrails": [
+          "100% 严格只读：绝不修改任何笔记、frontmatter、Bases 或 git 状态",
+          "自动跳过 `.git`/`.obsidian` 与 symlink 防越界，不建持久化缓存",
+          "90 区旧文档的 `status` 绝不冒充当前活跃任务状态"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Narrow multi-mode search", "desc": "Query by filename, content, tag, frontmatter, backlinks, or inventory with prefixes." },
+          { "title": "Rank by authority tier", "desc": "Rank `10 active -> 20 stable -> 30 frozen -> 90 archived`, flagging superseded records." },
+          { "title": "Redact sensitive scopes", "desc": "Use `--no-snippets` on legacy/account/private paths to return paths and counts only." },
+          { "title": "Separate filename vs. content", "desc": "Report `filename_hit` honestly for unparsed PDFs/Office docs/images." }
+        ],
+        "guardrails": [
+          "Strictly read-only: never edits files, frontmatter, `.base` views, or git state",
+          "Skips `.git`/`.obsidian` and symlinks; leaves zero persistent cache",
+          "Historical `status` fields in zone 90 never masquerade as active state"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "在知识库里查下我们关于「发版审批门禁」的稳定规范，排除历史导入区，并列出引用它的反向链接。",
+        "title": "分层只读检索与可信度排序示例",
+        "lines": [
+          { "text": "$ python3 scripts/query_vault.py --vault ~/vault --mode all --query '发版审批' --exclude-prefix '20_资料库/90_历史导入' --json", "tone": "muted" },
+          { "text": "[1 · stable]   20_资料库/20_规范与手册/技能发版规范.md (backlinks: 4)", "tone": "green" },
+          { "text": "[2 · frozen]   30_日志与思考/2026-08-08-发布复盘.md (evidence_only)", "tone": "cyan" },
+          { "text": "[3 · archived] 90_系统归档/旧发版流程.md (superseded_by -> 技能发版规范)", "tone": "muted" },
+          { "text": "✓ 扫描 1,420 篇 · 0 文件修改 · 强时效结论已标注源路径", "tone": "normal" }
+        ],
+        "footer": "先给当下权威真源、再给历史依据，绝不拿旧归档当现状回答"
+      },
+      "en": {
+        "prompt": "Search my vault for stable release-approval rules, excluding legacy imports, with backlinks.",
+        "title": "Tiered Read-Only Vault Search Sample",
+        "lines": [
+          { "text": "$ python3 scripts/query_vault.py --vault ~/vault --mode all --query 'release gate' --exclude-prefix '20_library/90_legacy' --json", "tone": "muted" },
+          { "text": "[1 · stable]   20_library/20_guides/release-policy.md (backlinks: 4)", "tone": "green" },
+          { "text": "[2 · frozen]   30_logs/2026-08-08-release-retro.md (evidence_only)", "tone": "cyan" },
+          { "text": "[3 · archived] 90_archive/old-release-flow.md (superseded_by -> release-policy)", "tone": "muted" },
+          { "text": "✓ Scanned 1,420 notes · 0 mutations · sources cited by authority tier", "tone": "normal" }
+        ],
+        "footer": "Authority-ranked answers instead of noisy keyword frequency"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "按权威层级检索笔记、代码与反向链接", "action": "跑 `query_vault.py` 在多模式下精确查找并按 10→20→30→90 排序", "outcome": "带可信标签的相对路径、`[[wikilink]]` 与短片段" },
+        { "want": "检索 PDF / DOCX / 图片等附件", "action": "优先调用 Omnisearch/QMD 查正文，无后端则明示只命中文件名", "outcome": "区分 `filename_hit`/`content_hit`/`ocr` 的真实结果" },
+        { "want": "防敏感语料正文直接泄露到对话", "action": "对历史/安全/私人路径启用 `--no-snippets`", "outcome": "仅含路径、计数与元数据的脱敏清单" }
+      ],
+      "en": [
+        { "want": "Search notes, code & backlinks by authority", "action": "Run `query_vault.py` across 7 modes ranked 10→20→30→90", "outcome": "Tier-tagged paths, wikilinks, and snippets" },
+        { "want": "Query PDFs, Word docs & images", "action": "Use Omnisearch/QMD when available or report `filename_hit` honestly", "outcome": "Clear `filename_hit` vs. `content_hit` labels" },
+        { "want": "Protect private notes from snippet leaks", "action": "Apply `--no-snippets` on sensitive or legacy folders", "outcome": "Desensitized path & count inventory" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "在我的知识库里查下「SOIA 发版规范」现在以哪篇为准，并把引用它的反向链接列出来。",
+        "用 `--no-snippets` 在历史区检索包含这个旧项目名的文件清单。"
+      ],
+      "en": [
+        "Search my vault for the current authoritative release policy and list its backlinks.",
+        "Search legacy imports using `--no-snippets` for files mentioning this old project."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "运行前后文件树哈希严格相等，绝不顺手「顺便整理一下」用户文件。",
+        "明确区分「找到文件」和「已通过五段入库整理」，不混淆状态。"
+      ],
+      "en": [
+        "File-tree hash remains strictly identical before and after every search.",
+        "Never confuses search discovery with completed vault organization."
+      ]
+    }
+  },
+  "soia-pkm-transform-article-notebooklm": {
+    "title": {
+      "zh": "文章转学习材料：试卷、Anki 闪卡、脑图与播客脚本",
+      "en": "Article to Quiz, Flashcards, Mindmap & Podcast"
+    },
+    "pain": {
+      "zh": "看了一篇好长文想真正学进去，自己出题、做 Anki 闪卡、画复习脑图太耗神；用 NotebookLM 又担心每次手动上传零散，或者 AI 瞎编几道连「题目数和答案数都对不上」的残次试卷、画一个语法报错打不开的 Mermaid 脑图。",
+      "en": "Turning deep articles into study quizzes, Anki flashcards, or mindmaps manually takes hours—while naive LLM generation often outputs broken Mermaid syntax or mismatched question/answer counts."
+    },
+    "solution": {
+      "zh": "围绕「学懂吃透」支持五种学习形态（`quiz` 试卷、`flashcards` 闪卡、`mindmap` 脑图、`podcast` 播客脚本、`notes` 笔记），提供 NotebookLM 与零依赖本地 Markdown 双引擎：先把生成 Prompt 规范落盘可重跑，生成后走机械质量门校验——强制验证 **题目数 == 答案数 == 解析数** 以及 Mermaid 语法可解析，不过绝不交差。",
+      "en": "Convert vault articles into `quiz`, `flashcards`, `mindmap`, `podcast` scripts, or `notes` using either NotebookLM (isolated browser profile) or zero-dependency local Markdown: save reproducible prompts under `outputs/transform/`, then run quality gates enforcing `questions == answers == explanations` and valid Mermaid syntax."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "定学习产物与引擎", "desc": "支持 `quiz`（默认）/ `flashcards` / `mindmap` / `podcast` / `notes`，选 `local` 或 `notebooklm`。" },
+          { "title": "上传前确认或本地落 Prompt", "desc": "走 NotebookLM 先健康检查并确认上传范围；本地路线先把 Prompt 落盘可复现。" },
+          { "title": "按知识点生成结构化材料", "desc": "提炼全部核心知识点出题/卡/脑图，不为了凑数编造文章之外的内容。" },
+          { "title": "过机械数量与语法质量门", "desc": "严格校验题目数 == 答案数 == 解析数、Mermaid 可解析，失败项如实单列不跳过。" }
+        ],
+        "guardrails": [
+          "NotebookLM 登录态仅留在本地专用 profile，绝不导出 Cookie 或 Google 凭据",
+          "往云端 NotebookLM 上传你的私有笔记前必须先由你确认范围",
+          "不做文章封面或海报（视觉转化请用 `transform-article-visual`）"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Select artifact & provider", "desc": "Choose `quiz`, `flashcards`, `mindmap`, `podcast`, or `notes` with `local` or `notebooklm`." },
+          { "title": "Confirm upload or save prompt", "desc": "Health-check NotebookLM & confirm sources first, or write reproducible local prompts." },
+          { "title": "Generate grounded study set", "desc": "Extract every core concept from the source article without hallucinating extras." },
+          { "title": "Pass deterministic quality gates", "desc": "Verify `questions == answers == explanations` and valid Mermaid parsing." }
+        ],
+        "guardrails": [
+          "NotebookLM sessions stay inside a local dedicated profile—zero exported cookies",
+          "Always asks confirmation before uploading private notes to NotebookLM",
+          "Dedicated to study artifacts (for posters/covers use `transform-article-visual`)"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "把这篇《分布式锁原理》笔记本地生成一套 10 道题的复习试卷和一份 Mermaid 脑图。",
+        "title": "学习材料转换与质量门校验示例",
+        "lines": [
+          { "text": "[TRANSFORM] source=分布式锁原理.md · provider=local · types=[quiz, mindmap]", "tone": "cyan" },
+          { "text": "✓ prompts/ 提示词已落盘 · outputs/transform/2026/分布式锁原理/quiz.md", "tone": "green" },
+          { "text": "✓ 质量门校验: 题目=10 · 答案=10 · 解析=10 (数量 100% 匹配)", "tone": "green" },
+          { "text": "✓ mindmap.md: Mermaid AST 语法解析通过 · 0 跳过项", "tone": "green" }
+        ],
+        "footer": "可离线本地生成、Prompt 可重跑、题数答案数零错位"
+      },
+      "en": {
+        "prompt": "Convert this distributed-locks note locally into a 10-question quiz and a Mermaid mindmap.",
+        "title": "Study Material Generation & Quality Gate Sample",
+        "lines": [
+          { "text": "[TRANSFORM] source=distributed-locks.md · provider=local · types=[quiz, mindmap]", "tone": "cyan" },
+          { "text": "✓ Prompts saved · outputs/transform/2026/distributed-locks/quiz.md", "tone": "green" },
+          { "text": "✓ Quality Gate: questions=10 · answers=10 · explanations=10 (exact match)", "tone": "green" },
+          { "text": "✓ mindmap.md: Mermaid syntax validated cleanly · 0 skipped targets", "tone": "green" }
+        ],
+        "footer": "Offline-capable, reproducible prompts, and strict count parity"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把文章变成自测试卷或 Anki 闪卡", "action": "提炼全部核心知识点生成带答案与解析的题库/卡组并校验数量一致", "outcome": "落盘产物、Prompt 与 `题==答==解` 校验" },
+        { "want": "生成复习脑图、播客脚本或结构笔记", "action": "按 `local` 或经健康检查的 `notebooklm` 生成并验证 Mermaid 可解析", "outcome": "产物路径、`notebook_id` 与语法检查结果" }
+      ],
+      "en": [
+        { "want": "Turn articles into quizzes or Anki decks", "action": "Extract core concepts and verify `questions == answers == explanations`", "outcome": "Saved study files, prompts, and parity check" },
+        { "want": "Generate mindmaps, podcast scripts, or notes", "action": "Run `local` or health-checked `notebooklm` and validate Mermaid syntax", "outcome": "Output paths, notebook ID, and parse pass" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把这篇笔记用本地模式转成一套 8 题的复习试卷（`quiz`），检查答案和解析数量齐不齐。",
+        "先把这篇英文技术文章走 NotebookLM 生成一张复习脑图和播客讨论脚本。"
+      ],
+      "en": [
+        "Convert this note into an 8-question `quiz` locally and verify answer parity.",
+        "Generate a study `mindmap` and `podcast` script from this technical article via NotebookLM."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "本地方案零额外安装依赖，随时可用；Prompt 落盘确保同一文章可稳定重跑。",
+        "内置 `quality-gates.md` 与 `notebooklm-test-matrix.md` 测试矩阵，失败目标严禁静默跳过。"
+      ],
+      "en": [
+        "Local mode works with zero extra dependencies and reproducible saved prompts.",
+        "Follows `quality-gates.md` & `notebooklm-test-matrix.md`; never hides failed items."
+      ]
+    }
+  },
+  "soia-pkm-transform-article-visual": {
+    "title": {
+      "zh": "文章转长图、信息图、概念图与海报（HTML/本地渲染）",
+      "en": "Article to Long Image, Infographic & Poster"
+    },
+    "pain": {
+      "zh": "想把一篇知识库长文做成一图读懂长图或信息图发给朋友看，用纯 AI 生图模型中文大概率糊成乱码、字句被硬截断；最糟的是有些工具图省事，在生成烂了的位图上用程序强行贴几个黑字补丁，丑得没法看。",
+      "en": "Turning long notes into Chinese infographics with raw image-gen models almost always blurs or garbles dense Chinese text—and crude PIL/Canvas text patches over broken bitmaps look awful."
+    },
+    "solution": {
+      "zh": "以「本地 HTML/CSS 无头浏览器渲染」为默认主力（也支持显式指定 `open-design` 或 `codex-image`）：先按 `visual_dense` 提取文章核心概念并把 Prompt 落盘进 `prompts/`，过机械质量门后截图出高清 PNG；最后强制实图验收（>50KB、宽 ≥750px、中文可读无截断无重叠），一旦发现文字乱码或溢出必须改 Prompt 重新渲染，绝不拿代码补丁糊弄。",
+      "en": "Default to crisp local headless-browser HTML/CSS rendering (with optional explicit `open-design` or `codex-image` backends): distill `visual_dense` structure, save reproducible prompts first, pass mechanical quality gates, and verify real PNGs (>50KB, width >=750px, zero clipped/garbled Chinese)—always re-rendering from prompt fixes rather than patching pixels."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "提取概念并落盘 Prompt", "desc": "按目标形态（长图/信息图/概念图/海报/封面）重组核心概念，Prompt 先写进 `prompts/`。" },
+          { "title": "过机械质量门防溢出", "desc": "在渲染前跑 `quality-gates.md` 检查字数密度、配色对比度与版式结构。" },
+          { "title": "本地无头渲染高清 PNG", "desc": "默认走 `local` HTML/CSS 渲染保证中文锐利；指定缺依赖引擎时停下报错不撒谎。" },
+          { "title": "实图视觉验收不过重绘", "desc": "必用 `view_image` 核验尺寸与可读性，禁止用 PIL/Canvas 在坏图上贴字修补。" }
+        ],
+        "guardrails": [
+          "修字红线：出现乱码或溢出必须改 Prompt 重新生成，严禁 Pillow 描字覆盖",
+          "给参考图只学版式语法，绝不抄袭他人内容或品牌标识",
+          "中间临时 HTML 放系统临时目录并于截图后清理"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Extract concepts & save prompt", "desc": "Restructure key ideas for the chosen visual type and persist prompts first." },
+          { "title": "Run pre-render quality gate", "desc": "Validate text density, contrast, and layout constraints per `quality-gates.md`." },
+          { "title": "Render high-res PNG locally", "desc": "Use crisp HTML/CSS rendering by default (or fail closed if an optional engine is missing)." },
+          { "title": "Inspect via `view_image`", "desc": "Verify >50KB, >=750px width, and zero clipping; re-render rather than pixel-patching." }
+        ],
+        "guardrails": [
+          "Never patches garbled text with PIL/Canvas/ImageMagick overlays",
+          "Reference images guide layout grammar only—never copy source content",
+          "Cleans temporary HTML artifacts after capture; keeps prompts & final PNGs"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "把这篇《AI-native PKM 架构》文章用本地 HTML/CSS 渲染成一张高清长图（infographic）。",
+        "title": "文章转信息长图与视觉验收示例",
+        "lines": [
+          { "text": "[ROUTE] type=infographic · provider=local (HTML/CSS headless) · 0 fallback", "tone": "cyan" },
+          { "text": "✓ Prompt 落盘: outputs/transform/2026/AI-native-PKM/prompts/infographic.md", "tone": "green" },
+          { "text": "✓ 成图生成: outputs/transform/2026/AI-native-PKM/infographic.png (1200x2480 · 412 KB)", "tone": "green" },
+          { "text": "✓ view_image 核验: 宽度>=750px · 中文锐利无截断 · 0 文字重叠", "tone": "green" }
+        ],
+        "footer": "中文高密度信息图默认走无头 HTML 渲染，彻底告别 AI 乱码"
+      },
+      "en": {
+        "prompt": "Turn this 'AI-native PKM' note into a crisp local HTML/CSS infographic PNG.",
+        "title": "Article-to-Visual Render & QA Sample",
+        "lines": [
+          { "text": "[ROUTE] type=infographic · provider=local (HTML/CSS headless) · 0 fallback", "tone": "cyan" },
+          { "text": "✓ Prompt saved: outputs/transform/2026/AI-native-PKM/prompts/infographic.md", "tone": "green" },
+          { "text": "✓ Image rendered: outputs/transform/2026/AI-native-PKM/infographic.png (1200x2480 · 412 KB)", "tone": "green" },
+          { "text": "✓ view_image QA: >=750px wide · crisp typography · zero clipping", "tone": "green" }
+        ],
+        "footer": "Local headless HTML rendering keeps dense typography razor-sharp"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "把笔记转成长图、信息图或概念图", "action": "重组 `visual_dense` 要点，落盘 Prompt 并用本地 HTML/CSS 截图验收", "outcome": "高清 PNG、Prompt 路径与 `view_image` 验收结果" },
+        { "want": "显式切换 Open Design 或 Codex 生图", "action": "按客户指定核对引擎就绪态执行，发生降级如实写明真实 provider", "outcome": "真实渲染通道记录与像素尺寸回执" }
+      ],
+      "en": [
+        { "want": "Convert articles to long images & infographics", "action": "Structure key ideas, save prompts, render locally, and run `view_image` QA", "outcome": "Verified PNG, prompt path, and dimensions" },
+        { "want": "Use explicit external visual engines", "action": "Route to `open-design` or `codex-image` if ready—never faking provider status", "outcome": "Honest provider receipt and resolution audit" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把这篇读书笔记做成一张高清竖版长图（`long_image`），保留关键对比表格。",
+        "用本地渲染引擎把这份技术总结转成信息图（`infographic`），确保中文完全清晰。"
+      ],
+      "en": [
+        "Turn this book note into a vertical `long_image` keeping the key comparison table.",
+        "Render this technical summary as a crisp local `infographic` PNG."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "本地 HTML 渲染不依赖收费生图 Key，也不会上传私有笔记到外部生图接口。",
+        "严格把关 `>50KB`、`>=750px` 与 `view_image` 视觉实测三道门槛。"
+      ],
+      "en": [
+        "Local rendering needs no paid image API keys and keeps private notes offline.",
+        "Enforces `>50KB`, `>=750px`, and `view_image` visual verification."
+      ]
+    }
+  },
+  "soia-pkm-translate-article-zh": {
+    "title": {
+      "zh": "外文文章三档精翻：机械分块、术语表与不改原文",
+      "en": "3-Mode Bilingual Translation with Chunking & Glossary"
+    },
+    "pain": {
+      "zh": "翻译一篇一万多字的英文长文或剪藏双语笔记时，常遇到三个头疼问题：直接喂给大模型后半段漏译偷懒；前半篇叫「代理」后半篇变成「智能体」术语乱飘；更坑的是如果原文是剪藏笔记，脚本把原本带有的英文和摘要一起算词数，导致分块错位甚至把原文件直接覆盖了。",
+      "en": "Translating 10,000-word foreign articles or bilingual clips often drops paragraphs mid-way, drifts terminology across chunks, miscounts already-translated sections, or overwrites the original note."
+    },
+    "solution": {
+      "zh": "提供 `quick`（快翻大意）/ `normal`（默认，带文体与术语表）/ `refined`（出版级精翻+跨块审校）三档模式，**永远另写独立新文件（绝不覆盖原文件）**：超过 4000 词自动用 `chunk_markdown.py` 机械切块（保护完整代码块不被拦腰切断），遇到 clip 归档笔记时聪明地先只截取 `## 原文` 段再切块；支持自定义术语表与「继续润色」一键升级精翻。",
+      "en": "Translate into a separate new file (never overwriting the source) across three modes—`quick`, `normal` (default, with style & glossary consistency), and `refined` (publication-grade cross-chunk review). Articles `>4000` words use `chunk_markdown.py` to split cleanly around code blocks, and clip notes extract only `## 原文` before chunking."
+    },
+    "mechanism": {
+      "zh": {
+        "steps": [
+          { "title": "先截原文再机械分块", "desc": "遇 clip 笔记先只抽 `## 原文` 到临时文件再计词；超 4000 词按代码块边界安全分块。" },
+          { "title": "建会话术语表统一译法", "desc": "继承你私有 `config.yml` 里的 `glossary`，跨块保持人名与专有名词完全一致。" },
+          { "title": "三档精翻或继续润色", "desc": "`normal` 自然流畅；说「精翻/继续润色」触发 `refined` 跨块审校清单消除生硬译腔。" },
+          { "title": "另存新档严守非覆盖", "desc": "写 `<原名>-中文版.md` 保留原 frontmatter，同名已存在必先征求覆盖确认。" }
+        ],
+        "guardrails": [
+          "绝不修改或覆盖原文章文件（只写独立译文新文件）",
+          "绝不擅自涂改图片内嵌文字，未翻译图片在回执如实提醒",
+          "不依赖任何外网付费翻译 API 或账号凭据"
+        ]
+      },
+      "en": {
+        "steps": [
+          { "title": "Isolate `## 原文` & chunk", "desc": "Slice only `## 原文` on clip notes; split `>4000` words cleanly preserving code fences." },
+          { "title": "Maintain shared glossary", "desc": "Load your custom `glossary` from `config.yml` to keep terms consistent across chunks." },
+          { "title": "3 modes + polish upgrade", "desc": "Run `quick`, `normal`, or `refined` (cross-chunk style & accuracy audit checklist)." },
+          { "title": "Write separate output file", "desc": "Save `<stem>-<lang>版.md` preserving original frontmatter; ask before overwriting." }
+        ],
+        "guardrails": [
+          "Never edits or overwrites the original source article",
+          "Never fakes edits to text inside images; lists untranslated images clearly",
+          "Requires zero external paid translation APIs or credentials"
+        ]
+      }
+    },
+    "liveSample": {
+      "zh": {
+        "prompt": "把这篇 6,800 词的英文长文按 normal 模式精译成独立中文版，用我的默认术语表。",
+        "title": "机械分块与术语表译文交付示例",
+        "lines": [
+          { "text": "$ python3 scripts/chunk_markdown.py --file essay.md --threshold 4000 --json", "tone": "muted" },
+          { "text": "[CHUNK] extracted ## 原文 (6,820 words) -> 2 clean chunks (0 code blocks broken)", "tone": "cyan" },
+          { "text": "✓ glossary hits: 14 terms unified · mode=normal (reply '继续润色' for refined)", "tone": "green" },
+          { "text": "✓ 已另存: essay-中文版.md · 原文零改动 · 提示: 正文含 2 张英文架构图未改字", "tone": "green" }
+        ],
+        "footer": "长文不丢段、代码块不被切碎、译完还能随时说一句「继续润色」升精翻"
+      },
+      "en": {
+        "prompt": "Translate this 6,800-word English essay in `normal` mode into a standalone Chinese note.",
+        "title": "Chunked Translation & Glossary Sample",
+        "lines": [
+          { "text": "$ python3 scripts/chunk_markdown.py --file essay.md --threshold 4000 --json", "tone": "muted" },
+          { "text": "[CHUNK] extracted ## 原文 (6,820 words) -> 2 clean chunks (0 code blocks split)", "tone": "cyan" },
+          { "text": "✓ Glossary hits: 14 terms aligned · mode=normal (say '继续润色' for refined)", "tone": "green" },
+          { "text": "✓ Saved: essay-中文版.md · Original untouched · Noted 2 untranslated diagrams", "tone": "green" }
+        ],
+        "footer": "Zero dropped paragraphs; preserves code blocks & source notes"
+      }
+    },
+    "capabilities": {
+      "zh": [
+        { "want": "快速通读一篇外文文章大意（quick）", "action": "整篇直译速度优先，另存独立译文文件（长文提示质量边界）", "outcome": "`<原名>-中文版.md` 与原件未改确认" },
+        { "want": "默认自然流畅长文翻译（normal）", "action": "自动机械分块并维护术语表，跨块保持译名一致", "outcome": "术语统一、代码块完好的完整译文" },
+        { "want": "出版级精翻与跨块润色（refined）", "action": "执行分析→翻译→按审校清单诊断→润色，查人名与风格漂移", "outcome": "诊断说明与出版级精翻定稿" }
+      ],
+      "en": [
+        { "want": "Fast gist translation (`quick`)", "action": "Direct pass into a separate output file noting long-doc limits", "outcome": "Standalone `<stem>-<lang>版.md`" },
+        { "want": "Natural default translation (`normal`)", "action": "Chunk cleanly around code blocks with shared glossary tracking", "outcome": "Consistent, archive-ready translation" },
+        { "want": "Publication-grade polish (`refined`)", "action": "Audit cross-chunk drift, names, and prose flow via checklist", "outcome": "Audit notes + polished final translation" }
+      ]
+    },
+    "prompts": {
+      "zh": [
+        "把这篇剪藏的英文长文用 `normal` 模式翻译成独立中文版，术语按我的 `glossary` 走。",
+        "帮我用 `refined` 模式精翻这篇，或者把刚翻好的那篇继续润色一遍。"
+      ],
+      "en": [
+        "Translate this clipped English essay in `normal` mode using my glossary.",
+        "Run `refined` translation (or polish the existing draft) with cross-chunk consistency checks."
+      ]
+    },
+    "trust": {
+      "zh": [
+        "自带 `chunk_markdown.py --selftest`（7/7 通过）与分块边界/非覆盖保护前向测试。",
+        "所有临时分块写进系统临时目录，个人术语表留在私有 `config.yml`，绝不外泄。"
+      ],
+      "en": [
+        "Ships `chunk_markdown.py --selftest` (7/7) verifying chunk boundaries & non-overwrite guards.",
+        "Glossary stays in private config; temp chunks stay in OS temp dirs."
+      ]
+    }
+  }
+}

@@ -4,7 +4,12 @@
   "description": "SOIA family — SoiaDeck desktop AI platform and 47 open skills for knowledge, engineering and office work.",
   "icons": [
     {
-      "src": "/soia/products/soiadeck-icon.png",
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
