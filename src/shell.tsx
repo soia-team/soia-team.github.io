@@ -67,6 +67,8 @@ export function SiteChrome({ active = 'home', locale }: { active?: HeaderProps['
 export function CompactFooter({ locale }: { locale: LandingLocaleCode }) {
   const href = (path: string) => hrefFor(path, locale);
   const zh = locale === 'zh';
+  const ja = locale === 'ja';
+  const t3 = (z: string, e: string, j: string) => (zh ? z : ja ? j : e);
   return (
     <footer className="sub-footer" data-od-id="footer">
       <div className="container sub-footer-inner">
@@ -74,25 +76,25 @@ export function CompactFooter({ locale }: { locale: LandingLocaleCode }) {
           <div className="sub-footer-col"><h5>SOIA</h5><ul>
             <li><a href={href('/soiadeck/')}>SoiaDeck</a></li>
             <li><a href={href('/soiacode/')}>SoiaCode</a></li>
-            <li><a href={href('/skills/')}>{zh ? '开源技能' : 'Open Skills'}</a></li>
+            <li><a href={href('/skills/')}>{t3('开源技能', 'Open Skills', 'オープンソーススキル')}</a></li>
             <li><a href={href('/soia/')}>SOIA Runtime</a></li>
           </ul></div>
-          <div className="sub-footer-col"><h5>{zh ? '技能域' : 'Skills'}</h5><ul>
+          <div className="sub-footer-col"><h5>{t3('技能域', 'Skills', 'スキル領域')}</h5><ul>
             <li><a href={href('/skills/pkm/')}>PKM Vault</a></li>
             <li><a href={href('/skills/dev/')}>Dev</a></li>
             <li><a href={href('/skills/office/')}>Office</a></li>
             <li><a href={href('/skills/meta/')}>Meta</a></li>
           </ul></div>
-          <div className="sub-footer-col"><h5>{zh ? '资源' : 'Resources'}</h5><ul>
-            <li><a href={href('/about/')}>{zh ? '关于' : 'About'}</a></li>
-            <li><a href={href('/faq/')}>{zh ? '常见问题' : 'FAQ'}</a></li>
-            <li><a href={href('/#contact')}>{zh ? '企业咨询' : 'Consulting'}</a></li>
+          <div className="sub-footer-col"><h5>{t3('资源', 'Resources', 'リソース')}</h5><ul>
+            <li><a href={href('/about/')}>{t3('关于', 'About', '概要')}</a></li>
+            <li><a href={href('/faq/')}>{t3('常见问题', 'FAQ', 'よくある質問')}</a></li>
+            <li><a href={href('/pricing/')}>{t3('服务与定价', 'Pricing', 'サービスと料金')}</a></li>
           </ul></div>
           <div className="sub-footer-col"><h5>Open source</h5><ul>
             <li><a href={REPO_ORG} target="_blank" rel="noreferrer noopener">GitHub</a></li>
             <li><a href={REPO_DISCUSSIONS} target="_blank" rel="noreferrer noopener">Discussions</a></li>
-            <li><a href={href('/privacy/')}>{zh ? '隐私' : 'Privacy'}</a></li>
-            <li><a href={href('/terms/')}>{zh ? '条款' : 'Terms'}</a></li>
+            <li><a href={href('/privacy/')}>{t3('隐私', 'Privacy', 'プライバシー')}</a></li>
+            <li><a href={href('/terms/')}>{t3('条款', 'Terms', '利用規約')}</a></li>
           </ul></div>
         </div>
         <div className="foot-bar">

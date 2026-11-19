@@ -298,8 +298,9 @@ export default function Page({
   const t = getHomeExtra(locale);
   const cta = getHomeCta(locale);
   const _cjk = locale === 'zh' || locale === 'zh-tw' || locale === 'ja' || locale === 'ko';
-  // Short inline labels still fall back to English for non-Chinese locales.
-  const tt = (zh: string, en: string) => (locale === 'zh' ? zh : en);
+  // Localized helper across English, Simplified Chinese, and Japanese.
+  const tt = (zh: string, en: string, ja?: string) =>
+    locale === 'zh' ? zh : locale === 'ja' ? (ja ?? en) : en;
   const _skills = fmt(counts.skills);
   const systems = fmt(counts.systems);
   // Design Systems stat card: derive from the raw count so a missing count
@@ -327,48 +328,53 @@ export default function Page({
 
   const heroStages = [
     {
-      label: tt('AI 作业台 · 多 Agent', 'AI Workbench'),
+      label: tt('AI 作业台 · 多 Agent', 'AI Workbench', 'AI ワークベンチ'),
       src: '/soia/products/soiadeck-workbench.png',
       title: 'SoiaDeck · AI Workbench',
       note: tt(
         '同屏并发调度 Claude Code、Codex、ACP 与 PTY 会话，本机 daemon 持久化持有回合，关窗不断流。',
         'Orchestrate Claude Code, Codex, ACP, and PTY conversations inside a persistent local daemon.',
+        'Claude Code・Codex・ACP・PTY の会話をローカル daemon で並列実行。ウィンドウを閉じても処理は継続します。',
       ),
     },
     {
-      label: tt('手机端 · 远程审批', 'Mobile & Diffs'),
+      label: tt('手机端 · 远程审批', 'Mobile & Diffs', 'モバイル承認・Diff'),
       src: '/soia/products/soiadeck-phone.png',
       title: 'SoiaDeck · Mobile Remote',
       note: tt(
         '离开桌面也能在手机上看实时进度、检视代码 Diff、逐条批准或拒绝命令，随时叫停跑偏回合。',
         'Follow agent progress, inspect diffs, approve risky commands, or stop a turn from your phone.',
+        '外出先でもスマートフォンから進捗確認・Diff 閲覧・コマンド承認・ターン停止が可能です。',
       ),
     },
     {
-      label: tt('NAT 加密中继', 'Encrypted Relay'),
+      label: tt('NAT 加密中继', 'Encrypted Relay', 'NAT 暗号化リレー'),
       src: '/soia/products/soiadeck-relay.png',
       title: 'SoiaDeck · NAT Relay',
       note: tt(
         '不在同一局域网也能跨网配对连接；中继只转发密文不窥探会话正文，断线或维护 90 秒内自动续连。',
         'End-to-end encrypted cross-network relay forwarding ciphertext only with 90s auto-reconnect.',
+        '同一 LAN 外でも安全に接続。リレーは暗号文のみを転送し、切断時も 90 秒以内に自動再接続します。',
       ),
     },
     {
-      label: tt('本地 LLM · 模型路由', 'Local LLM Router'),
+      label: tt('本地 LLM · 模型路由', 'Local LLM Router', 'ローカル LLM'),
       src: '/soia/products/soiadeck-router.png',
       title: 'SoiaDeck · Local LLM (MLX)',
       note: tt(
         '本机发现、下载并托管 MLX 等开源模型，统一对外提供 OpenAI 兼容入口，隐私任务完全离线可跑。',
         'Discover and host Apple Silicon MLX models with one local OpenAI-compatible router endpoint.',
+        'Apple Silicon 上の MLX モデルを検出・起動し、OpenAI 互換のローカルエンドポイントで提供します。',
       ),
     },
     {
-      label: tt('权限网关与待处理', 'Approvals & Guard'),
+      label: tt('权限网关与待处理', 'Approvals & Guard', '権限ゲート・承認'),
       src: '/soia/products/soiadeck-home.png',
       title: 'SoiaDeck · Approvals Queue',
       note: tt(
         '危险命令、工作区外写入、外部联网统一收口到可追溯的审批卡；支持逐次放行或本会话允许。',
         'Every out-of-workspace write, shell command, or network access queues cleanly for explicit approval.',
+        'ワークスペース外への書き込み・シェル実行・外部通信を明示的な承認キューで制御し記録します。',
       ),
     },
   ] as const;
@@ -533,14 +539,14 @@ export default function Page({
               </p>
 
               <div className='hero-agents-strip' data-reveal>
-                <span className='hero-agents-label'>{tt('已支持', 'Supports')}</span>
+                <span className='hero-agents-label'>{tt('已支持', 'Supports', '対応')}</span>
                 {['Claude Code', 'Codex', 'pi', 'dsh', 'Cursor', 'OpenCode', 'Kimi Code', 'Qwen Code', 'Gemini CLI', 'Copilot'].map((name) => (
                   <a className='hero-agent-chip' href={href('/soiadeck/#agents')} key={name}>
                     {name}
                   </a>
                 ))}
                 <a className='hero-agent-chip is-more' href={href('/soiadeck/#agents')}>
-                  {tt('全部 19 个接入清单 →', '+19 agents →')}
+                  {tt('全部 19 个接入清单 →', '+19 agents →', '全 19 Agent 一覧 →')}
                 </a>
               </div>
 
@@ -550,7 +556,7 @@ export default function Page({
                 onMouseEnter={() => setHeroPaused(true)}
                 onMouseLeave={() => setHeroPaused(false)}
               >
-                <div className='hero-stage-tabs' role='tablist' aria-label={tt('SoiaDeck 多场景切换', 'SoiaDeck scene switcher')}>
+                <div className='hero-stage-tabs' role='tablist' aria-label={tt('SoiaDeck 多场景切换', 'SoiaDeck scene switcher', 'SoiaDeck シーン切替')}>
                   {heroStages.map((stage, idx) => (
                     <button
                       type='button'
@@ -573,7 +579,7 @@ export default function Page({
                     <span>{activeHeroStage.title}</span>
                     <span className='hero-window-status'>
                       <span className='hero-pulse-dot' aria-hidden='true' />
-                      {tt('daemon local · zero lock-in', 'daemon local · zero lock-in')}
+                      {tt('daemon local · zero lock-in', 'daemon local · zero lock-in', 'ローカル daemon · ロックインなし')}
                     </span>
                   </div>
                   <div className='hero-window-frame'>
@@ -592,7 +598,7 @@ export default function Page({
                   </div>
                   <div className='hero-window-foot'>
                     <span>{activeHeroStage.note}</span>
-                    <a href={href('/soiadeck/')}>{tt('查看 SoiaDeck 详情 →', 'Explore SoiaDeck →')}</a>
+                    <a href={href('/soiadeck/')}>{tt('查看 SoiaDeck 详情 →', 'Explore SoiaDeck →', 'SoiaDeck の詳細を見る →')}</a>
                   </div>
                 </div>
               </div>
@@ -956,12 +962,13 @@ export default function Page({
           <div className='container'>
             <div className='home-anywhere-head' data-reveal>
               <h2 className='display'>
-                {tt('随处运行，统一掌控', 'Run anywhere, stay in control')}
+                {tt('随处运行，统一掌控', 'Run anywhere, stay in control', 'どこからでも、手元の主権を保つ')}
               </h2>
               <p>
                 {tt(
                   '从桌面的本地 daemon 到手机端远程看 Diff 与审批，再到跨网加密中继与 47 个可组合开源技能——代码、秘钥与会话始终留在你的机器上。',
                   'Desktop daemon, mobile approvals, encrypted NAT relay, and 47 composable skills — while code, credentials, and sessions remain on your machines.',
+                  'ローカル daemon のデスクトップ作業台からモバイルでの Diff・承認、NAT 暗号化リレー、47 の公開スキルまで——コード・鍵・会話は常にあなたのマシンに残ります。',
                 )}
               </p>
             </div>
@@ -970,31 +977,31 @@ export default function Page({
               {[
                 {
                   kicker: 'Desktop App',
-                  title: tt('桌面作业台', 'Desktop Workbench'),
-                  desc: tt('本机 daemon 持有全部会话，关窗继续跑、重开从缓冲重放；统一管项目、Worktree 与审批。', 'Local daemon keeps turns alive across restarts with unified workspaces, worktrees, and approvals.'),
+                  title: tt('桌面作业台', 'Desktop Workbench', 'デスクトップ作業台'),
+                  desc: tt('本机 daemon 持有全部会话，关窗继续跑、重开从缓冲重放；统一管项目、Worktree 与审批。', 'Local daemon keeps turns alive across restarts with unified workspaces, worktrees, and approvals.', 'ローカル daemon が全会話を保持。ウィンドウを閉じても処理は進み、プロジェクトと Worktree を一元管理。'),
                   href: href('/soiadeck/#workbench'),
-                  more: tt('看桌面架构 →', 'Desktop architecture →'),
+                  more: tt('看桌面架构 →', 'Desktop architecture →', 'アーキテクチャを見る →'),
                 },
                 {
                   kicker: 'Mobile Remote',
-                  title: tt('手机端随时处理', 'Approve from Mobile'),
-                  desc: tt('离开工位也能随时查看会话进度与代码改动 Diff，在手机上放行或拒掉危险操作。', 'Check turns, inspect code diffs, approve shell steps, or stop a session right from your phone.'),
+                  title: tt('手机端随时处理', 'Approve from Mobile', 'モバイルで即時承認'),
+                  desc: tt('离开工位也能随时查看会话进度与代码改动 Diff，在手机上放行或拒掉危险操作。', 'Check turns, inspect code diffs, approve shell steps, or stop a session right from your phone.', '席を離れても進捗とコード Diff を確認し、危険なコマンドをスマホから許可・停止できます。'),
                   href: href('/soiadeck/#remote'),
-                  more: tt('看手机端界面 →', 'Mobile surface →'),
+                  more: tt('看手机端界面 →', 'Mobile surface →', 'モバイル画面を見る →'),
                 },
                 {
                   kicker: 'Encrypted Relay',
-                  title: tt('NAT 加密中继', 'Encrypted NAT Relay'),
-                  desc: tt('不在同一局域网也能配对连回开发机；中继只转发密文不窥探正文，断线 90 秒自动续连。', 'Zero-inspection ciphertext forwarding across networks with 90s reconnect and Passkey device management.'),
+                  title: tt('NAT 加密中继', 'Encrypted NAT Relay', 'NAT 暗号化リレー'),
+                  desc: tt('不在同一局域网也能配对连回开发机；中继只转发密文不窥探正文，断线 90 秒自动续连。', 'Zero-inspection ciphertext forwarding across networks with 90s reconnect and Passkey device management.', 'LAN 外から開発機へペアリング接続。暗号文のみを中継し、90 秒自動再接続と Passkey 管理に対応。'),
                   href: href('/soiadeck/#relay'),
-                  more: tt('看中继机制 →', 'Relay spec →'),
+                  more: tt('看中继机制 →', 'Relay spec →', 'リレー仕様を見る →'),
                 },
                 {
                   kicker: 'Engine & Skills',
-                  title: tt('SoiaCode + 47 技能', 'SoiaCode + 47 Skills'),
-                  desc: tt('自研 Rust 轻量内核 SoiaCode (si) 配合 4 大领域 47 个公开技能，可按需单个装入宿主。', 'Minimal Rust agent kernel SoiaCode (si) alongside 47 open skills across PKM, Dev, Office & Meta.'),
+                  title: tt('SoiaCode + 47 技能', 'SoiaCode + 47 Skills', 'SoiaCode + 47 スキル'),
+                  desc: tt('自研 Rust 轻量内核 SoiaCode (si) 配合 4 大领域 47 个公开技能，可按需单个装入宿主。', 'Minimal Rust agent kernel SoiaCode (si) alongside 47 open skills across PKM, Dev, Office & Meta.', 'Rust 製極小カーネル SoiaCode (si) と 4 領域 47 の公開スキルを必要最小限でホストに導入。'),
                   href: href('/soiacode/'),
-                  more: tt('看 SoiaCode 架构 →', 'SoiaCode specs →'),
+                  more: tt('看 SoiaCode 架构 →', 'SoiaCode specs →', 'SoiaCode 仕様を見る →'),
                 },
               ].map((card) => (
                 <a className='home-anywhere-card' href={card.href} key={card.kicker}>
@@ -1009,28 +1016,28 @@ export default function Page({
             <div className='home-philosophy-grid' data-reveal>
               {[
                 {
-                  title: tt('Private · 本地优先', 'Private · Local-first'),
-                  desc: tt('会话正文、API 秘钥与代码仓库全部留在自己设备，默认零遥测，核心能力断网可用。', 'Repos, sessions, and API credentials stay local with zero default telemetry.'),
+                  title: tt('Private · 本地优先', 'Private · Local-first', 'Private · ローカル優先'),
+                  desc: tt('会话正文、API 秘钥与代码仓库全部留在自己设备，默认零遥测，核心能力断网可用。', 'Repos, sessions, and API credentials stay local with zero default telemetry.', '会話本文・API キー・リポジトリは手元に留まり、テレメトリ既定無効でオフライン管理も可能。'),
                 },
                 {
-                  title: tt('Daemon-backed · 永不断流', 'Daemon-backed · Persistent'),
-                  desc: tt('前端视图随时关闭或切端重连，正在执行的长任务不会因为页面刷新而丢失。', 'Close the UI or switch devices anytime — running agent turns never drop.'),
+                  title: tt('Daemon-backed · 永不断流', 'Daemon-backed · Persistent', 'Daemon-backed · 継続実行'),
+                  desc: tt('前端视图随时关闭或切端重连，正在执行的长任务不会因为页面刷新而丢失。', 'Close the UI or switch devices anytime — running agent turns never drop.', 'UI を閉じてもデバイスを切り替えても、実行中の長時間タスクはローカル daemon 上で途切れません。'),
                 },
                 {
-                  title: tt('Unified · 19 Agent 一致体验', 'Unified · 19 Agents'),
-                  desc: tt('统一整合 stream-json、app-server、ACP、pi-rpc 与 PTY，按清单一目了然查看支持程度。', 'One workbench across stream-json, app-server, ACP, pi-rpc, and PTY adapters.'),
+                  title: tt('Unified · 19 Agent 一致体验', 'Unified · 19 Agents', 'Unified · 19 Agent 統一'),
+                  desc: tt('统一整合 stream-json、app-server、ACP、pi-rpc 与 PTY，按清单一目了然查看支持程度。', 'One workbench across stream-json, app-server, ACP, pi-rpc, and PTY adapters.', 'stream-json・app-server・ACP・pi-rpc・PTY の違いを吸収し、対応一覧で状態を明示。'),
                 },
                 {
-                  title: tt('Permission-first · 审批留痕', 'Permission-first · Auditable'),
-                  desc: tt('高危命令、工作区外修改与联网必须先经权限闸门，每一次决策进入会话树可追溯。', 'Commands and out-of-workspace writes pause cleanly for explicit human approval.'),
+                  title: tt('Permission-first · 审批留痕', 'Permission-first · Auditable', 'Permission-first · 監査可能'),
+                  desc: tt('高危命令、工作区外修改与联网必须先经权限闸门，每一次决策进入会话树可追溯。', 'Commands and out-of-workspace writes pause cleanly for explicit human approval.', '危険コマンドやワークスペース外書込・通信は実行前に確認し、決定ログをセッション木に保存。'),
                 },
                 {
-                  title: tt('Composable · 复用既有订阅', 'Composable · Zero Lock-in'),
-                  desc: tt('直接用你本机已有的 Claude Code / Codex / Cursor 等 CLI 订阅与本地模型，绝不锁死供应商。', 'Bring your existing CLI subscriptions, local skills, and Apple Silicon MLX models.'),
+                  title: tt('Composable · 复用既有订阅', 'Composable · Zero Lock-in', 'Composable · ロックインなし'),
+                  desc: tt('直接用你本机已有的 Claude Code / Codex / Cursor 等 CLI 订阅与本地模型，绝不锁死供应商。', 'Bring your existing CLI subscriptions, local skills, and Apple Silicon MLX models.', '既にお持ちの CLI サブスクや Apple Silicon ローカルモデルをそのまま組み合わせ可能。'),
                 },
                 {
-                  title: tt('Honest · 如实标注边界', 'Honest · Grounded Scope'),
-                  desc: tt('已交付 macOS arm64、暂未发布 SoiaCode 二进制、Agent 分三级状态均透明如实标明。', 'Exact platform availability, verified CLI baselines, and honest milestone boundaries.'),
+                  title: tt('Honest · 如实标注边界', 'Honest · Grounded Scope', 'Honest · 誠実な開示'),
+                  desc: tt('已交付 macOS arm64、暂未发布 SoiaCode 二进制、Agent 分三级状态均透明如实标明。', 'Exact platform availability, verified CLI baselines, and honest milestone boundaries.', '現在の macOS arm64 配布範囲や SoiaCode の設計中ステータスを誇張せず正確に表示。'),
                 },
               ].map((item) => (
                 <div className='home-philosophy-item' key={item.title}>
@@ -1095,11 +1102,11 @@ export default function Page({
                   // [data-github-stars] / [data-github-contributors] enhancers in
                   // index.astro); the hard-coded `num` is only the SSR fallback
                   // shown until the API responds. The rest count up from 0.
-                  { src: 'card-1.webp', num: '47', to: '47', suffix: '', alt: tt('开源技能', 'Open skills'), href: href('/skills/') },
-                  { src: 'card-2.webp', num: '4', to: '4', suffix: '', alt: tt('技能域', 'Skill domains'), href: href('/skills/') },
-                  { src: 'card-3.webp', num: '3', to: '3', suffix: '', alt: tt('技能宿主', 'Skill hosts'), href: href('/skills/') },
-                  { src: 'card-4.webp', num: '19', to: '19', suffix: '', alt: tt('SoiaDeck Agent', 'SoiaDeck agents'), href: href('/soiadeck/') },
-                  { src: 'card-5.webp', num: null, to: null, suffix: '', alt: tt('SoiaCode 进行中', 'SoiaCode in progress'), href: href('/#faq') },
+                  { src: 'card-1.webp', num: '47', to: '47', suffix: '', alt: tt('开源技能', 'Open skills', 'オープンソーススキル'), href: href('/skills/') },
+                  { src: 'card-2.webp', num: '4', to: '4', suffix: '', alt: tt('技能域', 'Skill domains', 'スキル領域'), href: href('/skills/') },
+                  { src: 'card-3.webp', num: '3', to: '3', suffix: '', alt: tt('技能宿主', 'Skill hosts', '対応ホスト CLI'), href: href('/skills/') },
+                  { src: 'card-4.webp', num: '19', to: '19', suffix: '', alt: tt('SoiaDeck Agent', 'SoiaDeck agents', 'SoiaDeck 対応 Agent'), href: href('/soiadeck/') },
+                  { src: 'card-5.webp', num: null, to: null, suffix: '', alt: tt('SoiaCode 进行中', 'SoiaCode in progress', 'SoiaCode 設計中'), href: href('/soiacode/') },
                   { src: 'card-6.webp', num: null, to: null, suffix: '', alt: 'GitHub', href: REPO_ORG, cta: true },
                 ] as ReadonlyArray<{ src: string; num: string | null; to: string | null; suffix: string; alt: string; href: string; live?: 'stars' | 'contributors'; cta?: boolean }>).map((item, index) => (
                   <a
@@ -1146,57 +1153,58 @@ export default function Page({
             <div className='consulting-band' data-reveal>
               <div className='consulting-head'>
                 <span className='consulting-kicker'>
-                  {tt('CONSULTING & CUSTOM SKILLS · 明码标价', 'CONSULTING & CUSTOM SKILLS')}
+                  {tt('CONSULTING & CUSTOM SKILLS · 明码标价', 'CONSULTING & CUSTOM SKILLS', '技術相談・カスタム開発 · 明朗料金')}
                 </span>
                 <h2 className='display'>
-                  {tt('企业咨询与定制技能服务', 'Consulting & Custom Skill Engineering')}
+                  {tt('企业咨询与定制技能服务', 'Consulting & Custom Skill Engineering', '技術コンサル・カスタムスキル作成')}
                 </h2>
                 <p>
                   {tt(
                     '不卖 SaaS 订阅；公开软件按仓库开源或分阶段交付，企业专项支持与技能定制按次/工时明码计费，通过 GitHub Discussions 预约排期。',
                     'No SaaS subscription lock-in. Book focused 1-on-1 architecture consulting or bespoke skill engineering with transparent time-based rates.',
+                    '月額 SaaS サブスクリプションは提供せず、必要な分だけ都度・工数ベースで明朗会計にて承ります（GitHub Discussions より予約）。',
                   )}
                 </p>
               </div>
               <div className='consulting-grid'>
                 <div className='consulting-card'>
-                  <span className='consulting-tag'>{tt('01 · 一对一技术咨询', '01 · 1-ON-1 CONSULTING')}</span>
-                  <h3>{tt('架构与工作流专项咨询', 'Architecture & Workflow Session')}</h3>
+                  <span className='consulting-tag'>{tt('01 · 一对一技术咨询', '01 · 1-ON-1 CONSULTING', '01 · 1 対 1 技術コンサル')}</span>
+                  <h3>{tt('架构与工作流专项咨询', 'Architecture & Workflow Session', 'アーキテクチャ・運用相談')}</h3>
                   <div className='consulting-price-row'>
                     <span className='consulting-price'>¥200</span>
                     <span className='consulting-unit'>
-                      {tt('/ 30 分钟 / 次（超出 30 分钟 ¥400 · 每半小时 +¥200 · 单次上限 1 小时）', '/ 30 min (over 30 min ¥400 · +¥200/30m · max 1h)')}
+                      {tt('/ 30 分钟 / 次（超出 30 分钟 ¥400 · 每半小时 +¥200 · 单次上限 1 小时）', '/ 30 min (over 30 min ¥400 · +¥200/30m · max 1h)', '/ 30 分（超過分は 30 分毎 +¥200 · 上限 1 時間 ¥400）')}
                     </span>
                   </div>
                   <ul className='consulting-list'>
-                    <li>{tt('30 分钟标准单次 ¥200；超过 30 分钟按每半小时 +¥200 封顶 1 小时（¥400）', '¥200 per 30-min session; +¥200 per extra 30 min, capped at 1 hour (¥400 max)')}</li>
-                    <li>{tt('适用：企业落地选型、多 Agent（Claude Code / Codex / SoiaDeck）集成诊断', 'Scope: multi-agent workflow diagnosis, SoiaDeck integration & Obsidian PKM setup')}</li>
-                    <li>{tt('会前对齐问题清单，会后输出可执行调整建议，不兜售长期捆绑合同', 'Actionable findings delivered with zero bundled SaaS commitments')}</li>
+                    <li>{tt('30 分钟标准单次 ¥200；超过 30 分钟按每半小时 +¥200 封顶 1 小时（¥400）', '¥200 per 30-min session; +¥200 per extra 30 min, capped at 1 hour (¥400 max)', '基本 30 分 ¥200、30 分超過は半時間ごとに +¥200（1 回最大 1 時間・上限 ¥400）')}</li>
+                    <li>{tt('适用：企业落地选型、多 Agent（Claude Code / Codex / SoiaDeck）集成诊断', 'Scope: multi-agent workflow diagnosis, SoiaDeck integration & Obsidian PKM setup', '対象：導入設計・Obsidian PKM 構築・複数 Agent 統合診断')}</li>
+                    <li>{tt('会前对齐问题清单，会后输出可执行调整建议，不兜售长期捆绑合同', 'Actionable findings delivered with zero bundled SaaS commitments', '事前アジェンダ共有・事後アクション提示、長期契約の抱き合わせなし')}</li>
                   </ul>
                   <div className='consulting-cta'>
                     <a className='btn btn-ghost' href={REPO_DISCUSSIONS} {...ext}>
-                      {tt('去 Discussions 预约咨询 ↗', 'Book via Discussions ↗')}
+                      {tt('去 Discussions 预约咨询 ↗', 'Book via Discussions ↗', 'Discussions で予約する ↗')}
                     </a>
                   </div>
                 </div>
 
                 <div className='consulting-card is-featured'>
-                  <span className='consulting-tag'>{tt('02 · 按工具工时定制开发', '02 · CUSTOM SKILL ENGINEERING')}</span>
-                  <h3>{tt('定制化技能（Skill）编写', 'Bespoke Skill Development')}</h3>
+                  <span className='consulting-tag'>{tt('02 · 按工具工时定制开发', '02 · CUSTOM SKILL ENGINEERING', '02 · カスタムスキル開発')}</span>
+                  <h3>{tt('定制化技能（Skill）编写', 'Bespoke Skill Development', 'カスタムスキル新規作成')}</h3>
                   <div className='consulting-price-row'>
                     <span className='consulting-price'>¥1,000</span>
                     <span className='consulting-unit'>
-                      {tt('/ 人天（按实际工具研发工时计费）', '/ day (billed by engineering effort)')}
+                      {tt('/ 人天（按实际工具研发工时计费）', '/ day (billed by engineering effort)', '/ 人日（開発工数ベース）')}
                     </span>
                   </div>
                   <ul className='consulting-list'>
-                    <li>{tt('¥1,000 / 1 天基准，按团队实际需要的工具工时与复杂度预先评估确认', '¥1,000/day baseline billed strictly on agreed engineering hours')}</li>
-                    <li>{tt('交付完整 SKILL.md、执行脚本、权限防呆护栏（Guardrails）与验收测试', 'Delivers full SKILL.md, scripts, hard guardrails, and verification checks')}</li>
-                    <li>{tt('遵循 .agents/skills 最小安装规范，可直接装入团队 Codex / Claude Code / WorkBuddy', 'Ships cleanly for Codex, Claude Code, and WorkBuddy at project scope')}</li>
+                    <li>{tt('¥1,000 / 1 天基准，按团队实际需要的工具工时与复杂度预先评估确认', '¥1,000/day baseline billed strictly on agreed engineering hours', '¥1,000 / 日を基準に要件と難易度に応じた工数を事前に合意')}</li>
+                    <li>{tt('交付完整 SKILL.md、执行脚本、权限防呆护栏（Guardrails）与验收测试', 'Delivers full SKILL.md, scripts, hard guardrails, and verification checks', 'SKILL.md・実行スクリプト・安全ガードレール・検証テストを一式納品')}</li>
+                    <li>{tt('遵循 .agents/skills 最小安装规范，可直接装入团队 Codex / Claude Code / WorkBuddy', 'Ships cleanly for Codex, Claude Code, and WorkBuddy at project scope', 'Codex / Claude Code / WorkBuddy へそのまま導入可能な形式で納品')}</li>
                   </ul>
                   <div className='consulting-cta'>
                     <a className='btn btn-primary' href={REPO_DISCUSSIONS} {...ext}>
-                      {tt('提交定制需求 ↗', 'Request Custom Skill ↗')}
+                      {tt('提交定制需求 ↗', 'Request Custom Skill ↗', '作成を依頼する ↗')}
                     </a>
                   </div>
                 </div>
@@ -1377,7 +1385,8 @@ export default function Page({
               <div className='sub-footer-col'>
                 <h5>{menu.pricing}</h5>
                 <ul>
-                  <li><a href={href('/#contact')}>{menu.pricing}</a></li>
+                  <li><a href={href('/pricing/')}>{menu.pricing}</a></li>
+                  <li><a href={href('/#contact')}>{tt('首页咨询入口', 'Home pricing summary', 'ホーム料金案内')}</a></li>
                   <li><a href={REPO_DISCUSSIONS} target='_blank' rel='noopener'>{menu.communityItems.discussions}</a></li>
                 </ul>
               </div>

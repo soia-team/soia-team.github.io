@@ -35,7 +35,7 @@ const ROLE_HREFS = [
   '/#labs',
   '/skills/dev/',
   '/skills/office/',
-  '/#contact',
+  '/pricing/',
   REPO_DISCUSSIONS,
 ] as const;
 
@@ -359,7 +359,7 @@ export function Header({
                 modal (see app/_lib/pricing-content.ts). */}
             <li>
               <a
-                href={href('/#contact')}
+                href={href('/pricing/')}
                 className={active === 'pricing' ? 'is-active' : undefined}
               >
                 {productMenuCopy.pricing}

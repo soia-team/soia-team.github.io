@@ -9,9 +9,10 @@ import {
   getHomeFaq,
   getLocaleDefinition,
   localeFromPath,
+  stripLocaleFromPath,
   type LandingLocaleCode,
 } from './upstream/app/i18n';
-import { FaqPage, LegalPage, AboutPage } from './info-pages';
+import { FaqPage, LegalPage, AboutPage, PricingPage } from './info-pages';
 import { COUNTS, GITHUB, hrefFor, REPO, SubpageLayout } from './shell';
 import { SoiaDeckPage, SoiaCodePage, SoiaRuntimePage, SkillsHubPage, SkillDomainPage, SkillDetailPage, SKILL_DOMAINS } from './soia-pages';
 
@@ -41,10 +42,8 @@ function currentLocale(): LandingLocaleCode {
 }
 
 function localPathname(): string {
-  const path = window.location.pathname.replace(/\/+$/, '') || '/';
-  if (path === '/zh') return '/';
-  if (path.startsWith('/zh/')) return path.slice(3) || '/';
-  return path;
+  const clean = stripLocaleFromPath(window.location.pathname).pathname.replace(/\/+$/, '');
+  return clean || '/';
 }
 
 function loadClassicScript(src: string, id: string): Promise<void> {
@@ -417,20 +416,23 @@ function HomeRoute({ locale }: { locale: LandingLocaleCode }) {
 
 function NotFound({ locale }: { locale: LandingLocaleCode }) {
   const zh = locale === 'zh';
+  const ja = locale === 'ja';
   return (
     <SubpageLayout locale={locale}>
       <article className="info-page od-not-found">
         <header className="catalog-head">
           <span className="label">SOIA</span>
-          <h1 className="display">{zh ? '页面未找到。' : 'This page wandered off.'}</h1>
+          <h1 className="display">{zh ? '页面未找到。' : ja ? 'ページが見つかりません。' : 'This page wandered off.'}</h1>
           <p className="lead">
             {zh
               ? '该路径当前没有对应页面。你可以返回首页，或直接浏览 SoiaDeck 与开源技能目录。'
-              : 'No page is mapped to this path. Head back home or browse SoiaDeck and Open Skills.'}
+              : ja
+                ? '指定されたパスにはページが存在しません。ホームに戻るか、SoiaDeck やオープンソーススキル一覧をご覧ください。'
+                : 'No page is mapped to this path. Head back home or browse SoiaDeck and Open Skills.'}
           </p>
           <div className="od-route-actions">
-            <a className="btn btn-primary" href={hrefFor('/', locale)}>{zh ? '回到首页' : 'Back home'}</a>
-            <a className="btn btn-ghost" href={hrefFor('/skills/', locale)}>{zh ? '浏览开源技能' : 'Open skills'}</a>
+            <a className="btn btn-primary" href={hrefFor('/', locale)}>{zh ? '回到首页' : ja ? 'ホームへ戻る' : 'Back home'}</a>
+            <a className="btn btn-ghost" href={hrefFor('/skills/', locale)}>{zh ? '浏览开源技能' : ja ? 'オープンソーススキルを見る' : 'Open skills'}</a>
             <a className="btn btn-ghost" href={hrefFor('/soiadeck/', locale)}>SoiaDeck</a>
           </div>
         </header>
@@ -445,21 +447,24 @@ export default function App() {
   const isHome = path === '/';
   const isFaq = path === '/faq';
   const isAbout = path === '/about';
+  const isPricing = path === '/pricing';
   const isPrivacy = path === '/privacy';
   const isTerms = path === '/terms';
   const zh = locale === 'zh';
+  const ja = locale === 'ja';
 
   const pageTitle =
-    isHome ? (zh ? 'SOIA — SoiaDeck 桌面 AI 平台' : 'SOIA — SoiaDeck desktop AI platform')
-    : path === '/soiadeck' ? (zh ? 'SoiaDeck — 桌面 AI 平台，即将开源' : 'SoiaDeck — desktop AI platform, coming open source')
-    : path === '/soiacode' ? (zh ? 'SoiaCode (si) — 轻量 Rust Coding Agent' : 'SoiaCode (si) — lightweight Rust coding agent')
-    : path === '/soia' ? (zh ? 'SOIA Runtime — 开源 Agent Operating System' : 'SOIA Runtime — open-source Agent OS')
-    : path === '/skills' ? (zh ? '开源技能 — 47 个技能，4 个领域' : 'Open skills — 47 skills, 4 domains')
+    isHome ? (zh ? 'SOIA — SoiaDeck 桌面 AI 平台' : ja ? 'SOIA — ローカル優先の Agent プラットフォームと SoiaDeck' : 'SOIA — SoiaDeck desktop AI platform')
+    : path === '/soiadeck' ? (zh ? 'SoiaDeck — 桌面 AI 平台，即将开源' : ja ? 'SoiaDeck — デスクトップ AI プラットフォーム（オープンソース準備中）' : 'SoiaDeck — desktop AI platform, coming open source')
+    : path === '/soiacode' ? (zh ? 'SoiaCode (si) — 轻量 Rust Coding Agent' : ja ? 'SoiaCode (si) — 軽量 Rust Coding Agent 仕様' : 'SoiaCode (si) — lightweight Rust coding agent')
+    : path === '/soia' ? (zh ? 'SOIA Runtime — 开源 Agent Operating System' : ja ? 'SOIA Runtime — オープンソース Agent OS' : 'SOIA Runtime — open-source Agent OS')
+    : path === '/skills' ? (zh ? '开源技能 — 47 个技能，4 个领域' : ja ? 'オープンソーススキル — 4 領域 47 スキル' : 'Open skills — 47 skills, 4 domains')
     : path.startsWith('/skills/') ? `SOIA Skills — ${path.slice('/skills/'.length).replace(/\/+$/, '')}`
-    : isFaq ? (zh ? '常见问题 — SOIA' : 'FAQ — SOIA')
-    : isAbout ? (zh ? '关于 — SOIA' : 'About — SOIA')
-    : isPrivacy ? (zh ? '隐私政策 — SOIA' : 'Privacy Policy — SOIA')
-    : isTerms ? (zh ? '服务条款 — SOIA' : 'Terms of Service — SOIA')
+    : isFaq ? (zh ? '常见问题 — SOIA' : ja ? 'よくある質問 — SOIA' : 'FAQ — SOIA')
+    : isAbout ? (zh ? '关于 — SOIA' : ja ? 'SOIA について' : 'About — SOIA')
+    : isPricing ? (zh ? '服务与定价 — SOIA' : ja ? 'サービスと料金 — SOIA' : 'Services & Pricing — SOIA')
+    : isPrivacy ? (zh ? '隐私政策 — SOIA' : ja ? 'プライバシーポリシー — SOIA' : 'Privacy Policy — SOIA')
+    : isTerms ? (zh ? '服务条款 — SOIA' : ja ? '利用規約 — SOIA' : 'Terms of Service — SOIA')
     : 'SOIA';
 
   useEffect(() => {
@@ -519,6 +524,7 @@ export default function App() {
   }
   if (isFaq) return <FaqPage locale={locale} />;
   if (isAbout) return <AboutPage locale={locale} />;
+  if (isPricing) return <PricingPage locale={locale} />;
   if (isPrivacy) return <LegalPage locale={locale} kind="privacy" />;
   if (isTerms) return <LegalPage locale={locale} kind="terms" />;
   return <NotFound locale={locale} />;

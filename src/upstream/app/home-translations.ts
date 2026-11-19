@@ -192,50 +192,49 @@ const zhTw: HomeExtra = {
 };
 
 const ja: HomeExtra = {
-  heroLead:
-    'アイデアからプロトタイプ、Web、スライド、HTML 動画まで——プロダクトデザインの全工程を、あなたの手元のマシンで完結。',
-  heroTitleSub: 'Claude Design の最良のオープンソース代替',
+  heroLead: 'SOIA ファミリー。現在の主役はデスクトップ作業台 SoiaDeck（オープンソース準備中）。',
+  heroTitleSub: 'SOIA ファミリー · 現在の主役 SoiaDeck',
   heroSub:
-    'Open Design はオープンソースでローカルな vibe design workspace——すでに使っているコーディングエージェントを設計エンジンに変え、アイデアからプロトタイプ、Web、スライド、HTML 動画まで、すべて自分のマシン上で完結します。\nエージェントネイティブ、21 のコーディングエージェント、{systems} のデザインシステム、Apache-2.0。',
-  aboutKicker: 'なぜ Open Design なのか？',
-  aboutStatement:
-    'Open Design はオープンソースで agentic な vibe design workspace です。すでに使っているコーディングエージェントを、成果物が完全に自分のものになる設計エンジンに変えます。LLM が初めて本当に設計できる——コピーではなく本物の設計——と証明したとき、その能力はクローズドでホスト型、モデル固定でした。Open Design はそれを開きます：ローカル、BYOK、Apache-2.0。',
-  aboutTab1: 'デスクトップネイティブ',
-  aboutTab2: 'エージェントは作らず、つなぐ',
-  aboutTab3: '使うほどあなたを理解する',
+    '使い慣れた coding agent、オープンソーススキル、ローカルモデルをひとつのデスクトップ作業台へ——制御可能・監査可能・ベンダーロックインなし。',
+  aboutKicker: 'なぜ SoiaDeck か？',
+  aboutStatement: '使い慣れた coding agent を、ひとつのローカルデスクトップ作業台に統合。',
+  aboutTab1: 'デスクトップ作業台',
+  aboutTab2: '既存 Agent とモバイル承認',
+  aboutTab3: '47 のオープンソーススキル',
   aboutCap1:
-    'デザインはデスクトップで起こる。\nローカルファイル、Figma エクスポート、コードリポジトリを直接読み取り、エージェントはターミナル実行のすべての権限を持つ。',
+    'SoiaDeck はローカル優先の AI プラットフォーム。\ncoding agent の会話、権限承認、プロジェクト、Worktree をひとつのウィンドウで管理できます。',
   aboutCap2:
-    'あなたのマシンにある Claude Code / Codex / Cursor はすでに十分強力。\nOpen Design はそれらを完全なデザインワークフローにつなぎ込む。',
-  aboutCap3: 'すべての選択がデザインシステム・好み・記憶として蓄積され、次の生成があなたの望みに近づく。',
-  stepTitle1: '起点を選ぶ',
-  stepTitle2: 'ビジュアルの方向を決める',
-  stepTitle3: 'Artifact を生成',
-  stepTitle4: '納品、または動画化',
-  stepDesc1: '目標を一言で説明するか、テンプレート / プラグインから起点を選ぶ。',
-  stepDesc2: '方向が決まれば、カラーパレット・フォント・余白が自動で生成フローに反映される。',
-  stepDesc3: 'エージェントがすべてのコンテキストを読み、実際に動くファイルを生成。サンドボックス内で即時プレビューと編集。',
-  stepDesc4: 'エンジニアリングにエクスポートして開発を続けるか、HyperFrames でそのままマーケティング動画に。',
-  capTitle: 'アイデアからプロトタイプ、Web、スライド、HTML 動画まで',
+    'すでにお持ちの Claude Code、Codex、Cursor とそのまま連携。\nSoiaDeck が統一プロトコルとモバイルリレーを提供し、外出先から Diff 確認や承認が可能です。',
+  aboutCap3:
+    'PKM（27）・Dev（9）・Office（7）・Meta（4）の計 47 スキル。プロジェクト単位で 1 つから導入できます。',
+  stepTitle1: 'スキルを探す',
+  stepTitle2: 'ホストへ導入',
+  stepTitle3: 'SoiaDeck / CLI で実行',
+  stepTitle4: '検証し証跡を残す',
+  stepDesc1: 'やりたいことを伝えると、soia-meta-find-skill が適合する公開スキルを見つけます。',
+  stepDesc2: 'プロジェクト単位・ホスト明示で Claude Code、Codex、WorkBuddy にインストールします。',
+  stepDesc3: 'SoiaDeck が会話、承認、Git Worktree を保持。スキルはブラックボックスではなくオープンな手順書です。',
+  stepDesc4: '実際の動作を検証。設計段階の SoiaCode (si) はすべての実行を追跡・停止・監査できるよう設計されています。',
+  capTitle: 'ニーズから検証済みのローカル成果へ',
   labsPre: '',
-  labsPost: ' で何が作れる？',
+  labsPost: ' で何ができるか？',
   labsLead:
-    'プロトタイプ、ランディングページ、スライド、ダッシュボード、ブランド／デザインシステム、さらに HTML 動画まで。Open Design はそれぞれを実際に動くファイルに変換し、自分の coding agent で駆動、そのまま納品や開発への引き継ぎができます。',
-  methodTitle: '21+ のコーディングエージェントを設定ゼロで接続',
-  ctaTitle: '最先端の AI デザイン能力を、すべての作り手の手元へ',
-  testiPre: '世界中から、',
-  testiMid: ' 人のコントリビューター',
-  testiPost: 'が一緒に Open Design を作っています',
-  newsTitle: 'Open Design ニュースレター',
-  newsDesc:
-    '新しいテンプレート、デザインシステムの更新、アンバサダーイベント、プロダクトの最新情報を、あなたの受信箱へ直接お届けします。',
-  newsBtn: '購読する',
-  newsDone: 'ご登録ありがとうございます！',
-  faqTitle: 'Open Design のよくある質問 — オープンソース・ローカルファースト・Claude Design 代替',
-  footProduct: '製品',
-  footCommunity: 'コミュニティ',
-  footLegal: '法的情報',
-  footPartners: 'パートナー',
+    'デスクトップ上で coding agent とローカルモデルを動かし、PKM ナレッジ整理・エンジニアリング品質管理・オフィス記事執筆スキルを組み合わせます。代表スキル：soia-meta-find-skill / soia-pkm-clip-web / soia-pkm-query-vault / soia-dev-implement-task / soia-dev-review-code / soia-cwork-feishu-cli / soia-media-compose-article-draft。',
+  methodTitle: 'SoiaDeck は 19 の coding agent に対応',
+  ctaTitle: 'SoiaDeck 近日オープンソース化。',
+  testiPre: '',
+  testiMid: ' が公開開発中。',
+  testiPost: '技術相談（¥200/30分〜）・カスタムスキル作成を受付中です。',
+  newsTitle: 'SOIA アップデート',
+  newsDesc: '公開スキルのリリース、SoiaDeck の進捗通知。現在フォーム入力はローカルブラウザにのみ保存されます。',
+  newsBtn: '登録する',
+  newsDone: '記録しました（メーリングリスト未接続）。',
+  newsError: '保存できませんでした。後ほどお試しください。',
+  faqTitle: 'SOIA よくある質問 —— オープンソーススキル・SoiaDeck・SoiaCode',
+  footProduct: 'プロダクト',
+  footCommunity: 'SOIA について',
+  footLegal: '規約・プライバシー',
+  footPartners: 'GitHub',
 };
 
 const ko: HomeExtra = {
@@ -907,7 +906,9 @@ const _TABLE: Partial<Record<LandingLocaleCode, HomeExtra>> = {
 
 /** Localized copy for the homepage visual modules; falls back to English. */
 export function getHomeExtra(locale: LandingLocaleCode): HomeExtra {
-  return locale === 'zh' ? zh : en;
+  if (locale === 'zh') return zh;
+  if (locale === 'ja') return ja;
+  return en;
 }
 
 /**
@@ -950,14 +951,14 @@ const HOME_CTA: Partial<Record<LandingLocaleCode, HomeCta>> = {
     downloadProof: '47 个技能 · 4 个域 · MIT',
   },
   ja: {
-    solutions: 'すべてのソリューションを見る',
-    templates: 'すべてのテンプレートを見る',
-    agents: '21+ のエージェントをすべて見る',
-    contributors: 'すべてのコントリビューターを見る',
-    systems: 'デザインシステムを見る',
+    solutions: 'SOIA Runtime を見る',
+    templates: 'オープンソーススキル一覧',
+    agents: 'SoiaDeck 対応 Agent',
+    contributors: 'soia-team GitHub',
+    systems: 'スキル領域を見る',
     learnMore: '詳しく見る →',
-    statsTitle: 'オープンソースの vibe design workspace を数字で',
-    downloadProof: '74K+ スター · Apache-2.0 · 無料',
+    statsTitle: '数字で見る SOIA',
+    downloadProof: '47 スキル · 4 領域 · MIT',
   },
   ko: {
     solutions: '모든 솔루션 둘러보기',
@@ -1044,5 +1045,6 @@ const HOME_CTA: Partial<Record<LandingLocaleCode, HomeCta>> = {
 /** Localized homepage CTA labels; falls back to English for retired locales. */
 export function getHomeCta(locale: LandingLocaleCode): HomeCta {
   if (locale === 'zh') return HOME_CTA.zh as HomeCta;
+  if (locale === 'ja') return HOME_CTA.ja as HomeCta;
   return HOME_CTA.en as HomeCta;
 }

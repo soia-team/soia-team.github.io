@@ -4,21 +4,31 @@ import type { LandingLocaleCode } from './upstream/app/i18n';
 import { SKILL_DOCS, type LocaleText, type SkillDoc } from './skill-data';
 import './missing-pages.css';
 
+type Lang = 'zh' | 'en' | 'ja';
+const langOf = (locale: LandingLocaleCode): Lang => (locale === 'zh' ? 'zh' : locale === 'ja' ? 'ja' : 'en');
+const t3 = <T,>(locale: LandingLocaleCode, zh: T, en: T, ja: T): T => {
+  const l = langOf(locale);
+  return l === 'zh' ? zh : l === 'ja' ? ja : en;
+};
+
 function ZoomableFigure({
   src,
   alt,
   className = 'tutorial-detail-hero',
   zh,
+  locale,
   lazy = false,
   marginTop,
 }: {
   src: string;
   alt: string;
   className?: string;
-  zh: boolean;
+  zh?: boolean;
+  locale?: LandingLocaleCode;
   lazy?: boolean;
   marginTop?: number;
 }) {
+  const l: Lang = locale ? langOf(locale) : zh ? 'zh' : 'en';
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -44,10 +54,10 @@ function ZoomableFigure({
             setOpen(true);
           }
         }}
-        aria-label={zh ? `放大查看：${alt}` : `Zoom image: ${alt}`}
+        aria-label={l === 'zh' ? `放大查看：${alt}` : l === 'ja' ? `拡大表示：${alt}` : `Zoom image: ${alt}`}
       >
         <img src={src} alt={alt} loading={lazy ? 'lazy' : undefined} />
-        <span className="zoomable-hint">{zh ? '点击查看大图' : 'Click to zoom'}</span>
+        <span className="zoomable-hint">{l === 'zh' ? '点击查看大图' : l === 'ja' ? 'クリックで拡大' : 'Click to zoom'}</span>
       </figure>
       {open && (
         <div
@@ -60,7 +70,7 @@ function ZoomableFigure({
           <button
             type="button"
             className="lightbox-close"
-            aria-label={zh ? '关闭大图' : 'Close preview'}
+            aria-label={l === 'zh' ? '关闭大图' : l === 'ja' ? '閉じる' : 'Close preview'}
             onClick={() => setOpen(false)}
           >
             ×
@@ -435,8 +445,8 @@ type Domain = {
   repo: string;
   tokens: string;
   cover: string;
-  name: { zh: string; en: string };
-  blurb: { zh: string; en: string };
+  name: LocaleText;
+  blurb: LocaleText;
 };
 
 export const SKILL_DOMAINS: readonly Domain[] = [
@@ -446,10 +456,11 @@ export const SKILL_DOMAINS: readonly Domain[] = [
     repo: 'https://github.com/soia-team/soia-open-pkm-vault-skills',
     tokens: '~2.4k',
     cover: '/soia/domains/cover-pkm.png',
-    name: { zh: '知识库 PKM', en: 'PKM Vault' },
+    name: { zh: '知识库 PKM', en: 'PKM Vault', ja: 'ナレッジベース PKM' },
     blurb: {
       zh: '别再收藏吃灰。网页、公众号、X、小红书、抖音、GitHub、云盘进本地 Markdown vault，再整理、提炼、转成图。',
       en: 'Clip the web, WeChat, X, Rednote, Douyin, GitHub and drives into a local Markdown vault, then organize and distill.',
+      ja: 'Web、WeChat、X、RED、TikTok系、GitHub、クラウドをローカル Markdown Vault に保存し、整理・要約・可視化まで一気通貫。',
     },
   },
   {
@@ -458,10 +469,11 @@ export const SKILL_DOMAINS: readonly Domain[] = [
     repo: 'https://github.com/soia-team/soia-open-dev-skills',
     tokens: '~550',
     cover: '/soia/domains/cover-dev.png',
-    name: { zh: '工程 Dev', en: 'Engineering' },
+    name: { zh: '工程 Dev', en: 'Engineering', ja: 'エンジニアリング Dev' },
     blurb: {
       zh: '让 AI 改代码不再「应该没问题」就交差：定边界、最小改动、真跑验证、只读审查。',
       en: 'Bounded changes, real verification, and read-only review — not “should be fine”.',
+      ja: '「たぶん大丈夫」で終わらせない：変更範囲を限定し、実テストと読み取り専用レビューを徹底。',
     },
   },
   {
@@ -470,10 +482,11 @@ export const SKILL_DOMAINS: readonly Domain[] = [
     repo: 'https://github.com/soia-team/soia-open-cwork-office-skills',
     tokens: '~680',
     cover: '/soia/domains/cover-office.png',
-    name: { zh: '办公与内容', en: 'Office & content' },
+    name: { zh: '办公与内容', en: 'Office & content', ja: 'オフィス & コンテンツ' },
     blurb: {
       zh: '飞书、ProcessOn 落成本地文件；成文、传统构图配图；公众号 / 小红书 / X 只建草稿，绝不自动群发。',
       en: 'Feishu and ProcessOn to local files; drafts and images; WeChat / Rednote / X drafts only — never auto-publish.',
+      ja: 'Feishu や ProcessOn をローカル保存し、執筆と図版生成。WeChat / RED / X は下書きのみ作成し自動投稿しません。',
     },
   },
   {
@@ -482,10 +495,11 @@ export const SKILL_DOMAINS: readonly Domain[] = [
     repo: 'https://github.com/soia-team/soia-open-skills',
     tokens: '~250',
     cover: '/soia/domains/cover-meta.png',
-    name: { zh: '生态 Meta', en: 'Meta' },
+    name: { zh: '生态 Meta', en: 'Meta', ja: 'エコシステム Meta' },
     blurb: {
       zh: '技能越来越多，最麻烦的是不知道该叫谁。按需求检索、同步、发布，并把提示词写清楚。',
       en: 'Find, sync, release, and clarify prompts across the whole skill family.',
+      ja: '要件に合うスキル検索、リンク同期、リリース、プロンプト明確化を担うメタツール群。',
     },
   },
 ];
@@ -503,10 +517,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
   pkm: [
     {
       id: 'pkm-vault',
-      label: { zh: '知识库底座与治理', en: 'Vault core & governance' },
+      label: { zh: '知识库底座与治理', en: 'Vault core & governance', ja: 'Vault 基盤と統制' },
       desc: {
         zh: 'Vault 初始化、Obsidian 接入、分层检索、体检、生命周期整理与编码会话留痕。',
         en: 'Vault bootstrap, Obsidian wiring, layered search, health audits, lifecycle moves, and agent snapshots.',
+        ja: 'Vault 初期化、Obsidian 連携、階層検索、ヘルス診断、ライフサイクル整理とセッション記録。',
       },
       skills: [
         'soia-pkm-bootstrap-vault-base',
@@ -520,10 +535,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'pkm-clip',
-      label: { zh: '内容采集与归档', en: 'Capture & clipping' },
+      label: { zh: '内容采集与归档', en: 'Capture & clipping', ja: '収集・クリッピング' },
       desc: {
         zh: '网页、公众号、X、小红书、抖音、GitHub 与云盘 PDF 一键归档进本地 Markdown 仓库。',
         en: 'Clip web articles, WeChat, X, Rednote, Douyin, GitHub repos, and drives into local Markdown.',
+        ja: 'Web 記事、WeChat、X、RED、Douyin、GitHub、クラウド PDF をローカル Markdown へ保存。',
       },
       skills: [
         'soia-pkm-clip-web',
@@ -539,10 +555,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'pkm-distill',
-      label: { zh: '阅读理解、精翻与提炼', en: 'Reading, translation & distillation' },
+      label: { zh: '阅读理解、精翻与提炼', en: 'Reading, translation & distillation', ja: '精読・翻訳・知識抽出' },
       desc: {
         zh: '独立 AI 选读评估、三档精翻、苏格拉底式个人观点提炼，以及全库长期知识沉淀。',
         en: 'AI critical reading, 3-tier ZH translation, Socratic opinion distillation, and long-term knowledge extraction.',
+        ja: '批判的読解評価、3段階翻訳、ソクラテス式見解抽出、長期知識ベース蓄積。',
       },
       skills: [
         'soia-pkm-interpret-article-analysis',
@@ -553,10 +570,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'pkm-transform',
-      label: { zh: '多媒体视觉与学习转化', en: 'Visual & learning transforms' },
+      label: { zh: '多媒体视觉与学习转化', en: 'Visual & learning transforms', ja: '視覚化・学習変換' },
       desc: {
         zh: '把长文转成长图、信息图、海报、Anki 闪卡、脑图与 NotebookLM 播客材料。',
         en: 'Turn articles into infographics, posters, flashcards, mind maps, and NotebookLM study packs.',
+        ja: '長文記事を図解ポスター、Anki カード、マインドマップ、NotebookLM 用素材へ変換。',
       },
       skills: [
         'soia-pkm-transform-article-visual',
@@ -565,10 +583,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'pkm-tools',
-      label: { zh: '独立工具：个人书库与网盘', en: 'Standalone tools: Library & drives' },
+      label: { zh: '独立工具：个人书库与网盘', en: 'Standalone tools: Library & drives', ja: '単体ツール：蔵書とドライブ' },
       desc: {
         zh: '不绑完整文章流的独立工具：微信读书同步、纯本地书库底座，以及阿里云盘 / 百度网盘原子操作。',
         en: 'Standalone utilities for local book catalogs, WeRead sync, Alipan, and Baidu Netdisk.',
+        ja: '蔵書管理、WeRead 同期、Alipan / Baidu Netdisk 操作などの単体ユーティリティ。',
       },
       skills: [
         'soia-pkm-library-book-catalog',
@@ -582,10 +601,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
   office: [
     {
       id: 'office-sync',
-      label: { zh: '协作办公同步工具', en: 'Collaborative office tools' },
+      label: { zh: '协作办公同步工具', en: 'Collaborative office tools', ja: 'コラボ・同期ツール' },
       desc: {
         zh: '飞书只读调研/增量同步，以及 ProcessOn 图表安全盘点与导出归档。',
         en: 'Read-only Feishu wiki/drive sync and safe ProcessOn diagram export.',
+        ja: 'Feishu 読み取り専用同期や ProcessOn 図表の安全なエクスポート。',
       },
       skills: [
         'soia-cwork-feishu-cli',
@@ -594,10 +614,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'office-create',
-      label: { zh: '成文与视觉创作工坊', en: 'Writing & visual creation' },
+      label: { zh: '成文与视觉创作工坊', en: 'Writing & visual creation', ja: '記事執筆・図版制作' },
       desc: {
         zh: '以真实观点与 Vault 摘抄写长文草稿，并基于组合轴与中华传统色生成配图和 SVG。',
         en: 'Draft authentic articles from vault notes and compile artwork/SVGs.',
+        ja: 'Vault のメモを基に長文下書きを執筆し、SVG 図版や挿絵を生成。',
       },
       skills: [
         'soia-media-compose-article-draft',
@@ -606,10 +627,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'office-publish',
-      label: { zh: '多平台多媒体草稿发布', en: 'Multi-platform draft publishing' },
+      label: { zh: '多平台多媒体草稿发布', en: 'Multi-platform draft publishing', ja: 'マルチチャネル下書き配信' },
       desc: {
         zh: '只建草稿箱或当次授权代传，绝不静默群发：覆盖微信公众号、小红书与 X。',
         en: 'Draft-only and per-approval upload pipelines for WeChat, Rednote, and X.',
+        ja: 'WeChat / RED / X 向けに下書き保存・都度承認アップロードのみ実施（自動公開なし）。',
       },
       skills: [
         'soia-media-publish-wechat-draft',
@@ -621,10 +643,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
   dev: [
     {
       id: 'dev-design',
-      label: { zh: '规范定界与架构设计', en: 'Specs & architecture design' },
+      label: { zh: '规范定界与架构设计', en: 'Specs & architecture design', ja: '仕様確定・設計ガバナンス' },
       desc: {
         zh: '写代码先定范围、复现、契约职责边界与 UI 状态设计交接。',
         en: 'Scope guardrails, cross-component architecture governance, and implementation-ready UI design.',
+        ja: '実装前の変更範囲確定、アーキテクチャ境界統制、UI 状態設計。',
       },
       skills: [
         'soia-dev-enforce-coding-protocol',
@@ -634,10 +657,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'dev-build',
-      label: { zh: '任务落地与 CLI 调度', en: 'Implementation & dispatch' },
+      label: { zh: '任务落地与 CLI 调度', en: 'Implementation & dispatch', ja: 'タスク実装・CLI 連携' },
       desc: {
         zh: '需求实现与缺陷修复，以及派单给外部 AI CLI 进程并核验多账号额度与产物。',
         en: 'End-to-end engineering delivery plus multi-account external AI CLI dispatch.',
+        ja: '要件実装・バグ修正から外部 AI CLI プロセスへのジョブ委譲まで。',
       },
       skills: [
         'soia-dev-implement-task',
@@ -646,10 +670,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'dev-review',
-      label: { zh: '只读审查与 UI 验收', en: 'Read-only review & audit' },
+      label: { zh: '只读审查与 UI 验收', en: 'Read-only review & audit', ja: '読み取り専用レビュー・UI 監査' },
       desc: {
         zh: '独立只读视角：代码与技能包的双轨合规/风险审查，以及 UI 技术证据/UX 分轨验收。',
         en: 'Independent read-only code/skill reviews and split technical/UX UI audits.',
+        ja: '独立視点によるコード・スキル包の適合性レビューと UI 実機検証。',
       },
       skills: [
         'soia-dev-review-code',
@@ -658,10 +683,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'dev-tools',
-      label: { zh: '独立工具：GitHub 与视图', en: 'Standalone tools: GitHub & views' },
+      label: { zh: '独立工具：GitHub 与视图', en: 'Standalone tools: GitHub & views', ja: '単体ツール：GitHub・進捗ビュー' },
       desc: {
         zh: 'GitHub PR/CI/Release 权限管家，以及按需生成的最小任务进度与调用链视图。',
         en: 'GitHub PR/CI/Release operations and on-demand minimal task progress views.',
+        ja: 'GitHub PR/CI/Release 操作およびオンデマンド進捗 HTML 生成。',
       },
       skills: [
         'soia-dev-github-ops',
@@ -672,10 +698,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
   meta: [
     {
       id: 'meta-prompt',
-      label: { zh: '技能检索与提示词工程', en: 'Discovery & prompt engineering' },
+      label: { zh: '技能检索与提示词工程', en: 'Discovery & prompt engineering', ja: 'スキル検索・プロンプト設計' },
       desc: {
         zh: '按需求匹配已有或候选 SOIA 技能，以及起草、诊断并规格化清晰可执行的提示词。',
         en: 'Find the right SOIA skill without unauthorized installs, and clarify prompts.',
+        ja: '要件に合う SOIA スキルの発見と曖昧なプロンプトの仕様化。',
       },
       skills: [
         'soia-meta-find-skill',
@@ -684,10 +711,11 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
     },
     {
       id: 'meta-release',
-      label: { zh: '分发同步与发版管理', en: 'Sync & release ops' },
+      label: { zh: '分发同步与发版管理', en: 'Sync & release ops', ja: '配信同期・リリース運用' },
       desc: {
         zh: '先 dry-run 再跨项目/宿主软链同步技能，以及严格祖先校验与快进 main 的发版流程。',
         en: 'Dry-run symlink sync across hosts and fast-forward main skill releases.',
+        ja: 'ドライラン検証付きホスト間シンボリックリンク同期と Fast-forward リリース。',
       },
       skills: [
         'soia-meta-sync-skills',
@@ -698,8 +726,12 @@ const SKILL_SUBCATEGORIES: Record<SkillDomainSlug, readonly SkillSubcategory[]> 
 };
 
 const isZh = (locale: LandingLocaleCode) => locale === 'zh';
-const pick = <T,>(locale: LandingLocaleCode, value: { zh: T; en: T }): T =>
-  isZh(locale) ? value.zh : value.en;
+const pick = <T,>(locale: LandingLocaleCode, value: { zh: T; en: T; ja?: T }): T => {
+  const l = langOf(locale);
+  if (l === 'zh') return value.zh;
+  if (l === 'ja') return value.ja ?? value.en;
+  return value.en;
+};
 
 const domainOf = (slug: string) => SKILL_DOMAINS.find((d) => d.slug === slug);
 const skillsOf = (slug: string) => SKILL_DOCS.filter((s) => s.domain === slug);
@@ -726,72 +758,418 @@ function Inline({ text }: { text: string }) {
   );
 }
 
-/** Skills hub — tutorial-grid template, one card per domain. */
+function CopyButton({
+  text,
+  locale,
+}: {
+  text: string;
+  locale: LandingLocaleCode;
+}) {
+  const [copied, setCopied] = useState(false);
+  const label = copied
+    ? t3(locale, '已复制', 'Copied', 'コピー済み')
+    : t3(locale, '复制', 'Copy', 'コピー');
+  return (
+    <button
+      type="button"
+      className="skd-copy-btn"
+      onClick={() => {
+        if (navigator.clipboard?.writeText) {
+          navigator.clipboard.writeText(text).catch(() => undefined);
+        }
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1600);
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+function matchesSkillQuery(
+  doc: SkillDoc,
+  query: string,
+  locale: LandingLocaleCode,
+): boolean {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  const domain = domainOf(doc.domain);
+  const subcat = subcategoryOf(doc.domain, doc.name);
+  const lang = langOf(locale);
+  const haystack = [
+    doc.name,
+    doc.tagline,
+    doc.title.zh,
+    doc.title.en,
+    doc.title.ja ?? '',
+    doc.pain.zh,
+    doc.pain.en,
+    doc.solution.zh,
+    doc.solution.en,
+    domain ? `${domain.plugin} ${domain.name.zh} ${domain.name.en} ${domain.name.ja ?? ''}` : '',
+    subcat ? `${subcat.label.zh} ${subcat.label.en} ${subcat.label.ja ?? ''}` : '',
+    ...(lang === 'zh' ? doc.prompts.zh : doc.prompts.en),
+  ]
+    .join(' ')
+    .toLowerCase();
+  return q.split(/\s+/).every((token) => haystack.includes(token));
+}
+
+function SkillCatalogCard({
+  doc,
+  locale,
+}: {
+  doc: SkillDoc;
+  locale: LandingLocaleCode;
+}) {
+  const href = (path: string) => hrefFor(path, locale);
+  const domain = domainOf(doc.domain);
+  const subcat = subcategoryOf(doc.domain, doc.name);
+  const summary = langOf(locale) === 'zh' ? doc.tagline : pick(locale, doc.pain);
+  return (
+    <article className="sk-card">
+      <a className="sk-card-main" href={href(`/skills/${doc.domain}/${doc.name}/`)}>
+        <div className="sk-card-head">
+          <div className="sk-card-title-wrap">
+            <strong>{pick(locale, doc.title)}</strong>
+            <span className="sk-card-slug">{doc.name}</span>
+          </div>
+          {doc.version ? <span className="sk-card-ver">v{doc.version}</span> : null}
+        </div>
+        <p className="sk-card-desc">{summary}</p>
+        <div className="sk-card-tags">
+          {domain ? (
+            <span className={`sk-tag-domain is-${domain.slug}`}>
+              {pick(locale, domain.name)}
+            </span>
+          ) : null}
+          {subcat ? <span className="sk-tag-sub">{pick(locale, subcat.label)}</span> : null}
+        </div>
+      </a>
+      <div className="sk-card-foot">
+        <span>MIT · {domain?.plugin}</span>
+        {domain ? (
+          <a
+            className="sk-card-src"
+            href={SRC_URL(domain.repo, doc.name)}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            SKILL.md ↗
+          </a>
+        ) : null}
+      </div>
+    </article>
+  );
+}
+
+/** Skills hub — OpenDesign-inspired search, domain/subcategory filtering, 3-col skill grid & onboarding steps. */
 export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
   const href = (path: string) => hrefFor(path, locale);
-  const zh = isZh(locale);
+  const t = <T,>(zh: T, en: T, ja: T) => t3(locale, zh, en, ja);
+  const [query, setQuery] = useState('');
+  const [domainFilter, setDomainFilter] = useState<'all' | SkillDomainSlug>('all');
+  const [subcatFilter, setSubcatFilter] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'default' | 'az' | 'za'>('default');
+
+  const availableSubcats =
+    domainFilter === 'all'
+      ? (Object.values(SKILL_SUBCATEGORIES).flat() as SkillSubcategory[])
+      : SKILL_SUBCATEGORIES[domainFilter];
+
+  const handleDomainChange = (next: 'all' | SkillDomainSlug) => {
+    setDomainFilter(next);
+    setSubcatFilter('all');
+  };
+
+  const filteredSkills = SKILL_DOCS.filter((doc) => {
+    if (domainFilter !== 'all' && doc.domain !== domainFilter) return false;
+    if (subcatFilter !== 'all') {
+      const sub = subcategoryOf(doc.domain, doc.name);
+      if (!sub || sub.id !== subcatFilter) return false;
+    }
+    return matchesSkillQuery(doc, query, locale);
+  });
+
+  const sortedSkills =
+    sortBy === 'default'
+      ? filteredSkills
+      : [...filteredSkills].sort((a, b) => {
+          const cmp = a.name.localeCompare(b.name);
+          return sortBy === 'az' ? cmp : -cmp;
+        });
+
+  const hasFilters = Boolean(query.trim()) || domainFilter !== 'all' || subcatFilter !== 'all' || sortBy !== 'default';
+
   return (
     <SubpageLayout active="plugins" locale={locale}>
-      <article className="missing-page tutorials-page">
-        <header className="catalog-head">
-          <span className="label">Skills / 开源技能</span>
-          <h1 className="display">{zh ? '47 个公开技能，4 个领域。' : '47 public skills, 4 domains.'}</h1>
+      <article className="missing-page tutorials-page sk-hub">
+        <header className="sk-hero-banner">
+          <span className="sk-hero-kicker">
+            <span className="sk-hero-kicker-dot" aria-hidden="true" />
+            CLAUDE CODE · CODEX · WORKBUDDY · OPEN SOURCE
+          </span>
+          <h1>
+            {t(
+              '为 Claude Code、Codex 与你的 Agent 设计的开源 Skill',
+              'Open-source skills built for Claude Code, Codex, and your agent',
+              'Claude Code・Codex・WorkBuddy のための公開スキル集',
+            )}
+          </h1>
           <p className="lead">
-            {zh
-              ? '技能越来越多，最麻烦的不是不会用，而是不知道该叫谁。按能力子类整理，装到 Claude Code、Codex 或 WorkBuddy；默认项目级、明确宿主、单个技能。'
-              : 'The hard part is not using a skill — it is knowing which one to call. Organized by workflow subcategory for Claude Code, Codex, or WorkBuddy.'}
+            {t(
+              '涵盖知识库管理、代码工程规范、办公协同与技能元工具 4 大领域共 47 个开源技能。每个条目均源自真源 SKILL.md，带明确边界护栏，按项目级单技能最小安装。',
+              'Explore 47 public skills across PKM, Engineering, Office & Content, and Meta tooling. Grounded in upstream SKILL.md specs with explicit guardrails and project-scoped installs.',
+              'PKM（27）・Dev（9）・Office（7）・Meta（4）の 4 領域・計 47 スキルを収録。すべて一次ソース SKILL.md に基づき、明確な安全境界とともにプロジェクト単位で導入できます。',
+            )}
           </p>
+          <div className="sk-hero-actions">
+            <a className="btn btn-primary" href="#catalog">
+              {t('浏览全部 47 个 Skill ↓', 'Browse all 47 skills ↓', '全 47 スキルを探す ↓')}
+            </a>
+            <a
+              className="btn btn-ghost"
+              href="https://github.com/soia-team/soia-open-skills"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              GitHub (soia-open-skills) ↗
+            </a>
+          </div>
         </header>
-        <section className="tutorial-grid">
-          {SKILL_DOMAINS.map((domain) => {
-            const subcats = SKILL_SUBCATEGORIES[domain.slug];
-            return (
-              <article className="tutorial-card" key={domain.slug}>
-                <a href={href(`/skills/${domain.slug}/`)}>
-                  <img src={domain.cover} alt="" loading="lazy" />
-                  <div className="tutorial-card-body">
-                    <span className="label">{domain.plugin}</span>
-                    <h2>{pick(locale, domain.name)}</h2>
-                    <p>{pick(locale, domain.blurb)}</p>
-                    <div className="skill-hub-subcats">
-                      {subcats.map((sub) => (
-                        <span className="skill-hub-subcat" key={sub.id}>
-                          {pick(locale, sub.label)} · {sub.skills.length}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="tutorial-meta">
-                      <span>{skillsOf(domain.slug).length} {zh ? '个技能' : 'skills'} · {domain.tokens} tok</span>
-                      <span>{zh ? '查看分类 ↗' : 'Browse categories ↗'}</span>
-                    </div>
-                  </div>
-                </a>
-              </article>
-            );
-          })}
+
+        <section className="sk-facts" aria-label={t('技能库统计事实', 'Skill catalog facts', 'スキルカタログ概要')}>
+          <div className="sk-fact">
+            <span className="sk-fact-label">SKILLS</span>
+            <strong>{t('47 个开源技能', '47 Public Skills', '47 個の公開スキル')}</strong>
+            <span>{t('PKM 27 · Dev 9 · Office 7 · Meta 4，基于真源 SKILL.md 整理', 'PKM 27 · Dev 9 · Office 7 · Meta 4 from source SKILL.md', 'PKM 27・Dev 9・Office 7・Meta 4（SKILL.md 一次情報準拠）')}</span>
+          </div>
+          <div className="sk-fact">
+            <span className="sk-fact-label">REPOSITORIES</span>
+            <strong>{t('4 个独立领域仓库', '4 Domain Repositories', '4 つの独立リポジトリ')}</strong>
+            <span>{t('每张卡片直链 GitHub 源码与完整机制说明', 'Every card links cleanly to upstream SKILL.md source', 'すべてのカードから GitHub ソースへ直接リンク')}</span>
+          </div>
+          <div className="sk-fact">
+            <span className="sk-fact-label">HOSTS &amp; LICENSE</span>
+            <strong>{t('MIT · 按项目级最小安装', 'MIT · Project-scoped', 'MIT · プロジェクト単位導入')}</strong>
+            <span>{t('明确宿主（Claude Code / Codex / WorkBuddy），绝不静默扩散', 'Explicit host targeting without silent global overrides', 'ホスト明示・単一スキル単位で安全に導入')}</span>
+          </div>
         </section>
-        <div className="missing-cta">
-          <a className="btn btn-primary" href="https://github.com/soia-team/soia-open-skills" target="_blank" rel="noreferrer noopener">GitHub</a>
-          <a className="btn btn-ghost" href={href('/soiadeck/')}>SoiaDeck</a>
+
+        <section className="sk-section-head" id="catalog">
+          <div className="sk-section-eyebrow">
+            <span className="sk-section-num">01</span>
+            <span>{t('所有 SKILL · 分类与检索', 'ALL SKILLS · FILTER & SEARCH', 'ALL SKILLS · 分類と検索')}</span>
+          </div>
+          <h2>{t('按领域、子类或关键词查找全部 47 个 SOIA Skill', 'Search and filter all 47 SOIA skills by task', '領域・カテゴリ・キーワードから全 47 スキルを検索')}</h2>
+          <p>
+            {t(
+              '支持按技能名、痛点场景、支持工具模糊搜索，也可点击下方 4 个领域卡进入分域专题列表。',
+              'Filter by domain, workflow subcategory, or keyword — or jump directly to any domain overview below.',
+              'スキル名・課題・ツール名での横断検索に加え、ドメイン別ページからも絞り込めます。',
+            )}
+          </p>
+        </section>
+
+        <div className="sk-domain-strip">
+          {SKILL_DOMAINS.map((domain) => (
+            <a className="sk-domain-chip" href={href(`/skills/${domain.slug}/`)} key={domain.slug}>
+              <div className="sk-domain-chip-top">
+                <span>{domain.plugin}</span>
+                <span>{skillsOf(domain.slug).length} {t('项', 'skills', '件')} ↗</span>
+              </div>
+              <strong>{pick(locale, domain.name)}</strong>
+              <small>{domain.tokens} tok · {SKILL_SUBCATEGORIES[domain.slug].length} {t('个子类', 'subcategories', 'カテゴリ')}</small>
+            </a>
+          ))}
+        </div>
+
+        <div className="sk-toolbar" role="search">
+          <div className="sk-search-wrap">
+            <span className="sk-search-icon" aria-hidden="true">⌕</span>
+            <input
+              type="search"
+              className="sk-search-input"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t(
+                '搜索 skill 名称、中文标题、场景或命令（如 obsidian、wechat、review）',
+                'Search skill name, title, task, or keyword (e.g. obsidian, review)',
+                'スキル名・課題・キーワードで検索（例：obsidian, review）',
+              )}
+              aria-label={t('搜索技能', 'Search skills', 'スキルを検索')}
+            />
+            {query ? (
+              <button
+                type="button"
+                className="sk-search-clear"
+                aria-label={t('清空搜索', 'Clear search', '検索をクリア')}
+                onClick={() => setQuery('')}
+              >
+                ×
+              </button>
+            ) : null}
+          </div>
+
+          <select
+            className="sk-select"
+            aria-label={t('按领域筛选', 'Filter by domain', '領域で絞り込み')}
+            value={domainFilter}
+            onChange={(e) => handleDomainChange(e.target.value as 'all' | SkillDomainSlug)}
+          >
+            <option value="all">{t('所有领域 (47)', 'All domains (47)', 'すべての領域 (47)')}</option>
+            {SKILL_DOMAINS.map((d) => (
+              <option value={d.slug} key={d.slug}>
+                {pick(locale, d.name)} ({skillsOf(d.slug).length})
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="sk-select"
+            aria-label={t('按子类筛选', 'Filter by subcategory', 'カテゴリで絞り込み')}
+            value={subcatFilter}
+            onChange={(e) => setSubcatFilter(e.target.value)}
+          >
+            <option value="all">{t('全部子类', 'All subcategories', 'すべてのカテゴリ')}</option>
+            {availableSubcats.map((sub) => (
+              <option value={sub.id} key={sub.id}>
+                {pick(locale, sub.label)} ({sub.skills.length})
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="sk-select"
+            aria-label={t('排序方式', 'Sort order', '並び替え')}
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as 'default' | 'az' | 'za')}
+          >
+            <option value="default">{t('默认领域序', 'Default order', '標準順')}</option>
+            <option value="az">{t('名称 A–Z', 'Name A–Z', '名前 A–Z')}</option>
+            <option value="za">{t('名称 Z–A', 'Name Z–A', '名前 Z–A')}</option>
+          </select>
+
+          {hasFilters ? (
+            <button
+              type="button"
+              className="sk-clear-btn"
+              onClick={() => {
+                setQuery('');
+                setDomainFilter('all');
+                setSubcatFilter('all');
+                setSortBy('default');
+              }}
+            >
+              {t('清除筛选', 'Reset', 'リセット')}
+            </button>
+          ) : null}
+        </div>
+
+        <div className="sk-status-row">
+          <span>
+            {t(
+              `显示 ${sortedSkills.length} / ${SKILL_DOCS.length} 个技能`,
+              `Showing ${sortedSkills.length} of ${SKILL_DOCS.length} skills`,
+              `${SKILL_DOCS.length} 件中 ${sortedSkills.length} 件を表示`,
+            )}
+          </span>
+          <div className="sk-domain-pills" role="tablist" aria-label={t('快速切换领域', 'Quick domain filter', '領域クイック切替')}>
+            <button
+              type="button"
+              className={`sk-domain-pill${domainFilter === 'all' ? ' is-active' : ''}`}
+              onClick={() => handleDomainChange('all')}
+            >
+              {t('全部', 'All', 'すべて')} ({SKILL_DOCS.length})
+            </button>
+            {SKILL_DOMAINS.map((d) => (
+              <button
+                type="button"
+                key={d.slug}
+                className={`sk-domain-pill${domainFilter === d.slug ? ' is-active' : ''}`}
+                onClick={() => handleDomainChange(d.slug as SkillDomainSlug)}
+              >
+                {pick(locale, d.name)} ({skillsOf(d.slug).length})
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <section className="sk-catalog-grid" aria-label={t('技能卡片列表', 'Skill catalog results', 'スキル一覧')}>
+          {sortedSkills.length > 0 ? (
+            sortedSkills.map((skill) => <SkillCatalogCard doc={skill} locale={locale} key={skill.name} />)
+          ) : (
+            <div className="sk-empty">
+              <strong>{t('没有找到匹配的技能', 'No matching skills found', '一致するスキルが見つかりません')}</strong>
+              <span>{t('换个关键词，或者先清空领域/子类筛选试试。', 'Try another keyword or clear active filters.', '別のキーワードを試すかフィルタをリセットしてください。')}</span>
+              <button
+                type="button"
+                className="sk-clear-btn"
+                onClick={() => {
+                  setQuery('');
+                  setDomainFilter('all');
+                  setSubcatFilter('all');
+                }}
+              >
+                {t('显示全部 47 个技能', 'Show all 47 skills', '全 47 スキルを表示')}
+              </button>
+            </div>
+          )}
+        </section>
+
+        <section className="sk-section-head">
+          <div className="sk-section-eyebrow">
+            <span className="sk-section-num">02</span>
+            <span>{t('使用流程', 'HOW TO USE', '導入の流れ')}</span>
+          </div>
+          <h2>{t('三步选对 Skill，并在 Claude Code、Codex 或 WorkBuddy 中运行', 'Pick, inspect, and run any SOIA skill in 3 steps', '3 ステップで選んでローカル CLI に導入')}</h2>
+        </section>
+
+        <div className="sk-guide-list">
+          <div className="sk-guide-card">
+            <span className="sk-guide-no">01</span>
+            <div className="sk-guide-body">
+              <strong>{t('按任务与子类筛选，而不是死记命令名', 'Filter by task & domain rather than memorizing slugs', 'コマンド暗記不要：領域と目的で絞り込む')}</strong>
+              <p>{t('不知道叫哪个技能时，可以直接在上面搜关键词，或者直接装入并调用 soia-meta-find-skill，让 Agent 帮你从 47 个技能里挑最合适的那一个。', 'Search by problem keyword above, or install soia-meta-find-skill so your coding agent picks the right skill automatically.', '上の検索バーで目的を探すか、soia-meta-find-skill を導入してエージェントに最適スキルを選ばせます。')}</p>
+            </div>
+          </div>
+          <div className="sk-guide-card">
+            <span className="sk-guide-no">02</span>
+            <div className="sk-guide-body">
+              <strong>{t('点开详情核查机制、前置要求与硬性底线', 'Inspect steps, prerequisites & hard guardrails', '詳細ページで動作手順と安全ガードレールを確認')}</strong>
+              <p>{t('每个技能页都基于上游 SKILL.md 与真实脚本列出「分步机制」「能力对照」和「绝不越界规则」（如公众号只建草稿不群发、Git 操作隔离工作树）。', 'Every detail page extracts step-by-step execution mechanics and non-negotiable safety guardrails straight from source.', '各詳細ページには SKILL.md 準拠のステップ、入出力対照、絶対越えない安全境界を明記しています。')}</p>
+            </div>
+          </div>
+          <div className="sk-guide-card">
+            <span className="sk-guide-no">03</span>
+            <div className="sk-guide-body">
+              <strong>{t('项目级单技能安装，装好直接说人话触发', 'Install at project scope and trigger in plain language', 'プロジェクト単位で導入し自然な日本語・英語・中国語で実行')}</strong>
+              <p>{t('默认只在当前项目安装指定单个技能到对应宿主目录（.agents/skills/<name>/），不静默改写全局环境。', 'Installs cleanly into your project workspace without mutating global host configs.', '既定では対象プロジェクト配下のみに単体導入し、グローバル環境を勝手に汚しません。')}</p>
+              <pre className="sk-guide-code"><code>{`npx skills add https://github.com/soia-team/soia-open-pkm-vault-skills --skill soia-pkm-query-vault`}</code></pre>
+            </div>
+          </div>
         </div>
       </article>
     </SubpageLayout>
   );
 }
 
-/** One domain — filterable subcategories + craft-list grouped by role. */
+/** One domain — searchable + filterable subcategories + craft-list grouped by role. */
 export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; slug: SkillDomainSlug }) {
   const href = (path: string) => hrefFor(path, locale);
-  const zh = isZh(locale);
+  const t = <T,>(zh: T, en: T, ja: T) => t3(locale, zh, en, ja);
   const domain = domainOf(slug);
   const [activeCat, setActiveCat] = useState<string>('all');
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     setActiveCat('all');
+    setQuery('');
   }, [slug]);
 
   if (!domain) return null;
-  const skills = skillsOf(slug);
+  const allDomainSkills = skillsOf(slug);
+  const skills = allDomainSkills.filter((s) => matchesSkillQuery(s, query, locale));
   const subcats = SKILL_SUBCATEGORIES[slug];
   const byName = new Map(skills.map((s) => [s.name, s]));
   const assigned = new Set<string>();
@@ -810,8 +1188,8 @@ export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; s
   if (rest.length > 0) {
     groups.push({
       id: `${slug}-other`,
-      label: { zh: '其他工具', en: 'Other tools' },
-      desc: { zh: '独立工具与未归类技能。', en: 'Additional domain skills.' },
+      label: { zh: '其他工具', en: 'Other tools', ja: 'その他のツール' },
+      desc: { zh: '独立工具与未归类技能。', en: 'Additional domain skills.', ja: '追加の単体スキル・ツール群。' },
       skills: rest.map((s) => s.name),
       items: rest,
     });
@@ -824,22 +1202,41 @@ export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; s
     <SubpageLayout active="plugins" locale={locale}>
       <article className="missing-page craft-page">
         <nav className="breadcrumb" aria-label="breadcrumb">
-          <a href={href('/skills/')}>{zh ? '开源技能' : 'Open skills'}</a><span>/</span>
+          <a href={href('/skills/')}>{t('开源技能', 'Open skills', '公開スキル')}</a><span>/</span>
           <span aria-current="page">{pick(locale, domain.name)}</span>
         </nav>
         <header className="catalog-head">
-          <span className="label">{domain.plugin} · {skills.length} {zh ? '个技能' : 'skills'} · {groups.length} {zh ? '个子类' : 'categories'}</span>
+          <span className="label">{domain.plugin} · {allDomainSkills.length} {t('个技能', 'skills', 'スキル')} · {subcats.length} {t('个子类', 'categories', 'カテゴリ')}</span>
           <h1 className="display">{pick(locale, domain.name)}</h1>
           <p className="lead">{pick(locale, domain.blurb)}</p>
         </header>
 
-        <div className="missing-filter skill-cat-filter" role="tablist" aria-label={zh ? '按子类筛选' : 'Filter by category'}>
+        <div className="sk-search-wrap" style={{ marginBottom: 16, maxWidth: 520 }}>
+          <span className="sk-search-icon" aria-hidden="true">⌕</span>
+          <input
+            type="search"
+            className="sk-search-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t(
+              `在 ${pick(locale, domain.name)} 内搜索技能...`,
+              `Search inside ${pick(locale, domain.name)}...`,
+              `${pick(locale, domain.name)} 内を検索...`,
+            )}
+            aria-label={t('域内搜索', 'Search within domain', '領域内を検索')}
+          />
+          {query ? (
+            <button type="button" className="sk-search-clear" onClick={() => setQuery('')} aria-label={t('清空', 'Clear', 'クリア')}>×</button>
+          ) : null}
+        </div>
+
+        <div className="missing-filter skill-cat-filter" role="tablist" aria-label={t('按子类筛选', 'Filter by category', 'カテゴリで絞り込み')}>
           <button
             type="button"
             className={activeCat === 'all' ? 'is-active' : undefined}
             onClick={() => setActiveCat('all')}
           >
-            {zh ? '全部' : 'All'}
+            {t('全部', 'All', 'すべて')}
             <span className="cat-count">{skills.length}</span>
           </button>
           {groups.map((g) => (
@@ -887,7 +1284,7 @@ export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; s
 
         <div className="missing-cta">
           <a className="btn btn-primary" href={domain.repo} target="_blank" rel="noreferrer noopener">GitHub</a>
-          <a className="btn btn-ghost" href={href('/skills/')}>{zh ? '返回全部领域' : 'All domains'}</a>
+          <a className="btn btn-ghost" href={href('/skills/')}>{t('返回全部领域', 'All domains', 'すべての領域へ戻る')}</a>
         </div>
       </article>
     </SubpageLayout>
@@ -1021,145 +1418,297 @@ function buildSkillHeroCardDataUrl(doc: SkillDoc, domainLabel: string, zh: boole
 export function SkillDetailPage({ locale, slug, skill }: { locale: LandingLocaleCode; slug: string; skill: string }) {
   const href = (path: string) => hrefFor(path, locale);
   const zh = isZh(locale);
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
   const domain = domainOf(slug);
   const doc = SKILL_DOCS.find((item) => item.name === skill && item.domain === slug);
   if (!domain || !doc) return null;
 
   const domainLabel = pick(locale, domain.name);
   const subcat = subcategoryOf(slug, doc.name);
+  const subcatLabel = subcat ? pick(locale, subcat.label) : '';
   const friendlyTitle = pick(locale, doc.title);
   const mechanism = zh ? doc.mechanism.zh : doc.mechanism.en;
   const capabilities = zh ? doc.capabilities.zh : doc.capabilities.en;
   const prompts = zh ? doc.prompts.zh : doc.prompts.en;
   const trust = zh ? doc.trust.zh : doc.trust.en;
   const heroVisualUrl = buildSkillHeroCardDataUrl(doc, domainLabel, zh);
+  const subSiblings = subcat
+    ? skillsOf(slug).filter((s) => s.name !== doc.name && subcat.skills.includes(s.name))
+    : [];
+  const otherDomainSkills = skillsOf(slug).filter(
+    (s) => s.name !== doc.name && !subSiblings.some((x) => x.name === s.name),
+  );
+  const related = [...subSiblings, ...otherDomainSkills].slice(0, 3);
 
   return (
     <SubpageLayout active="plugins" locale={locale}>
       <nav className="breadcrumb" aria-label="breadcrumb">
-        <a href={href('/skills/')}>{zh ? '开源技能' : 'Open skills'}</a><span>/</span>
+        <a href={href('/skills/')}>{t('开源技能', 'Open skills', '公開スキル')}</a><span>/</span>
         <a href={href(`/skills/${slug}/`)}>{domainLabel}</a><span>/</span>
         <span aria-current="page">{doc.name}</span>
       </nav>
+
       <article className="plugin-detail-page">
-        <header className="plugin-detail-head">
-          <span className="plugins-eyebrow">
-            {domain.plugin} · {domainLabel}{subcat ? ` · ${pick(locale, subcat.label)}` : ''}{doc.version ? ` · v${doc.version}` : ''} · <code>{doc.name}</code>
-          </span>
-          <h1 className="display">{friendlyTitle}<span className="dot">.</span></h1>
-          <p className="lead">{doc.tagline}</p>
-          <div className="od-route-actions">
-            <a className="btn btn-primary" href="#install">{zh ? '安装' : 'Install'}</a>
-            <a className="btn btn-ghost" href={DOC_URL(doc.name)} target="_blank" rel="noreferrer noopener">{zh ? '完整文档 ↗' : 'Full doc ↗'}</a>
+        <div className="skd-hero-grid">
+          <header className="plugin-detail-head" style={{ marginBottom: 0 }}>
+            <span className="plugins-eyebrow">
+              {domain.plugin} · {domainLabel}{subcatLabel ? ` · ${subcatLabel}` : ''}{doc.version ? ` · v${doc.version}` : ''}
+            </span>
+            <h1 className="display">{friendlyTitle}<span className="dot">.</span></h1>
+            <p className="lead">{zh ? doc.tagline : pick(locale, doc.pain)}</p>
+            <div className="sk-card-tags" style={{ marginBottom: 18 }}>
+              <span className={`sk-tag-domain is-${domain.slug}`}>{domainLabel}</span>
+              {subcatLabel ? <span className="sk-tag-sub">{subcatLabel}</span> : null}
+              <span className="sk-tag-sub">MIT</span>
+            </div>
+            <div className="od-route-actions">
+              <a className="btn btn-primary" href="#quickstart">{t('安装与示例 ↓', 'Install & Prompts ↓', '導入と実行例 ↓')}</a>
+              <a className="btn btn-ghost" href={DOC_URL(doc.name)} target="_blank" rel="noreferrer noopener">{t('完整文档 ↗', 'Full doc ↗', 'ドキュメント ↗')}</a>
+              <a className="btn btn-ghost" href={SRC_URL(domain.repo, doc.name)} target="_blank" rel="noreferrer noopener">SKILL.md ↗</a>
+            </div>
+          </header>
+
+          <aside className="skd-inspect-card" aria-label={t('源文件摘要卡片', 'Source inspection summary', 'ソース要約カード')}>
+            <div className="skd-inspect-head">
+              <span>{t('源文件解读', 'SOURCE INSPECT', 'ソース解説')} · {doc.name.toUpperCase()}</span>
+              <span className="skd-inspect-badge">SKILL.MD</span>
+            </div>
+            <div className="skd-inspect-body">
+              <div className="skd-inspect-item">
+                <span>{t('解决什么痛点', 'Task / Pain', '解決する課題')}</span>
+                <p><Inline text={pick(locale, doc.pain)} /></p>
+              </div>
+              <div className="skd-inspect-item">
+                <span>{t('方案与产出', 'Solution / Output', '仕組みと出力')}</span>
+                <p><Inline text={pick(locale, doc.solution)} /></p>
+              </div>
+              <div className="skd-inspect-item">
+                <span>{t('安装与执行边界', 'Scope & Guardrails', '適用スコープ')}</span>
+                <p>{t('默认项目级 .agents/skills/ 单技能安装；风险操作需先确认。', 'Project-scoped single skill install under .agents/skills/; explicit consent on side effects.', '既定はプロジェクト単位の導入。副作用のある操作は事前確認を行います。')}</p>
+              </div>
+            </div>
+            <div className="skd-inspect-foot">
+              {t('真源', 'Source', '一次情報')}: {domain.plugin}/skills/{doc.name}
+            </div>
+          </aside>
+        </div>
+
+        <div className="skd-meta-strip">
+          <div className="skd-meta-cell">
+            <span>{t('所属领域', 'Domain', '領域')}</span>
+            <strong>{domainLabel}{subcatLabel ? ` · ${subcatLabel}` : ''}</strong>
           </div>
-        </header>
+          <div className="skd-meta-cell">
+            <span>{t('开源许可', 'License', 'ライセンス')}</span>
+            <strong>MIT</strong>
+          </div>
+          <div className="skd-meta-cell">
+            <span>{t('当前版本', 'Version', 'バージョン')}</span>
+            <strong>{doc.version ? `v${doc.version}` : 'main'}</strong>
+          </div>
+          <div className="skd-meta-cell">
+            <span>{t('支持宿主', 'Supported Hosts', '対応ホスト')}</span>
+            <strong>Claude Code · Codex · WorkBuddy</strong>
+          </div>
+        </div>
 
         <ZoomableFigure
           className="skill-hero-card"
           src={heroVisualUrl}
-          alt={zh ? `${friendlyTitle}（${doc.name}）运行实况与产出预览` : `${friendlyTitle} (${doc.name}) live preview`}
-          zh={zh}
+          alt={t(`${friendlyTitle}（${doc.name}）运行实况与产出预览`, `${friendlyTitle} (${doc.name}) live preview`, `${friendlyTitle} (${doc.name}) 実行プレビュー`)}
+          locale={locale}
         />
 
-        <div className="plugin-detail-columns">
-          <article>
-            <h2>{zh ? '为什么需要它' : 'The problem it solves'}</h2>
-            <p className="skill-prose"><Inline text={pick(locale, doc.pain)} /></p>
+        <div className="skd-layout" style={{ marginTop: 28 }}>
+          <aside className="skd-toc">
+            <span className="skd-toc-label">{t('本页目录', 'On this page', '目次')}</span>
+            <a href="#overview">01 · {t('功能与工作机制', 'How it works', '機能とメカニズム')}</a>
+            <a href="#scope">02 · {t('适用场景与边界', 'Scope & guardrails', '適用場面と境界')}</a>
+            <a href="#quickstart">03 · {t('触发词与安装', 'Prompts & install', '実行例と導入')}</a>
+            <a href="#source">04 · {t('来源与可信说明', 'Source & trust', 'ソースと信頼性')}</a>
+            {related.length > 0 ? <a href="#related">05 · {t('同类技能推荐', 'Related skills', '関連スキル')}</a> : null}
+          </aside>
 
-            <h2>{zh ? '它怎么解' : 'How it works'}</h2>
-            <p className="skill-prose"><Inline text={pick(locale, doc.solution)} /></p>
-
-            <section className="skill-mechanism-card" aria-label={zh ? '机制与底线卡' : 'Mechanism and guardrails'}>
-              <div className="skill-mech-head">
-                <span className="skill-mech-kicker">{zh ? '工作机制 · 步步留痕' : 'MECHANISM · STEP BY STEP'}</span>
-                <code>{doc.name}</code>
+          <div className="skd-main">
+            <section className="skd-sec" id="overview">
+              <div className="sk-section-eyebrow">
+                <span className="sk-section-num">01</span>
+                <span>{t('功能说明与工作机制', 'OVERVIEW & WORKFLOW', '機能概要と手順')}</span>
               </div>
-              <ol className="skill-mech-steps">
-                {mechanism.steps.map((step, idx) => (
-                  <li className="skill-mech-step" key={step.title}>
-                    <span className="skill-mech-num">{idx + 1}</span>
-                    <div>
-                      <strong>{step.title}</strong>
-                      <p><Inline text={step.desc} /></p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
-              <div className="skill-mech-guard">
-                <span className="skill-mech-guard-title">{zh ? '边界底线 · 绝不越界' : 'HARD GUARDRAILS'}</span>
-                <ul>
-                  {mechanism.guardrails.map((g) => (
-                    <li key={g}><Inline text={g} /></li>
-                  ))}
-                </ul>
+              <h2>{t('为什么需要它，以及每一步怎么跑', 'The problem it solves & step-by-step execution', '課題と実行メカニズム')}</h2>
+
+              <div className="skd-method-grid">
+                <div className="skd-panel">
+                  <h3>{t('核心解法与预期交付物', 'Approach & expected deliverables', '解法と期待される出力')}</h3>
+                  <p className="skill-prose" style={{ margin: 0 }}><Inline text={pick(locale, doc.solution)} /></p>
+                  <ul className="skd-deliver-list">
+                    {capabilities.slice(0, 4).map((row) => (
+                      <li key={row.want}>
+                        <strong><Inline text={row.want} />：</strong><Inline text={row.outcome} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="skd-panel is-soft">
+                  <h3>{t('分步机制（步步留痕）', 'Execution pipeline', 'ステップバイステップ手順')}</h3>
+                  <ol className="skill-mech-steps">
+                    {mechanism.steps.map((step, idx) => (
+                      <li className="skill-mech-step" key={step.title}>
+                        <span className="skill-mech-num">{idx + 1}</span>
+                        <div>
+                          <strong>{step.title}</strong>
+                          <p><Inline text={step.desc} /></p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
               </div>
             </section>
 
-            <h2>{zh ? '它能做什么（能力对照）' : 'What it handles'}</h2>
-            <div className="skill-table-wrap">
-              <table className="skill-cap-table">
-                <thead>
-                  <tr>
-                    <th>{zh ? '你想做什么' : 'Goal'}</th>
-                    <th>{zh ? '技能会怎么做' : 'What the skill does'}</th>
-                    <th>{zh ? '你会看到什么' : 'What you get'}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {capabilities.map((row) => (
-                    <tr key={row.want}>
-                      <td><strong><Inline text={row.want} /></strong></td>
-                      <td><Inline text={row.action} /></td>
-                      <td><Inline text={row.outcome} /></td>
+            <section className="skd-sec" id="scope">
+              <div className="sk-section-eyebrow">
+                <span className="sk-section-num">02</span>
+                <span>{t('适用场景与安全边界', 'USE CASES & GUARDRAILS', '適用範囲と安全境界')}</span>
+              </div>
+              <h2>{t('适用场景、能力对照与绝不越界规则', 'When to use it, capability matrix & hard guardrails', '対応ケースと厳守ガードレール')}</h2>
+
+              <div className="skd-fit-grid">
+                <div className="skd-fit-card is-good">
+                  <span className="skd-fit-badge">✓ {t('适合的场景与输入目标', 'Good fit scenarios', '適している場面')}</span>
+                  <ul className="skd-fit-list">
+                    {capabilities.map((row) => (
+                      <li key={row.want}>
+                        <strong><Inline text={row.want} /></strong> — <Inline text={row.action} />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="skd-fit-card is-guard">
+                  <span className="skd-fit-badge">⚠ {t('硬性边界底线（绝不越界）', 'Hard guardrails', '厳守すべき安全境界')}</span>
+                  <ul className="skd-fit-list">
+                    {mechanism.guardrails.map((g) => (
+                      <li key={g}><Inline text={g} /></li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="skill-table-wrap">
+                <table className="skill-cap-table">
+                  <thead>
+                    <tr>
+                      <th>{t('你想做什么', 'Goal', 'やりたいこと')}</th>
+                      <th>{t('技能会怎么做', 'What the skill does', 'スキルの挙動')}</th>
+                      <th>{t('你会看到什么', 'What you get', '出力結果')}</th>
                     </tr>
-                  ))}
+                  </thead>
+                  <tbody>
+                    {capabilities.map((row) => (
+                      <tr key={row.want}>
+                        <td><strong><Inline text={row.want} /></strong></td>
+                        <td><Inline text={row.action} /></td>
+                        <td><Inline text={row.outcome} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section className="skd-sec" id="quickstart">
+              <div className="sk-section-eyebrow">
+                <span className="sk-section-num">03</span>
+                <span>{t('快速上手', 'QUICKSTART & PROMPTS', 'クイックスタート')}</span>
+              </div>
+              <h2>{t('装好就能用：自然语言触发示例与安装命令', 'Trigger naturally & install at project scope', '自然な言葉での呼び出し例と導入コマンド')}</h2>
+
+              <div className="skd-prompt-cards">
+                {prompts.map((p) => (
+                  <div className="skd-prompt-card" key={p}>
+                    <span>“<Inline text={p} />”</span>
+                    <CopyButton text={p.replace(/\*\*/g, '')} locale={locale} />
+                  </div>
+                ))}
+              </div>
+
+              <div id="install" style={{ display: 'grid', gap: 10, marginTop: 4 }}>
+                {doc.install.length > 0 ? (
+                  doc.install.map((cmd) => (
+                    <div className="skd-cmd-box" key={cmd}>
+                      <code>{cmd}</code>
+                      <CopyButton text={cmd} locale={locale} />
+                    </div>
+                  ))
+                ) : (
+                  <p>{t('见完整文档的安装节。', 'See the install section in the full doc.', '詳細はフルドキュメントをご覧ください。')}</p>
+                )}
+                <p className="skill-prose" style={{ margin: 0 }}>
+                  {t(
+                    'Claude Code、Codex 与 WorkBuddy 全支持；默认项目级（.agents/skills/）、明确宿主、单个技能，不擅自做全局覆盖。',
+                    'Supported on Claude Code, Codex, and WorkBuddy. Project-scoped by default — never silently writes global configs.',
+                    'Claude Code / Codex / WorkBuddy に対応。既定で対象プロジェクト配下へ単体導入されます。',
+                  )}
+                </p>
+              </div>
+            </section>
+
+            <section className="skd-sec" id="source">
+              <div className="sk-section-eyebrow">
+                <span className="sk-section-num">04</span>
+                <span>{t('来源与可信边界', 'SOURCE & TRUST', 'ソース・ライセンス')}</span>
+              </div>
+              <h2>{t('源码位置、许可证与可信说明', 'Source provenance & safety commitments', 'ソース情報と検証基準')}</h2>
+
+              <table className="skd-kv-table">
+                <tbody>
+                  <tr>
+                    <th>{t('所属仓库', 'Repository', 'リポジトリ')}</th>
+                    <td>
+                      <a href={domain.repo} target="_blank" rel="noreferrer noopener">{domain.repo} ↗</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>{t('真源入口', 'Entry File', '一次ソース')}</th>
+                    <td>
+                      <a href={SRC_URL(domain.repo, doc.name)} target="_blank" rel="noreferrer noopener">skills/{doc.name}/SKILL.md ↗</a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>{t('许可证', 'License', 'ライセンス')}</th>
+                    <td>MIT</td>
+                  </tr>
+                  <tr>
+                    <th>{t('宿主与安装域', 'Host Scope', '対応ホスト')}</th>
+                    <td>Claude Code · Codex · WorkBuddy ({domain.plugin})</td>
+                  </tr>
                 </tbody>
               </table>
-            </div>
 
-            <h2>{zh ? '零门槛用法：说人话就能触发' : 'How to trigger it'}</h2>
-            <p className="skill-prose">
-              {zh
-                ? '不用背命令参数，装好后直接用自然语言说出你的目标和范围即可：'
-                : 'No flags to memorize—once installed, speak naturally with your goal and scope:'}
-            </p>
-            <ul className="skill-prompt-list">
-              {prompts.map((p) => (
-                <li className="skill-prompt-item" key={p}>
-                  <span className="skill-prompt-mark">“</span>
-                  <span><Inline text={p} /></span>
-                </li>
-              ))}
-            </ul>
+              <ul style={{ margin: 0, paddingLeft: 18, display: 'grid', gap: 6 }}>
+                {trust.map((item) => (
+                  <li key={item}><Inline text={item} /></li>
+                ))}
+              </ul>
+            </section>
 
-            <h2 id="install">{zh ? '支持宿主与安装' : 'Hosts & install'}</h2>
-            {doc.install.length > 0 ? (
-              doc.install.map((cmd) => (
-                <pre className="agent-code" key={cmd}><code>{cmd}</code></pre>
-              ))
-            ) : (
-              <p>{zh ? '见完整文档的安装节。' : 'See the install section in the full doc.'}</p>
-            )}
-            <p className="skill-prose">
-              {zh
-                ? 'Claude Code、Codex 与 WorkBuddy（内置腾讯 SkillHub 搜名字或走角色化专家）全支持；默认项目级、明确宿主、单个技能。整域或全局安装须你明确选择，发布不会自动装到本机。'
-                : 'Works on Claude Code, Codex, and WorkBuddy. Default is project scope, one explicit host, one skill; whole-domain or global installs always require your choice.'}
-            </p>
-
-            <h2>{zh ? '为什么信得过（开源可查与边界）' : 'Why trust it'}</h2>
-            <ul>
-              {trust.map((item) => (
-                <li key={item}><Inline text={item} /></li>
-              ))}
-            </ul>
-          </article>
-          <aside className="plugin-detail-aside">
-            <span className="plugins-eyebrow">{zh ? '来源与真源' : 'Source'}</span>
-            <p>{zh ? '本页内容基于技能真源 SKILL.md 与配套脚本整理，MIT 开源可查。' : 'Grounded in the skill source SKILL.md and scripts; MIT open source.'}</p>
-            <a className="btn btn-primary" href={SRC_URL(domain.repo, doc.name)} target="_blank" rel="noreferrer noopener">{zh ? '查看源码 ↗' : 'Source ↗'}</a>
-            <a className="btn btn-ghost" href={href(`/skills/${slug}/`)}>← {domainLabel}</a>
-            <a className="btn btn-ghost" href={href('/skills/')}>{zh ? '全部领域' : 'All domains'}</a>
-          </aside>
+            {related.length > 0 ? (
+              <section className="skd-sec" id="related">
+                <div className="sk-section-eyebrow">
+                  <span className="sk-section-num">05</span>
+                  <span>{t('继续探索', 'RELATED SKILLS', '関連スキル')}</span>
+                </div>
+                <h2>{t('同类与相邻技能推荐', 'More skills in this domain', '同じ領域のおすすめスキル')}</h2>
+                <div className="sk-catalog-grid">
+                  {related.map((item) => (
+                    <SkillCatalogCard doc={item} locale={locale} key={item.name} />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+          </div>
         </div>
       </article>
     </SubpageLayout>
@@ -1169,111 +1718,166 @@ export function SkillDetailPage({ locale, slug, skill }: { locale: LandingLocale
 /** SoiaDeck — desktop + mobile agent orchestration platform detail page. */
 export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
   const href = (path: string) => hrefFor(path, locale);
-  const zh = isZh(locale);
+  const lang = langOf(locale);
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
   const [heroTab, setHeroTab] = useState(0);
   const [agentFilter, setAgentFilter] = useState<'all' | 'supported' | 'experimental' | 'planned'>('all');
 
-  const heroTabs: ReadonlyArray<{ label: string; src: string; alt: string; note: string }> = zh
-    ? [
-        {
-          label: 'AI 作业台 · 多协议并行',
-          src: '/soia/products/soiadeck-workbench.png',
-          alt: 'SoiaDeck AI 作业台多会话并行视图',
-          note: '在同一桌面工作台中并行调度 Claude Code、Codex 与多种 ACP / PTY Agent，对话由本地 daemon 持久化持有，关窗不断流。',
-        },
-        {
-          label: '手机端 · 远程看 Diff 与审批',
-          src: '/soia/products/soiadeck-phone.png',
-          alt: 'SoiaDeck 手机端远程访问界面',
-          note: '离开电脑也能用手机端实时看进度、核查改动 Diff、逐条批准或拒绝高危命令，或随时终止跑偏回合。',
-        },
-        {
-          label: '中继通道 · 不在局域网也能连',
-          src: '/soia/products/soiadeck-relay.png',
-          alt: 'SoiaDeck 加密中继与多端连接监控',
-          note: '跨网通过轻量加密中继建连，中继只做密文转发不解密对话内容；维护或断线重连 90 秒内自动续上。',
-        },
-        {
-          label: '19 Agent 清单矩阵',
-          src: '/soia/products/soiadeck-19-agents.png',
-          alt: 'SoiaDeck 19 个 Coding Agent 接入矩阵',
-          note: '以 agent-manifest-index.json 为真源：已接入 4 个正式支持、9 个 ACP 试验接入与 6 个计划接入 Agent。',
-        },
-      ]
-    : [
-        {
-          label: 'AI Workbench · Multi-agent',
-          src: '/soia/products/soiadeck-workbench.png',
-          alt: 'SoiaDeck AI Workbench multi-session view',
-          note: 'Orchestrate Claude Code, Codex, and ACP/PTY agents side by side. Daemon-owned sessions keep running even when you close the window.',
-        },
-        {
-          label: 'Mobile · Diffs & Approvals',
-          src: '/soia/products/soiadeck-phone.png',
-          alt: 'SoiaDeck mobile remote control surface',
-          note: 'Follow agent turns, inspect file diffs, approve commands one by one, or stop a run right from your phone.',
-        },
-        {
-          label: 'Encrypted Relay · Any network',
-          src: '/soia/products/soiadeck-relay.png',
-          alt: 'SoiaDeck encrypted relay monitor',
-          note: 'Connect across networks via a lightweight zero-inspection encrypted relay with automatic 90s reconnect recovery.',
-        },
-        {
-          label: '19-Agent Matrix',
-          src: '/soia/products/soiadeck-19-agents.png',
-          alt: 'SoiaDeck 19 coding agents matrix',
-          note: 'Driven by agent-manifest-index.json: 4 supported, 9 experimental (ACP stdio), and 6 planned CLI adapters.',
-        },
-      ];
+  const heroTabs: ReadonlyArray<{ label: string; src: string; alt: string; note: string }> =
+    lang === 'zh'
+      ? [
+          {
+            label: 'AI 作业台 · 多协议并行',
+            src: '/soia/products/soiadeck-workbench.png',
+            alt: 'SoiaDeck AI 作业台多会话并行视图',
+            note: '在同一桌面工作台中并行调度 Claude Code、Codex 与多种 ACP / PTY Agent，对话由本地 daemon 持久化持有，关窗不断流。',
+          },
+          {
+            label: '手机端 · 远程看 Diff 与审批',
+            src: '/soia/products/soiadeck-phone.png',
+            alt: 'SoiaDeck 手机端远程访问界面',
+            note: '离开电脑也能用手机端实时看进度、核查改动 Diff、逐条批准或拒绝高危命令，或随时终止跑偏回合。',
+          },
+          {
+            label: '中继通道 · 不在局域网也能连',
+            src: '/soia/products/soiadeck-relay.png',
+            alt: 'SoiaDeck 加密中继与多端连接监控',
+            note: '跨网通过轻量加密中继建连，中继只做密文转发不解密对话内容；维护或断线重连 90 秒内自动续上。',
+          },
+          {
+            label: '19 Agent 清单矩阵',
+            src: '/soia/products/soiadeck-19-agents.png',
+            alt: 'SoiaDeck 19 个 Coding Agent 接入矩阵',
+            note: '以 agent-manifest-index.json 为真源：已接入 4 个正式支持、9 个 ACP 试验接入与 6 个计划接入 Agent。',
+          },
+        ]
+      : lang === 'ja'
+        ? [
+            {
+              label: 'AI 作業台 · マルチプロトコル',
+              src: '/soia/products/soiadeck-workbench.png',
+              alt: 'SoiaDeck AI 作業台マルチセッションビュー',
+              note: '同一デスクトップ作業台から Claude Code / Codex / ACP・PTY Agent を並列実行。会話はローカル daemon が保持するためウィンドウを閉じても継続します。',
+            },
+            {
+              label: 'モバイル · Diff 確認と承認',
+              src: '/soia/products/soiadeck-phone.png',
+              alt: 'SoiaDeck モバイルリモート管理画面',
+              note: '席を離れていてもスマホから進捗確認、コード Diff レビュー、危険コマンドの承認・拒否、ターン即時停止が可能です。',
+            },
+            {
+              label: '暗号化リレー · LAN 外接続',
+              src: '/soia/products/soiadeck-relay.png',
+              alt: 'SoiaDeck 暗号化リレー接続モニター',
+              note: 'NAT 越しでも暗号文のみを転送する軽量リレー経由で接続。90 秒以内の自動再接続に対応します。',
+            },
+            {
+              label: '19 Agent 対応マトリクス',
+              src: '/soia/products/soiadeck-19-agents.png',
+              alt: 'SoiaDeck 19 Coding Agent 接続一覧',
+              note: 'agent-manifest-index.json を一次ソースとして正式対応 4、ACP 試験接続 9、予定 6 の計 19 エージェントを管理。',
+            },
+          ]
+        : [
+            {
+              label: 'AI Workbench · Multi-agent',
+              src: '/soia/products/soiadeck-workbench.png',
+              alt: 'SoiaDeck AI Workbench multi-session view',
+              note: 'Orchestrate Claude Code, Codex, and ACP/PTY agents side by side. Daemon-owned sessions keep running even when you close the window.',
+            },
+            {
+              label: 'Mobile · Diffs & Approvals',
+              src: '/soia/products/soiadeck-phone.png',
+              alt: 'SoiaDeck mobile remote control surface',
+              note: 'Follow agent turns, inspect file diffs, approve commands one by one, or stop a run right from your phone.',
+            },
+            {
+              label: 'Encrypted Relay · Any network',
+              src: '/soia/products/soiadeck-relay.png',
+              alt: 'SoiaDeck encrypted relay monitor',
+              note: 'Connect across networks via a lightweight zero-inspection encrypted relay with automatic 90s reconnect recovery.',
+            },
+            {
+              label: '19-Agent Matrix',
+              src: '/soia/products/soiadeck-19-agents.png',
+              alt: 'SoiaDeck 19 coding agents matrix',
+              note: 'Driven by agent-manifest-index.json: 4 supported, 9 experimental (ACP stdio), and 6 planned CLI adapters.',
+            },
+          ];
 
-  const philosophyCards: ReadonlyArray<{ title: string; desc: string }> = zh
-    ? [
-        { title: 'Private · 本地优先', desc: '对话正文、秘钥与代码留在自己机器上；中继仅转发加密流量，核心桌面管理能力断网可用。' },
-        { title: 'Daemon-backed · 永不断流', desc: '对话由本机后端 daemon 持有而非浏览器标签页，关闭界面继续跑，重开按缓冲实时重放。' },
-        { title: 'Unified · 一致操控多协议', desc: '抹平 stream-json、app-server、ACP、pi-rpc 与 PTY 差异，切换 Agent 不用重新学一套工作流。' },
-        { title: 'Permission-first · 权限可审计', desc: '执行命令、越界写入与联网请求必须先问人批准或拒绝，每次决策落盘会话树可追溯。' },
-        { title: 'Composable · 组合现有生态', desc: '自带你已有的 Agent 订阅账号与 CLI，叠加 47 个公开 SOIA 技能和本机 MLX 模型即可工作。' },
-        { title: 'Honest · 实事求是交付', desc: '现阶段明确仅发布 macOS arm64 验收安装包与 19 Agent 分级状态，未验收能力绝不虚标。' },
-      ]
-    : [
-        { title: 'Private · Local-first', desc: 'Sessions, keys, and repos stay on your machines; the relay forwards ciphertext only and core controls work offline.' },
-        { title: 'Daemon-backed · Persistent', desc: 'The local daemon owns running turns; close the window safely and replay buffered output anytime.' },
-        { title: 'Unified · Protocol-agnostic', desc: 'Consistent UX across stream-json, app-server, ACP, pi-rpc, and PTY without re-learning tools.' },
-        { title: 'Permission-first · Auditable', desc: 'Commands, out-of-workspace writes, and network calls ask first and persist every decision in the session record.' },
-        { title: 'Composable · Zero Lock-in', desc: 'Bring your own CLI subscriptions, local skills (.agents/skills), and Apple Silicon MLX models.' },
-        { title: 'Honest · Grounded Scope', desc: 'Currently ships macOS arm64 builds and reports exact agent readiness rather than fake promises.' },
-      ];
+  const philosophyCards: ReadonlyArray<{ title: string; desc: string }> =
+    lang === 'zh'
+      ? [
+          { title: 'Private · 本地优先', desc: '对话正文、秘钥与代码留在自己机器上；中继仅转发加密流量，核心桌面管理能力断网可用。' },
+          { title: 'Daemon-backed · 永不断流', desc: '对话由本机后端 daemon 持有而非浏览器标签页，关闭界面继续跑，重开按缓冲实时重放。' },
+          { title: 'Unified · 一致操控多协议', desc: '抹平 stream-json、app-server、ACP、pi-rpc 与 PTY 差异，切换 Agent 不用重新学一套工作流。' },
+          { title: 'Permission-first · 权限可审计', desc: '执行命令、越界写入与联网请求必须先问人批准或拒绝，每次决策落盘会话树可追溯。' },
+          { title: 'Composable · 组合现有生态', desc: '自带你已有的 Agent 订阅账号与 CLI，叠加 47 个公开 SOIA 技能和本机 MLX 模型即可工作。' },
+          { title: 'Honest · 实事求是交付', desc: '现阶段明确仅发布 macOS arm64 验收安装包与 19 Agent 分级状态，未验收能力绝不虚标。' },
+        ]
+      : lang === 'ja'
+        ? [
+            { title: 'Private · ローカルファースト', desc: '会話本文、鍵、コードは自分のマシンに保持。リレーは暗号化パケットのみを中継し、主要機能はオフラインでも動作します。' },
+            { title: 'Daemon-backed · セッション永続化', desc: '実行ループはブラウザタブではなくローカル daemon が保有。画面を閉じても継続し、再接続時にバッファを再生します。' },
+            { title: 'Unified · プロトコル差異を吸収', desc: 'stream-json / app-server / ACP / pi-rpc / PTY の違いを吸収し、Agent を切り替えても同じ操作感で使えます。' },
+            { title: 'Permission-first · 監査可能な権限管理', desc: 'コマンド実行・領域外書き込み・外部通信は事前の人間承認を必須とし、すべての判断をセッション記録に残します。' },
+            { title: 'Composable · 既存エコシステムと連携', desc: 'お手持ちの CLI サブスクリプションとローカル .agents/skills（47 公開スキル）、MLX モデルをそのまま組み合わせ可能。' },
+            { title: 'Honest · 誇張のないステータス表記', desc: '現在は macOS arm64 配布対象と 19 エージェントの正確な対応状況をそのまま開示し、未検証機能を謳いません。' },
+          ]
+        : [
+            { title: 'Private · Local-first', desc: 'Sessions, keys, and repos stay on your machines; the relay forwards ciphertext only and core controls work offline.' },
+            { title: 'Daemon-backed · Persistent', desc: 'The local daemon owns running turns; close the window safely and replay buffered output anytime.' },
+            { title: 'Unified · Protocol-agnostic', desc: 'Consistent UX across stream-json, app-server, ACP, pi-rpc, and PTY without re-learning tools.' },
+            { title: 'Permission-first · Auditable', desc: 'Commands, out-of-workspace writes, and network calls ask first and persist every decision in the session record.' },
+            { title: 'Composable · Zero Lock-in', desc: 'Bring your own CLI subscriptions, local skills (.agents/skills), and Apple Silicon MLX models.' },
+            { title: 'Honest · Grounded Scope', desc: 'Currently ships macOS arm64 builds and reports exact agent readiness rather than fake promises.' },
+          ];
 
-  const sections: ReadonlyArray<{ id: string; title: string; body: string; image?: string; alt?: string }> = zh
-    ? [
-        { id: 'works-with', title: '自带你的工具与订阅', body: '无需重新购买额度或放弃熟悉的工作流：直接复用你本机已登录的 Claude Code、Codex、Gemini CLI、Antigravity、GitHub Copilot 等 CLI 订阅，挂载本地 .agents/skills（包括 47 个开源 SOIA 技能），也可叠加本机 MLX 模型。' },
-        { id: 'workbench', title: 'AI 作业台', body: '在桌面应用里开 Claude Code、Codex 等对话。每种 Agent 走自己的原生协议；没有原生协议的走 ACP，也有终端 PTY。对话由后端持有：关掉页面 Agent 继续跑，重开从缓冲重放。项目、工作树和权限审批都在这里管。', image: '/soia/products/soiadeck-wb-home.png', alt: 'SoiaDeck AI 作业台首页' },
-        { id: 'factory', title: '工坊与项目', body: '左侧工坊切换工作区，下面是插件、作业台、本地 LLM、AI 网络四个入口。项目列表按仓库分组，每个条目显示待审批与待处理数量，新建项目直接在列表里完成。', image: '/soia/products/soiadeck-plugins.png', alt: 'SoiaDeck 插件中心' },
-        { id: 'approvals', title: '权限审批', body: '要执行命令、写工作区外文件、联网前先问你。可以逐次允许、本对话内允许或拒绝；多条待审批可逐张处理。每一次决定都进会话记录，可回放。', image: '/soia/products/soiadeck-home.png', alt: 'SoiaDeck 首页待处理与权限审批' },
-        { id: 'models', title: '本地 LLM', body: '发现、启停、下载本机模型，并提供一个 OpenAI 兼容入口。现在推理引擎以 MLX 系为主，所以本地模型在 Apple Silicon 上最完整。作业台本身不依赖本地模型。', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck 本地 LLM 模型转发' },
-        { id: 'network', title: 'AI 网络', body: '本机访问各 AI 服务走哪张网卡、连不连得通。核心管理能力断网可用。', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI 网络监控' },
-        { id: 'remote', title: '远程访问与手机端', body: '电脑开启远程访问或通过中继配对后，手机端可随时查看对话进度、看代码改动与 Diff，并在手机上远程审批权限或止损停轮。', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck 手机端远程访问与设计总览' },
-        { id: 'account', title: '远程账号与名下主机', body: '账号网页支持邮箱验证码与 Passkey 登录，集中管理名下绑定的主机指纹、登录设备与中继流量；设备丢失时可一键标记丢失并自动通知中继收回授权。', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck 远程账号与名下主机' },
-        { id: 'relay', title: '中继服务', body: '不在同一局域网时，手机与电脑通过轻量中继建立加密通道，中继只做转发不看对话内容；维护期间支持 90 秒内自动续上，连接不断。', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck 中继服务状态与通道监控' },
-        { id: 'agents', title: '19 个 coding agent 接入清单与演进', body: '以 SoiaDeck 静态 manifest 真源（agent-manifest-index.json）为准，共登记 19 个 Agent：正式支持 4 个（stream-json / app-server / ACP / pi-rpc）、试验接入 9 个（统一走 ACP stdio）、计划接入 6 个。后续按底层统一方案收口到单一目录真源，补齐启停排序、更新计划、技能统计、活动账本以及 WorkBuddy 只读导入 + CodeBuddy ACP 分流。', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 已接入 19 个 Coding Agent 矩阵' },
-        { id: 'philosophy', title: '设计哲学与边界', body: '站在代码、API 密钥与远程主机之间的工具必须保持中立、可审查、不强绑云厂商。以下六条是 SoiaDeck 每一项能力的设计底线：' },
-        { id: 'open', title: '即将开源', body: '现在是私有仓，持续开发中。目前只发 macOS arm64 安装包；Linux / Windows 有构建入口，但没验收、不发包。官网不假装已有公开下载。' },
-      ]
-    : [
-        { id: 'works-with', title: 'Bring your tools & subscriptions', body: 'No forced lock-in or quota reselling: reuse your existing Claude Code, Codex, Gemini CLI, Antigravity, and Copilot subscriptions alongside local .agents/skills (including 47 open SOIA skills) and local MLX models.' },
-        { id: 'workbench', title: 'AI Workbench', body: 'Open Claude Code, Codex and other agent conversations in the desktop app. Each agent uses its native protocol; others use ACP or a PTY. The backend owns the conversation: close the page and the agent keeps working.', image: '/soia/products/soiadeck-wb-home.png', alt: 'SoiaDeck AI Workbench home' },
-        { id: 'factory', title: 'Workshops and projects', body: 'Switch workspaces from the left rail; plugins, workbench, local LLM and AI network sit under it. Projects are grouped by repository with pending approvals and tasks counted per row.', image: '/soia/products/soiadeck-plugins.png', alt: 'SoiaDeck Plugin Center' },
-        { id: 'approvals', title: 'Approvals', body: 'Commands, writes outside the workspace and network access ask first. Allow once, allow for this conversation, or deny; batch cards can be handled one by one. Every decision lands in the session record.', image: '/soia/products/soiadeck-home.png', alt: 'SoiaDeck desktop home and approvals' },
-        { id: 'models', title: 'Local LLM', body: 'Discover, start/stop and download local models, plus one OpenAI-compatible endpoint. Engines today are mostly MLX, so local models are most complete on Apple Silicon.', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck Local LLM router' },
-        { id: 'network', title: 'AI Network', body: 'Which network interface the machine uses to reach AI services, and whether they are reachable. Core management still works offline.', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI Network' },
-        { id: 'remote', title: 'Remote & Mobile', body: 'Pair your phone over local LAN or relay to follow running sessions, inspect diffs, approve tool permissions, or stop a turn on the go.', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck mobile surface' },
-        { id: 'account', title: 'Remote account & bound hosts', body: 'Sign in with email verification or Passkey on the Account Web to manage bound host fingerprints, active devices, and relay usage — or mark a lost device to revoke access immediately.', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck account web and bound hosts' },
-        { id: 'relay', title: 'Relay service', body: 'When away from your local network, desktop and mobile connect through an encrypted relay that forwards traffic without inspecting contents, with automatic 90s reconnect during maintenance.', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck relay service' },
-        { id: 'agents', title: '19 coding agents: current matrix & plan', body: 'Tracked in SoiaDeck’s agent-manifest-index.json: 4 supported (stream-json, app-server, ACP, pi-rpc), 9 experimental (ACP stdio), and 6 planned—with upcoming backend unification adding enable/order prefs, update plans, extension counts, activity ledger, and WorkBuddy read-only import + CodeBuddy ACP.', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 19 coding agents' },
-        { id: 'philosophy', title: 'Engineering philosophy', body: 'A tool sitting between you, your codebase, your keys, and your machines must stay transparent and neutral:' },
-        { id: 'open', title: 'Coming open source', body: 'Private today, under active development. Only macOS arm64 installers ship; Linux and Windows have build entry points but are not released.' },
-      ];
+  const sections: ReadonlyArray<{ id: string; title: string; body: string; image?: string; alt?: string }> =
+    lang === 'zh'
+      ? [
+          { id: 'works-with', title: '自带你的工具与订阅', body: '无需重新购买额度或放弃熟悉的工作流：直接复用你本机已登录的 Claude Code、Codex、Gemini CLI、Antigravity、GitHub Copilot 等 CLI 订阅，挂载本地 .agents/skills（包括 47 个开源 SOIA 技能），也可叠加本机 MLX 模型。' },
+          { id: 'workbench', title: 'AI 作业台', body: '在桌面应用里开 Claude Code、Codex 等对话。每种 Agent 走自己的原生协议；没有原生协议的走 ACP，也有终端 PTY。对话由后端持有：关掉页面 Agent 继续跑，重开从缓冲重放。项目、工作树和权限审批都在这里管。', image: '/soia/products/soiadeck-wb-home.png', alt: 'SoiaDeck AI 作业台首页' },
+          { id: 'factory', title: '工坊与项目', body: '左侧工坊切换工作区，下面是插件、作业台、本地 LLM、AI 网络四个入口。项目列表按仓库分组，每个条目显示待审批与待处理数量，新建项目直接在列表里完成。', image: '/soia/products/soiadeck-plugins.png', alt: 'SoiaDeck 插件中心' },
+          { id: 'approvals', title: '权限审批', body: '要执行命令、写工作区外文件、联网前先问你。可以逐次允许、本对话内允许或拒绝；多条待审批可逐张处理。每一次决定都进会话记录，可回放。', image: '/soia/products/soiadeck-home.png', alt: 'SoiaDeck 首页待处理与权限审批' },
+          { id: 'models', title: '本地 LLM', body: '发现、启停、下载本机模型，并提供一个 OpenAI 兼容入口。现在推理引擎以 MLX 系为主，所以本地模型在 Apple Silicon 上最完整。作业台本身不依赖本地模型。', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck 本地 LLM 模型转发' },
+          { id: 'network', title: 'AI 网络', body: '本机访问各 AI 服务走哪张网卡、连不连得通。核心管理能力断网可用。', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI 网络监控' },
+          { id: 'remote', title: '远程访问与手机端', body: '电脑开启远程访问或通过中继配对后，手机端可随时查看对话进度、看代码改动与 Diff，并在手机上远程审批权限或止损停轮。', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck 手机端远程访问与设计总览' },
+          { id: 'account', title: '远程账号与名下主机', body: '账号网页支持邮箱验证码与 Passkey 登录，集中管理名下绑定的主机指纹、登录设备与中继流量；设备丢失时可一键标记丢失并自动通知中继收回授权。', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck 远程账号与名下主机' },
+          { id: 'relay', title: '中继服务', body: '不在同一局域网时，手机与电脑通过轻量中继建立加密通道，中继只做转发不看对话内容；维护期间支持 90 秒内自动续上，连接不断。', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck 中继服务状态与通道监控' },
+          { id: 'agents', title: '19 个 coding agent 接入清单与演进', body: '以 SoiaDeck 静态 manifest 真源（agent-manifest-index.json）为准，共登记 19 个 Agent：正式支持 4 个（stream-json / app-server / ACP / pi-rpc）、试验接入 9 个（统一走 ACP stdio）、计划接入 6 个。后续按底层统一方案收口到单一目录真源，补齐启停排序、更新计划、技能统计、活动账本以及 WorkBuddy 只读导入 + CodeBuddy ACP 分流。', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 已接入 19 个 Coding Agent 矩阵' },
+          { id: 'philosophy', title: '设计哲学与边界', body: '站在代码、API 密钥与远程主机之间的工具必须保持中立、可审查、不强绑云厂商。以下六条是 SoiaDeck 每一项能力的设计底线：' },
+          { id: 'open', title: '即将开源', body: '现在是私有仓，持续开发中。目前只发 macOS arm64 安装包；Linux / Windows 有构建入口，但没验收、不发包。官网不假装已有公开下载。' },
+        ]
+      : lang === 'ja'
+        ? [
+            { id: 'works-with', title: '手持ちのツール・契約をそのまま利用', body: '新たな課金枠の買い直しやワークフロー変更は不要。ログイン済みの Claude Code / Codex / Gemini CLI / Antigravity / GitHub Copilot 契約やローカル .agents/skills、Apple Silicon MLX モデルをそのまま利用できます。' },
+            { id: 'workbench', title: 'AI 作業台（ワークベンチ）', body: 'Claude Code や Codex をデスクトップから並列起動。各 Agent はネイティブプロトコル（未対応は ACP や PTY）で動作し、会話状態はバックエンド daemon が保持するため画面を閉じても止まりません。', image: '/soia/products/soiadeck-wb-home.png', alt: 'SoiaDeck AI 作業台ホーム' },
+            { id: 'factory', title: 'ワークショップとプロジェクト管理', body: '左レールでワークスペースを切り替え、プラグイン・作業台・ローカル LLM・AI ネットワークへ即アクセス。リポジトリ別に承認待ちとタスク数を一覧表示します。', image: '/soia/products/soiadeck-plugins.png', alt: 'SoiaDeck プラグインセンター' },
+            { id: 'approvals', title: '権限承認ゲート', body: 'コマンド実行・領域外書き込み・外部通信の前に確認を要求。今回のみ許可／会話内許可／拒否を選択でき、判断履歴はすべてセッションに記録・再生できます。', image: '/soia/products/soiadeck-home.png', alt: 'SoiaDeck 権限承認画面' },
+            { id: 'models', title: 'ローカル LLM 管理', body: 'ローカルモデルの検出・起動・停止・ダウンロードと OpenAI 互換エンドポイントを提供。MLX エンジン中心のため Apple Silicon で最も充実しています。', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck ローカル LLM ルーター' },
+            { id: 'network', title: 'AI ネットワーク監視', body: '各 AI サービスへの経路インタフェースと到達性を監視。コア管理機能はオフラインでも動作します。', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI ネットワーク' },
+            { id: 'remote', title: 'リモートアクセス & モバイル操作', body: 'LAN またはリレー経由でスマホとペアリングし、進行中セッションの閲覧、Diff 確認、承認許可、ターン緊急停止を行えます。', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck モバイル画面' },
+            { id: 'account', title: 'リモートアカウント & 紐付けホスト', body: 'メール認証や Passkey でログインし、ホストフィンガープリントや認証済み端末・リレー通信量を一元管理。端末紛失時は即座に失効できます。', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck アカウント・端末管理' },
+            { id: 'relay', title: '暗号化リレーサービス', body: '同一 LAN 外でも軽量リレー経由でデスクトップとモバイルを暗号化接続。リレーは中身を覗かず暗号文のみ転送し、メンテナンス時も 90 秒自動再接続に対応します。', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck リレー監視' },
+            { id: 'agents', title: '19 種の Coding Agent 接続一覧と計画', body: '静的マニフェスト（agent-manifest-index.json）に基づき計 19 種を管理：正式対応 4（stream-json / app-server / ACP / pi-rpc）、試験接続 9（ACP stdio）、予定 6。', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 19 Coding Agents マトリクス' },
+            { id: 'philosophy', title: '設計哲学と境界', body: 'コードと認証鍵・ホストの間に立つツールは中立で監査可能でなければなりません。以下の 6 原則を厳守します：' },
+            { id: 'open', title: '公開予定オープンソース', body: '現在はプライベートリポジトリで開発中。配布ビルドは macOS arm64 のみ提供し、未検証ターゲットの公開配布は偽装しません。' },
+          ]
+        : [
+            { id: 'works-with', title: 'Bring your tools & subscriptions', body: 'No forced lock-in or quota reselling: reuse your existing Claude Code, Codex, Gemini CLI, Antigravity, and Copilot subscriptions alongside local .agents/skills (including 47 open SOIA skills) and local MLX models.' },
+            { id: 'workbench', title: 'AI Workbench', body: 'Open Claude Code, Codex and other agent conversations in the desktop app. Each agent uses its native protocol; others use ACP or a PTY. The backend owns the conversation: close the page and the agent keeps working.', image: '/soia/products/soiadeck-wb-home.png', alt: 'SoiaDeck AI Workbench home' },
+            { id: 'factory', title: 'Workshops and projects', body: 'Switch workspaces from the left rail; plugins, workbench, local LLM and AI network sit under it. Projects are grouped by repository with pending approvals and tasks counted per row.', image: '/soia/products/soiadeck-plugins.png', alt: 'SoiaDeck Plugin Center' },
+            { id: 'approvals', title: 'Approvals', body: 'Commands, writes outside the workspace and network access ask first. Allow once, allow for this conversation, or deny; batch cards can be handled one by one. Every decision lands in the session record.', image: '/soia/products/soiadeck-home.png', alt: 'SoiaDeck desktop home and approvals' },
+            { id: 'models', title: 'Local LLM', body: 'Discover, start/stop and download local models, plus one OpenAI-compatible endpoint. Engines today are mostly MLX, so local models are most complete on Apple Silicon.', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck Local LLM router' },
+            { id: 'network', title: 'AI Network', body: 'Which network interface the machine uses to reach AI services, and whether they are reachable. Core management still works offline.', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI Network' },
+            { id: 'remote', title: 'Remote & Mobile', body: 'Pair your phone over local LAN or relay to follow running sessions, inspect diffs, approve tool permissions, or stop a turn on the go.', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck mobile surface' },
+            { id: 'account', title: 'Remote account & bound hosts', body: 'Sign in with email verification or Passkey on the Account Web to manage bound host fingerprints, active devices, and relay usage — or mark a lost device to revoke access immediately.', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck account web and bound hosts' },
+            { id: 'relay', title: 'Relay service', body: 'When away from your local network, desktop and mobile connect through an encrypted relay that forwards traffic without inspecting contents, with automatic 90s reconnect during maintenance.', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck relay service' },
+            { id: 'agents', title: '19 coding agents: current matrix & plan', body: 'Tracked in SoiaDeck’s agent-manifest-index.json: 4 supported (stream-json, app-server, ACP, pi-rpc), 9 experimental (ACP stdio), and 6 planned—with upcoming backend unification adding enable/order prefs, update plans, extension counts, activity ledger, and WorkBuddy read-only import + CodeBuddy ACP.', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 19 coding agents' },
+            { id: 'philosophy', title: 'Engineering philosophy', body: 'A tool sitting between you, your codebase, your keys, and your machines must stay transparent and neutral:' },
+            { id: 'open', title: 'Coming open source', body: 'Private today, under active development. Only macOS arm64 installers ship; Linux and Windows have build entry points but are not released.' },
+          ];
   const currentTab = heroTabs[heroTab] ?? heroTabs[0];
   return (
     <SubpageLayout active="product" locale={locale}>
@@ -1282,15 +1886,17 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
           <a href={href('/')}>SOIA</a><span>/</span><span>SoiaDeck</span>
         </nav>
         <header className="catalog-head">
-          <span className="label">{zh ? 'SOIA 家族 · 当前主角 · 即将开源' : 'SOIA family · current lead · coming open source'}</span>
+          <span className="label">{t('SOIA 家族 · 当前主角 · 即将开源', 'SOIA family · current lead · coming open source', 'SOIA ファミリー · 主力製品 · 近日公開予定')}</span>
           <h1 className="display">SoiaDeck</h1>
           <p className="lead">
-            {zh
-              ? '跨端 AI 作业台：本机 daemon + 桌面 / 手机 / 网页 / CLI。在同一工作台并行驱动 19 种 Coding Agent，随时随地处理权限、代码 Diff 与工作树。'
-              : 'Cross-device AI Workbench: one local daemon plus desktop, mobile, browser, and CLI. Run 19 coding agents across workspaces, diffs, and approvals from your desk or phone.'}
+            {t(
+              '跨端 AI 作业台：本机 daemon + 桌面 / 手机 / 网页 / CLI。在同一工作台并行驱动 19 种 Coding Agent，随时随地处理权限、代码 Diff 与工作树。',
+              'Cross-device AI Workbench: one local daemon plus desktop, mobile, browser, and CLI. Run 19 coding agents across workspaces, diffs, and approvals from your desk or phone.',
+              'マルチデバイス AI 作業台：ローカル daemon ＋ デスクトップ / モバイル / Web / CLI。19 種の Coding Agent と権限承認・Diff・Worktree をシームレスに統合。',
+            )}
           </p>
         </header>
-        <section className="deck-showcase" aria-label={zh ? 'SoiaDeck 场景切换演示' : 'SoiaDeck interactive scene preview'}>
+        <section className="deck-showcase" aria-label={t('SoiaDeck 场景切换演示', 'SoiaDeck interactive scene preview', 'SoiaDeck シーン切替プレビュー')}>
           <div className="deck-tab-bar" role="tablist">
             {heroTabs.map((tab, idx) => (
               <button
@@ -1305,12 +1911,12 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
               </button>
             ))}
           </div>
-          <ZoomableFigure src={currentTab.src} alt={currentTab.alt} zh={zh} />
+          <ZoomableFigure src={currentTab.src} alt={currentTab.alt} locale={locale} />
           <p className="deck-showcase-caption">{currentTab.note}</p>
         </section>
         <div className="tutorial-detail-layout">
           <aside className="missing-toc">
-            <span>{zh ? '本页内容' : 'On this page'}</span>
+            <span>{t('本页内容', 'On this page', '目次')}</span>
             {sections.map((section) => (
               <a href={`#${section.id}`} key={section.id}>{section.title}</a>
             ))}
@@ -1322,13 +1928,13 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
                 <p>{section.body}</p>
                 {section.id === 'agents' && (
                   <>
-                    <div className="agent-filter-bar" role="tablist" aria-label={zh ? '按接入状态筛选 Agent' : 'Filter agents by status'}>
+                    <div className="agent-filter-bar" role="tablist" aria-label={t('按接入状态筛选 Agent', 'Filter agents by status', 'ステータス別に絞り込む')}>
                       {(
                         [
-                          { id: 'all', label: zh ? '全部' : 'All', count: CODING_AGENTS_19.length },
-                          { id: 'supported', label: zh ? '正式支持' : 'Supported', count: CODING_AGENTS_19.filter((a) => a.level === 'supported').length },
-                          { id: 'experimental', label: zh ? '试验接入' : 'Experimental', count: CODING_AGENTS_19.filter((a) => a.level === 'experimental').length },
-                          { id: 'planned', label: zh ? '计划接入' : 'Planned', count: CODING_AGENTS_19.filter((a) => a.level === 'planned').length },
+                          { id: 'all', label: t('全部', 'All', 'すべて'), count: CODING_AGENTS_19.length },
+                          { id: 'supported', label: t('正式支持', 'Supported', '正式対応'), count: CODING_AGENTS_19.filter((a) => a.level === 'supported').length },
+                          { id: 'experimental', label: t('试验接入', 'Experimental', '試験接続'), count: CODING_AGENTS_19.filter((a) => a.level === 'experimental').length },
+                          { id: 'planned', label: t('计划接入', 'Planned', '対応予定'), count: CODING_AGENTS_19.filter((a) => a.level === 'planned').length },
                         ] as const
                       ).map((tab) => (
                         <button
@@ -1349,10 +1955,10 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
                         .map(({ agent, origIdx }) => {
                           const levelText =
                             agent.level === 'supported'
-                              ? zh ? '正式支持' : 'Supported'
+                              ? t('正式支持', 'Supported', '正式対応')
                               : agent.level === 'experimental'
-                                ? zh ? '试验接入' : 'Experimental'
-                                : zh ? '计划接入' : 'Planned';
+                                ? t('试验接入', 'Experimental', '試験接続')
+                                : t('计划接入', 'Planned', '対応予定');
                           return (
                             <li className="agent-detail-row" key={agent.id}>
                               <div className="agent-detail-top">
@@ -1365,9 +1971,9 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
                                 <span className={`agent-level-badge is-${agent.level}`}>{levelText}</span>
                               </div>
                               <div className="agent-detail-meta">
-                                <span><strong>{zh ? '协议' : 'Protocol'}:</strong> {pick(locale, agent.protocol)}</span>
-                                <span><strong>{zh ? '版本' : 'Version'}:</strong> {pick(locale, agent.version)}</span>
-                                <span><strong>{zh ? '认证' : 'Auth'}:</strong> {pick(locale, agent.auth)}</span>
+                                <span><strong>{t('协议', 'Protocol', 'プロトコル')}:</strong> {pick(locale, agent.protocol)}</span>
+                                <span><strong>{t('版本', 'Version', 'バージョン')}:</strong> {pick(locale, agent.version)}</span>
+                                <span><strong>{t('认证', 'Auth', '認証')}:</strong> {pick(locale, agent.auth)}</span>
                               </div>
                               <p className="agent-detail-desc">{pick(locale, agent.detail)}</p>
                             </li>
@@ -1390,7 +1996,7 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
                   <ZoomableFigure
                     src={section.image}
                     alt={section.alt ?? section.title}
-                    zh={zh}
+                    locale={locale}
                     lazy
                     marginTop={18}
                   />
@@ -1398,7 +2004,7 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
               </section>
             ))}
             <div className="missing-cta">
-              <a className="btn btn-primary" href={href('/skills/')}>{zh ? '看开源技能' : 'Open skills'}</a>
+              <a className="btn btn-primary" href={href('/skills/')}>{t('看开源技能', 'Open skills', '公開スキルを見る')}</a>
               <a className="btn btn-ghost" href={href('/soia/')}>SOIA Runtime</a>
             </div>
           </div>
@@ -1409,31 +2015,32 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
 }
 
 /** SoiaCode (si) — native HTML interactive architecture diagrams grounded in soiacode/docs. */
-function SoiaCodeProductDiagram({ zh }: { zh: boolean }) {
+function SoiaCodeProductDiagram({ locale }: { locale: LandingLocaleCode }) {
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
   return (
-    <section className="sc-diagram sc-hero-diagram" aria-label={zh ? 'SoiaCode 五层产品架构' : 'SoiaCode 5-layer product architecture'}>
+    <section className="sc-diagram sc-hero-diagram" aria-label={t('SoiaCode 五层产品架构', 'SoiaCode 5-layer product architecture', 'SoiaCode 5 層アーキテクチャ')}>
       <div className="sc-diagram-head">
-        <span className="sc-diagram-title">{zh ? 'PRODUCT ARCHITECTURE · 五层产品架构总览' : 'PRODUCT ARCHITECTURE · 5-LAYER OVERVIEW'}</span>
-        <span className="sc-diagram-sub">{zh ? '人守住注意力 · 系统守住安全' : 'Humans guard attention · System guards safety'}</span>
+        <span className="sc-diagram-title">{t('PRODUCT ARCHITECTURE · 五层产品架构总览', 'PRODUCT ARCHITECTURE · 5-LAYER OVERVIEW', 'PRODUCT ARCHITECTURE · 5 層アーキテクチャ概要')}</span>
+        <span className="sc-diagram-sub">{t('人守住注意力 · 系统守住安全', 'Humans guard attention · System guards safety', '人は注意力を守り · システムは安全を守る')}</span>
       </div>
 
       <div className="sc-band is-cyan">
         <div className="sc-band-head">
-          <span className="sc-band-tag">{zh ? 'L4 之外 · 调用方（谁在用 si）' : 'CALLERS · WHO DRIVES SI'}</span>
-          <span className="sc-band-note">{zh ? '开发者交互 / CI 脚本 / 编辑器 / 后台 / 其他 Agent' : 'Humans / Scripts / Editors / Services / External Agents'}</span>
+          <span className="sc-band-tag">{t('L4 之外 · 调用方（谁在用 si）', 'CALLERS · WHO DRIVES SI', 'CALLERS · si の呼び出し元')}</span>
+          <span className="sc-band-note">{t('开发者交互 / CI 脚本 / 编辑器 / 后台 / 其他 Agent', 'Humans / Scripts / Editors / Services / External Agents', '対話端末 / CI スクリプト / エディタ / サービス / 他 Agent')}</span>
         </div>
         <div className="sc-node-grid cols-3">
           <div className="sc-node">
-            <strong>{zh ? '人（终端交互）' : 'Human CLI'}</strong>
-            <span>{zh ? '日常编码 + 关键审批' : 'Daily coding + approvals'}</span>
+            <strong>{t('人（终端交互）', 'Human CLI', '開発者（対話 CLI）')}</strong>
+            <span>{t('日常编码 + 关键审批', 'Daily coding + approvals', '日常コーディング＋承認')}</span>
           </div>
           <div className="sc-node">
-            <strong>{zh ? '应用与编辑器' : 'Apps & Editors'}</strong>
-            <span>{zh ? 'CI 脚本 / Zed ACP / 图形壳 RPC / Rust 嵌入' : 'CI print / Zed ACP / GUI RPC / Rust embed'}</span>
+            <strong>{t('应用与编辑器', 'Apps & Editors', 'アプリ・エディタ連携')}</strong>
+            <span>{t('CI 脚本 / Zed ACP / 图形壳 RPC / Rust 嵌入', 'CI print / Zed ACP / GUI RPC / Rust embed', 'CI print / Zed ACP / GUI RPC / Rust 組込')}</span>
           </div>
           <div className="sc-node">
-            <strong>{zh ? '其他 Agent' : 'External Agents'}</strong>
-            <span>{zh ? '经子工具或 MCP / A2A 调用 si' : 'Call si via print, RPC, MCP, or A2A'}</span>
+            <strong>{t('其他 Agent', 'External Agents', '外部 Agent')}</strong>
+            <span>{t('经子工具或 MCP / A2A 调用 si', 'Call si via print, RPC, MCP, or A2A', 'print / RPC / MCP / A2A 経由で si を呼出')}</span>
           </div>
         </div>
       </div>
@@ -1442,14 +2049,14 @@ function SoiaCodeProductDiagram({ zh }: { zh: boolean }) {
 
       <div className="sc-band is-slate">
         <div className="sc-band-head">
-          <span className="sc-band-tag">{zh ? '入口层 · 4 种运行方式 + 1 个 Rust 库' : 'ENTRYPOINTS · 4 RUN MODES + 1 SDK'}</span>
+          <span className="sc-band-tag">{t('入口层 · 4 种运行方式 + 1 个 Rust 库', 'ENTRYPOINTS · 4 RUN MODES + 1 SDK', 'ENTRYPOINTS · 4 実行モード + 1 SDK')}</span>
         </div>
         <div className="sc-node-grid">
-          <div className="sc-node"><strong>si</strong><span>{zh ? '终端交互 Line-mode TUI' : 'Interactive CLI'}</span></div>
-          <div className="sc-node"><strong>si -p</strong><span>{zh ? 'Print 单次脚本输出' : 'One-shot print mode'}</span></div>
-          <div className="sc-node"><strong>--mode rpc</strong><span>{zh ? 'stdio JSON-RPC 长期驱动' : 'Long-lived stdio RPC'}</span></div>
-          <div className="sc-node"><strong>--mode acp</strong><span>{zh ? 'Zed 等编辑器接入' : 'Editor ACP mode'}</span></div>
-          <div className="sc-node"><strong>soiacode-sdk</strong><span>{zh ? 'Rust 进程内嵌入门面' : 'In-process Rust crate'}</span></div>
+          <div className="sc-node"><strong>si</strong><span>{t('终端交互 Line-mode TUI', 'Interactive CLI', '対話 Line-mode TUI')}</span></div>
+          <div className="sc-node"><strong>si -p</strong><span>{t('Print 单次脚本输出', 'One-shot print mode', '単発スクリプト出力')}</span></div>
+          <div className="sc-node"><strong>--mode rpc</strong><span>{t('stdio JSON-RPC 长期驱动', 'Long-lived stdio RPC', '常駐 stdio JSON-RPC')}</span></div>
+          <div className="sc-node"><strong>--mode acp</strong><span>{t('Zed 等编辑器接入', 'Editor ACP mode', 'エディタ ACP 接続')}</span></div>
+          <div className="sc-node"><strong>soiacode-sdk</strong><span>{t('Rust 进程内嵌入门面', 'In-process Rust crate', 'Rust 組込みクレート')}</span></div>
         </div>
       </div>
 
@@ -1457,14 +2064,14 @@ function SoiaCodeProductDiagram({ zh }: { zh: boolean }) {
 
       <div className="sc-band is-amber">
         <div className="sc-band-head">
-          <span className="sc-band-tag">{zh ? '内核核心（L0–L2）+ 内置能力（L3）' : 'MINIMAL KERNEL (L0–L2) + BUILT-IN CAPABILITIES (L3)'}</span>
-          <span className="sc-band-note">{zh ? '极小、可审查、零遥测' : 'Small, auditable, zero telemetry'}</span>
+          <span className="sc-band-tag">{t('内核核心（L0–L2）+ 内置能力（L3）', 'MINIMAL KERNEL (L0–L2) + BUILT-IN CAPABILITIES (L3)', '最小カーネル (L0–L2) + 組込み機能 (L3)')}</span>
+          <span className="sc-band-note">{t('极小、可审查、零遥测', 'Small, auditable, zero telemetry', '極小・監査可能・ゼロテレメトリ')}</span>
         </div>
         <div className="sc-node-grid cols-2">
-          <div className="sc-node"><strong>{zh ? 'agent 循环 · L2' : 'agent loop · L2'}</strong><span>{zh ? '上下文裁剪 · 压缩摘要 · Steer/FollowUp' : 'Context trim · Compaction · Steer/FollowUp'}</span></div>
-          <div className="sc-node"><strong>{zh ? '挂载点与审批 · 10 Hook' : 'Mounts & approval · 10 hooks'}</strong><span>{zh ? 'deny > ask > allow · 写保护路径拦截' : 'deny > ask > allow · write-protected paths'}</span></div>
-          <div className="sc-node"><strong>{zh ? 'JSONL 会话树 · L1' : 'JSONL session tree · L1'}</strong><span>{zh ? '/tree 分支 · /fork 深拷贝 · Blob 旁路' : '/tree branch · /fork copy · Blob offload'}</span></div>
-          <div className="sc-node"><strong>{zh ? '5 工具 + 扩展宿主 · L3' : '5 tools + ext host · L3'}</strong><span>{zh ? 'read/write/edit/bash/grep · MCP 客户端 · 可选沙箱' : 'read/write/edit/bash/grep · MCP client · opt sandbox'}</span></div>
+          <div className="sc-node"><strong>{t('agent 循环 · L2', 'agent loop · L2', 'agent ループ · L2')}</strong><span>{t('上下文裁剪 · 压缩摘要 · Steer/FollowUp', 'Context trim · Compaction · Steer/FollowUp', '文脈トリム · 要約圧縮 · Steer/FollowUp')}</span></div>
+          <div className="sc-node"><strong>{t('挂载点与审批 · 10 Hook', 'Mounts & approval · 10 hooks', 'マウントと承認 · 10 Hook')}</strong><span>{t('deny > ask > allow · 写保护路径拦截', 'deny > ask > allow · write-protected paths', 'deny > ask > allow · 保護パス遮断')}</span></div>
+          <div className="sc-node"><strong>{t('JSONL 会话树 · L1', 'JSONL session tree · L1', 'JSONL セッション木 · L1')}</strong><span>{t('/tree 分支 · /fork 深拷贝 · Blob 旁路', '/tree branch · /fork copy · Blob offload', '/tree 分岐 · /fork 複製 · Blob 退避')}</span></div>
+          <div className="sc-node"><strong>{t('5 工具 + 扩展宿主 · L3', '5 tools + ext host · L3', '5 ツール + 拡張ホスト · L3')}</strong><span>{t('read/write/edit/bash/grep · MCP 客户端 · 可选沙箱', 'read/write/edit/bash/grep · MCP client · opt sandbox', 'read/write/edit/bash/grep · MCP · 任意サンドボックス')}</span></div>
         </div>
       </div>
 
@@ -1472,105 +2079,117 @@ function SoiaCodeProductDiagram({ zh }: { zh: boolean }) {
 
       <div className="sc-band is-emerald">
         <div className="sc-band-head">
-          <span className="sc-band-tag">{zh ? '外部 · 内核之外独立演化' : 'PERIPHERAL · OUTSIDE THE KERNEL'}</span>
-          <span className="sc-band-note">{zh ? 'JSON-RPC / stdio / HTTPS' : 'JSON-RPC / stdio / HTTPS'}</span>
+          <span className="sc-band-tag">{t('外部 · 内核之外独立演化', 'PERIPHERAL · OUTSIDE THE KERNEL', '周辺機能 · カーネル外で独立進化')}</span>
+          <span className="sc-band-note">JSON-RPC / stdio / HTTPS</span>
         </div>
         <div className="sc-node-grid">
-          <div className="sc-node"><strong>{zh ? '模型厂商' : 'LLM Providers'}</strong><span>{zh ? 'Anthropic / OpenAI / Gemini / Bedrock' : 'Anthropic / OpenAI / Gemini / Bedrock'}</span></div>
-          <div className="sc-node"><strong>{zh ? '34 个官方扩展' : '34 Extensions'}</strong><span>{zh ? '独立子进程 · si install 按需装' : 'Subprocesses via si install'}</span></div>
-          <div className="sc-node"><strong>{zh ? '自运行外围服务' : 'Standalone Services'}</strong><span>{zh ? 'si serve / mcp-server / a2a / inline' : 'si serve / mcp-server / a2a / inline'}</span></div>
-          <div className="sc-node"><strong>soiacode-exec</strong><span>{zh ? 'SSH / 容器远端执行端（无凭据）' : 'Remote exec endpoint (no creds)'}</span></div>
+          <div className="sc-node"><strong>{t('模型厂商', 'LLM Providers', 'LLM プロバイダー')}</strong><span>Anthropic / OpenAI / Gemini / Bedrock</span></div>
+          <div className="sc-node"><strong>{t('34 个官方扩展', '34 Extensions', '34 公式拡張')}</strong><span>{t('独立子进程 · si install 按需装', 'Subprocesses via si install', '独立子プロセス · si install')}</span></div>
+          <div className="sc-node"><strong>{t('自运行外围服务', 'Standalone Services', '独立周辺サービス')}</strong><span>si serve / mcp-server / a2a / inline</span></div>
+          <div className="sc-node"><strong>soiacode-exec</strong><span>{t('SSH / 容器远端执行端（无凭据）', 'Remote exec endpoint (no creds)', 'SSH / コンテナ遠隔実行（鍵非保持）')}</span></div>
         </div>
       </div>
     </section>
   );
 }
 
-function SoiaCodeSystemDiagram({ zh }: { zh: boolean }) {
+function SoiaCodeSystemDiagram({ locale }: { locale: LandingLocaleCode }) {
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
   return (
-    <div className="sc-diagram" aria-label={zh ? '系统运行时单进程多会话数据流' : 'System runtime process dataflow'}>
+    <div className="sc-diagram" aria-label={t('系统运行时单进程多会话数据流', 'System runtime process dataflow', 'システム単一プロセス内データフロー')}>
       <div className="sc-diagram-head">
-        <span className="sc-diagram-title">{zh ? 'SYSTEM RUNTIME · 单 si 进程与外部边界' : 'SYSTEM RUNTIME · SINGLE PROCESS & EXTERNAL IO'}</span>
-        <span className="sc-diagram-sub">{zh ? '多会话同进程隔离，所有落盘只追加 JSONL' : 'Multi-session in one process, append-only JSONL'}</span>
+        <span className="sc-diagram-title">{t('SYSTEM RUNTIME · 单 si 进程与外部边界', 'SYSTEM RUNTIME · SINGLE PROCESS & EXTERNAL IO', 'SYSTEM RUNTIME · 単一 si プロセスと外部境界')}</span>
+        <span className="sc-diagram-sub">{t('多会话同进程隔离，所有落盘只追加 JSONL', 'Multi-session in one process, append-only JSONL', '同一プロセス内で複数セッション分離 · append-only JSONL')}</span>
       </div>
 
       <div className="sc-band is-violet">
         <div className="sc-band-head">
-          <span className="sc-band-tag">{zh ? 'si 进程内（可同时承载多个互不干扰的会话）' : 'INSIDE si PROCESS (MULTIPLE ISOLATED SESSIONS)'}</span>
+          <span className="sc-band-tag">{t('si 进程内（可同时承载多个互不干扰的会话）', 'INSIDE si PROCESS (MULTIPLE ISOLATED SESSIONS)', 'si プロセス内部（複数セッションを干渉なく同時保持）')}</span>
         </div>
         <div className="sc-node" style={{ justifySelf: 'center', minWidth: '220px', textAlign: 'center' }}>
-          <strong>{zh ? '入口调度 · 创建或恢复会话' : 'Entrypoint · Create or resume session'}</strong>
-          <span>{zh ? 'stdio (RPC/ACP) · 命令行参数 (print) · 进程内 (Rust SDK)' : 'stdio (RPC/ACP) · args (print) · in-proc (Rust SDK)'}</span>
+          <strong>{t('入口调度 · 创建或恢复会话', 'Entrypoint · Create or resume session', 'エントリポイント · セッション生成/復元')}</strong>
+          <span>{t('stdio (RPC/ACP) · 命令行参数 (print) · 进程内 (Rust SDK)', 'stdio (RPC/ACP) · args (print) · in-proc (Rust SDK)', 'stdio (RPC/ACP) · 引数 (print) · プロセス内 (Rust SDK)')}</span>
         </div>
         <div className="sc-bus-row">
           <div className="sc-node">
-            <strong>{zh ? '挂载点与审批' : 'Mounts & Approval'}</strong>
-            <span>{zh ? '每次工具/请求前后裁决' : 'Gate every call & request'}</span>
+            <strong>{t('挂载点与审批', 'Mounts & Approval', 'マウント・承認ゲート')}</strong>
+            <span>{t('每次工具/请求前后裁决', 'Gate every call & request', '全ツール/通信の前後を検証')}</span>
           </div>
-          <div className="sc-bus-arrow">← {zh ? '调用前后' : 'hooks'} →</div>
+          <div className="sc-bus-arrow">← {t('调用前后', 'hooks', 'フック')} →</div>
           <div className="sc-node" style={{ borderColor: '#8b5cf6', background: '#faf8ff' }}>
-            <strong>{zh ? 'agent 主循环' : 'agent loop'}</strong>
-            <span>{zh ? '上下文拼接 · 回合控制 · 调度' : 'Context · Turn loop · Dispatch'}</span>
+            <strong>{t('agent 主循环', 'agent loop', 'agent メインループ')}</strong>
+            <span>{t('上下文拼接 · 回合控制 · 调度', 'Context · Turn loop · Dispatch', '文脈統合 · ターン制御 · 実行')}</span>
           </div>
-          <div className="sc-bus-arrow">→ {zh ? '每一步' : 'every step'} →</div>
+          <div className="sc-bus-arrow">→ {t('每一步', 'every step', '各ステップ')} →</div>
           <div className="sc-node">
-            <strong>{zh ? '会话写入器' : 'Session Writer'}</strong>
-            <span>{zh ? '追加到 ~/.soiacode/sessions/' : 'Append to ~/.soiacode/sessions/'}</span>
+            <strong>{t('会话写入器', 'Session Writer', 'セッションライター')}</strong>
+            <span>{t('追加到 ~/.soiacode/sessions/', 'Append to ~/.soiacode/sessions/', '~/.soiacode/sessions/ へ追記')}</span>
           </div>
         </div>
         <div className="sc-node-grid cols-3">
           <div className="sc-node">
-            <strong>{zh ? '模型客户端 (L1)' : 'Provider Client (L1)'}</strong>
-            <span>HTTPS {zh ? '流式 → 模型厂商' : 'stream → LLM Vendor'}</span>
+            <strong>{t('模型客户端 (L1)', 'Provider Client (L1)', 'モデルクライアント (L1)')}</strong>
+            <span>HTTPS {t('流式 → 模型厂商', 'stream → LLM Vendor', 'ストリーム → LLM 側')}</span>
           </div>
           <div className="sc-node">
-            <strong>{zh ? '内置工具 (L3)' : 'Built-in Tools (L3)'}</strong>
-            <span>{zh ? '管道 → 命令子进程' : 'Pipe → Command subprocess'}</span>
+            <strong>{t('内置工具 (L3)', 'Built-in Tools (L3)', '組込みツール (L3)')}</strong>
+            <span>{t('管道 → 命令子进程', 'Pipe → Command subprocess', 'パイプ → コマンド子プロセス')}</span>
           </div>
           <div className="sc-node">
-            <strong>{zh ? '扩展宿主 (L3)' : 'Extension Host (L3)'}</strong>
-            <span>JSON-RPC → {zh ? '扩展 / MCP 子进程' : 'Extensions / MCP'}</span>
+            <strong>{t('扩展宿主 (L3)', 'Extension Host (L3)', '拡張ホスト (L3)')}</strong>
+            <span>JSON-RPC → {t('扩展 / MCP 子进程', 'Extensions / MCP', '拡張 / MCP 子プロセス')}</span>
           </div>
         </div>
       </div>
 
       <div className="sc-band is-amber">
         <div className="sc-band-head">
-          <span className="sc-band-tag">{zh ? '外部进程与持久化存储' : 'EXTERNAL PROCESSES & DISK'}</span>
-          <span className="sc-band-note">{zh ? '~/.soiacode/{sessions,audit,confirmed.json,crashes.jsonl}' : '~/.soiacode/{sessions,audit,confirmed.json,crashes.jsonl}'}</span>
+          <span className="sc-band-tag">{t('外部进程与持久化存储', 'EXTERNAL PROCESSES & DISK', '外部プロセスと永続ストレージ')}</span>
+          <span className="sc-band-note">~/.soiacode/{'{sessions,audit,confirmed.json,crashes.jsonl}'}</span>
         </div>
         <div className="sc-node-grid">
-          <div className="sc-node"><strong>{zh ? '模型厂商 API' : 'Model APIs'}</strong><span>{zh ? '仅经 soiacode-http 出站' : 'Outbound solely via soiacode-http'}</span></div>
-          <div className="sc-node"><strong>{zh ? 'OS 命令子进程' : 'OS Subprocesses'}</strong><span>{zh ? '仅经 soiacode-local 拉起' : 'Spawned solely via soiacode-local'}</span></div>
-          <div className="sc-node"><strong>{zh ? '扩展与 MCP' : 'Ext & MCP'}</strong><span>{zh ? '独立进程，不享内核内存' : 'Isolated OS processes'}</span></div>
-          <div className="sc-node"><strong>{zh ? '本地磁盘 JSONL' : 'Local Disk JSONL'}</strong><span>{zh ? '只追加记录 + Blob 文件' : 'Append-only records + blobs'}</span></div>
+          <div className="sc-node"><strong>{t('模型厂商 API', 'Model APIs', 'モデル API')}</strong><span>{t('仅经 soiacode-http 出站', 'Outbound solely via soiacode-http', 'soiacode-http 経由のみ通信')}</span></div>
+          <div className="sc-node"><strong>{t('OS 命令子进程', 'OS Subprocesses', 'OS サブプロセス')}</strong><span>{t('仅经 soiacode-local 拉起', 'Spawned solely via soiacode-local', 'soiacode-local 経由のみ起動')}</span></div>
+          <div className="sc-node"><strong>{t('扩展与 MCP', 'Ext & MCP', '拡張・MCP')}</strong><span>{t('独立进程，不享内核内存', 'Isolated OS processes', 'カーネルとメモリ空間を分離')}</span></div>
+          <div className="sc-node"><strong>{t('本地磁盘 JSONL', 'Local Disk JSONL', 'ローカル JSONL')}</strong><span>{t('只追加记录 + Blob 文件', 'Append-only records + blobs', '追記専用ログ + Blob 退避')}</span></div>
         </div>
       </div>
     </div>
   );
 }
 
-function SoiaCodePeripheralDiagram({ zh }: { zh: boolean }) {
-  const rows: ReadonlyArray<{ cmd: string; proto: string; role: string }> = zh
-    ? [
-        { cmd: 'si serve', proto: 'Unix socket / TCP+TLS', role: '常驻后台托管会话；复用 JSON-RPC 分派，分级 Token（read/prompt/approve/admin）管理跨终端接入。' },
-        { cmd: 'si mcp-server', proto: 'stdio MCP', role: '把 si 包装为标准 MCP Server 供外部 Agent 调用（交任务 / 等待 / 取消 / 列会话），审批默认按规则或转交调用方。' },
-        { cmd: 'si a2a', proto: 'HTTP + TLS + Token', role: '以 Agent2Agent 协议对外暴露 Agent Card；只听可信调用方 Token，触发的高危操作未预设放行一律拒绝。' },
-        { cmd: 'si inline', proto: 'stdio LSP', role: '充当编辑器灰字行内补全语言服务器（si inline lsp）；不进长会话，默认屏蔽 .env 与密钥文件。' },
-        { cmd: 'soiacode-exec', proto: 'SSH / 容器 stdio', role: '放到远端主机或容器里的轻量执行端；只依赖 local 与 protocol，按指令读写文件并起进程，不存用户凭据。' },
-      ]
-    : [
-        { cmd: 'si serve', proto: 'Unix socket / TCP+TLS', role: 'Background daemon holding live sessions; exposes scoped tokens (read/prompt/approve/admin) across devices.' },
-        { cmd: 'si mcp-server', proto: 'stdio MCP', role: 'Exposes si as a standard MCP server (submit / wait / cancel / list) for peer agents over stdio.' },
-        { cmd: 'si a2a', proto: 'HTTP + TLS + Token', role: 'Exposes Agent2Agent discovery & task execution with per-caller tokens and strict approval rules.' },
-        { cmd: 'si inline', proto: 'stdio LSP', role: 'Acts as an IDE LSP for FIM/chat inline completion; skips long session history and ignores .env/secret files.' },
-        { cmd: 'soiacode-exec', proto: 'SSH / container stdio', role: 'Remote worker deployed inside SSH hosts or containers; only depends on local + protocol and holds zero credentials.' },
-      ];
+function SoiaCodePeripheralDiagram({ locale }: { locale: LandingLocaleCode }) {
+  const lang = langOf(locale);
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
+  const rows: ReadonlyArray<{ cmd: string; proto: string; role: string }> =
+    lang === 'zh'
+      ? [
+          { cmd: 'si serve', proto: 'Unix socket / TCP+TLS', role: '常驻后台托管会话；复用 JSON-RPC 分派，分级 Token（read/prompt/approve/admin）管理跨终端接入。' },
+          { cmd: 'si mcp-server', proto: 'stdio MCP', role: '把 si 包装为标准 MCP Server 供外部 Agent 调用（交任务 / 等待 / 取消 / 列会话），审批默认按规则或转交调用方。' },
+          { cmd: 'si a2a', proto: 'HTTP + TLS + Token', role: '以 Agent2Agent 协议对外暴露 Agent Card；只听可信调用方 Token，触发的高危操作未预设放行一律拒绝。' },
+          { cmd: 'si inline', proto: 'stdio LSP', role: '充当编辑器灰字行内补全语言服务器（si inline lsp）；不进长会话，默认屏蔽 .env 与密钥文件。' },
+          { cmd: 'soiacode-exec', proto: 'SSH / 容器 stdio', role: '放到远端主机或容器里的轻量执行端；只依赖 local 与 protocol，按指令读写文件并起进程，不存用户凭据。' },
+        ]
+      : lang === 'ja'
+        ? [
+            { cmd: 'si serve', proto: 'Unix socket / TCP+TLS', role: '常駐バックグラウンドでセッションをホスト。read/prompt/approve/admin の権限別トークンで複数端末を保護。' },
+            { cmd: 'si mcp-server', proto: 'stdio MCP', role: 'si を標準 MCP サーバーとして外部 Agent へ公開（投入 / 待機 / 取消 / 一覧）。承認は既定ルールまたは呼出元へ委譲。' },
+            { cmd: 'si a2a', proto: 'HTTP + TLS + Token', role: 'Agent2Agent プロトコルで公開。信頼されたトークンのみ受理し、未許可の危険操作は即座に拒否。' },
+            { cmd: 'si inline', proto: 'stdio LSP', role: 'エディタ用のインライン補完 LSP（si inline lsp）。長期セッションには残さず .env や鍵ファイルは既定で除外。' },
+            { cmd: 'soiacode-exec', proto: 'SSH / コンテナ stdio', role: 'SSH 先やコンテナ内に配置する軽量ワーカー。local と protocol のみに依存しユーザー認証鍵は保持しません。' },
+          ]
+        : [
+            { cmd: 'si serve', proto: 'Unix socket / TCP+TLS', role: 'Background daemon holding live sessions; exposes scoped tokens (read/prompt/approve/admin) across devices.' },
+            { cmd: 'si mcp-server', proto: 'stdio MCP', role: 'Exposes si as a standard MCP server (submit / wait / cancel / list) for peer agents over stdio.' },
+            { cmd: 'si a2a', proto: 'HTTP + TLS + Token', role: 'Exposes Agent2Agent discovery & task execution with per-caller tokens and strict approval rules.' },
+            { cmd: 'si inline', proto: 'stdio LSP', role: 'Acts as an IDE LSP for FIM/chat inline completion; skips long session history and ignores .env/secret files.' },
+            { cmd: 'soiacode-exec', proto: 'SSH / container stdio', role: 'Remote worker deployed inside SSH hosts or containers; only depends on local + protocol and holds zero credentials.' },
+          ];
   return (
-    <div className="sc-diagram" aria-label={zh ? '外围独立运行程序交互架构' : 'Standalone peripheral processes'}>
+    <div className="sc-diagram" aria-label={t('外围独立运行程序交互架构', 'Standalone peripheral processes', '独立動作周辺バイナリの境界')}>
       <div className="sc-diagram-head">
-        <span className="sc-diagram-title">{zh ? 'PERIPHERALS · 外围自运行程序边界' : 'PERIPHERALS · STANDALONE BINARIES'}</span>
-        <span className="sc-diagram-sub">{zh ? '全为独立可执行/子命令，内核 si 本体不反向依赖它们' : 'Separate binaries/subcommands — the kernel never depends backward on them'}</span>
+        <span className="sc-diagram-title">{t('PERIPHERALS · 外围自运行程序边界', 'PERIPHERALS · STANDALONE BINARIES', 'PERIPHERALS · 独立バイナリの境界')}</span>
+        <span className="sc-diagram-sub">{t('全为独立可执行/子命令，内核 si 本体不反向依赖它们', 'Separate binaries/subcommands — the kernel never depends backward on them', 'すべて独立バイナリ／サブコマンドであり、カーネル si から逆依存しません')}</span>
       </div>
       {rows.map((r) => (
         <div className="sc-periph-row" key={r.cmd}>
@@ -1583,46 +2202,62 @@ function SoiaCodePeripheralDiagram({ zh }: { zh: boolean }) {
   );
 }
 
-function SoiaCodeToolSequenceDiagram({ zh }: { zh: boolean }) {
+function SoiaCodeToolSequenceDiagram({ locale }: { locale: LandingLocaleCode }) {
+  const lang = langOf(locale);
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
   const [stepIdx, setStepIdx] = useState(0);
   const lanes = ['provider', 'dispatch', 'mounts', 'approval', 'writer', 'tools'] as const;
-  const steps: ReadonlyArray<{ no: string; from: string; to: string; route: string; desc: string }> = zh
-    ? [
-        { no: '01', from: 'provider', to: 'dispatch', route: 'provider → dispatch', desc: '模型响应带出工具调用，已统一转换并校验为 protocol 的 ToolCall 类型。' },
-        { no: '02', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: '触发 before_tool_call 挂载点（策略 / 扩展可放行、拒绝或原地改写参数）。' },
-        { no: '03', from: 'mounts', to: 'approval', route: 'mounts → approval', desc: '内置权限规则介入：拆分复合命令，按 deny > ask > allow 与写保护路径判定。' },
-        { no: '04', from: 'approval', to: 'approval', route: 'approval [ask / never]', desc: '若判定需要确认：交互端弹窗等用户批准；无人值守 / never 策略直接视为拒绝。' },
-        { no: '05', from: 'approval', to: 'writer', route: 'approval → writer', desc: '先把审批决定追加写入会话记录；若落盘失败则保守按拒绝处理，绝不无痕执行。' },
-        { no: '06', from: 'dispatch', to: 'tools', route: 'dispatch → tools', desc: '放行后进入执行：文件工具做工作区路径核查；命令进入可选 OS 沙箱或远端执行端。' },
-        { no: '07', from: 'tools', to: 'dispatch', route: 'tools → dispatch', desc: '返回工具执行原文输出（及沙箱/退出码诊断标记）。' },
-        { no: '08', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: '触发 after_tool_result：超长输出裁剪、Blob 旁路与 redact 脱敏处理。' },
-        { no: '09', from: 'dispatch', to: 'writer', route: 'dispatch → writer', desc: '将处理后的 ToolResult（带大输出引用 id）追加进只读会话树。' },
-        { no: '10', from: 'dispatch', to: 'provider', route: 'dispatch → provider', desc: '结果回填上下文前缀，发起下一轮模型推理请求。' },
-      ]
-    : [
-        { no: '01', from: 'provider', to: 'dispatch', route: 'provider → dispatch', desc: 'Model response emits a ToolCall normalized into soiacode-protocol types.' },
-        { no: '02', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: 'Invoke before_tool_call mount (policy/extensions can allow, deny, or rewrite args).' },
-        { no: '03', from: 'mounts', to: 'approval', route: 'mounts → approval', desc: 'Built-in rules split compound commands and evaluate deny > ask > allow & protected paths.' },
-        { no: '04', from: 'approval', to: 'approval', route: 'approval [ask / never]', desc: 'If confirmation is required: ask interactively, or auto-deny under never / unattended.' },
-        { no: '05', from: 'approval', to: 'writer', route: 'approval → writer', desc: 'Persist approval decision before running; write failure safely aborts as deny.' },
-        { no: '06', from: 'dispatch', to: 'tools', route: 'dispatch → tools', desc: 'Execute inside workspace guard / optional OS sandbox / remote-exec endpoint.' },
-        { no: '07', from: 'tools', to: 'dispatch', route: 'tools → dispatch', desc: 'Return raw execution output plus exit status and sandbox markers.' },
-        { no: '08', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: 'Invoke after_tool_result: trim noisy output, offload blobs, and redact secrets.' },
-        { no: '09', from: 'dispatch', to: 'writer', route: 'dispatch → writer', desc: 'Append compact ToolResult (plus blob reference id) to append-only JSONL.' },
-        { no: '10', from: 'dispatch', to: 'provider', route: 'dispatch → provider', desc: 'Feed result back into next provider turn.' },
-      ];
+  const steps: ReadonlyArray<{ no: string; from: string; to: string; route: string; desc: string }> =
+    lang === 'zh'
+      ? [
+          { no: '01', from: 'provider', to: 'dispatch', route: 'provider → dispatch', desc: '模型响应带出工具调用，已统一转换并校验为 protocol 的 ToolCall 类型。' },
+          { no: '02', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: '触发 before_tool_call 挂载点（策略 / 扩展可放行、拒绝或原地改写参数）。' },
+          { no: '03', from: 'mounts', to: 'approval', route: 'mounts → approval', desc: '内置权限规则介入：拆分复合命令，按 deny > ask > allow 与写保护路径判定。' },
+          { no: '04', from: 'approval', to: 'approval', route: 'approval [ask / never]', desc: '若判定需要确认：交互端弹窗等用户批准；无人值守 / never 策略直接视为拒绝。' },
+          { no: '05', from: 'approval', to: 'writer', route: 'approval → writer', desc: '先把审批决定追加写入会话记录；若落盘失败则保守按拒绝处理，绝不无痕执行。' },
+          { no: '06', from: 'dispatch', to: 'tools', route: 'dispatch → tools', desc: '放行后进入执行：文件工具做工作区路径核查；命令进入可选 OS 沙箱或远端执行端。' },
+          { no: '07', from: 'tools', to: 'dispatch', route: 'tools → dispatch', desc: '返回工具执行原文输出（及沙箱/退出码诊断标记）。' },
+          { no: '08', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: '触发 after_tool_result：超长输出裁剪、Blob 旁路与 redact 脱敏处理。' },
+          { no: '09', from: 'dispatch', to: 'writer', route: 'dispatch → writer', desc: '将处理后的 ToolResult（带大输出引用 id）追加进只读会话树。' },
+          { no: '10', from: 'dispatch', to: 'provider', route: 'dispatch → provider', desc: '结果回填上下文前缀，发起下一轮模型推理请求。' },
+        ]
+      : lang === 'ja'
+        ? [
+            { no: '01', from: 'provider', to: 'dispatch', route: 'provider → dispatch', desc: 'モデルの ToolCall 応答を soiacode-protocol の標準型へ変換・検証。' },
+            { no: '02', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: 'before_tool_call フックを呼び出し、ポリシー／拡張が許可・拒否・引数書換えを判定。' },
+            { no: '03', from: 'mounts', to: 'approval', route: 'mounts → approval', desc: '複合シェルコマンドを分割し、deny > ask > allow と保護パス規則で判定。' },
+            { no: '04', from: 'approval', to: 'approval', route: 'approval [ask / never]', desc: '確認が必要な場合は対話プロンプトを表示。無人実行または never 設定は即座に拒否。' },
+            { no: '05', from: 'approval', to: 'writer', route: 'approval → writer', desc: '実行前に承認判断を JSONL へ記録。記録失敗時は安全側（拒否）へ倒し無痕跡実行を禁止。' },
+            { no: '06', from: 'dispatch', to: 'tools', route: 'dispatch → tools', desc: '許可後に実行：ワークスペース境界チェック、任意の OS サンドボックスまたは remote-exec へ。' },
+            { no: '07', from: 'tools', to: 'dispatch', route: 'tools → dispatch', desc: '生の出力結果と終了コード・サンドボックス診断情報を返却。' },
+            { no: '08', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: 'after_tool_result フック：長大出力のトリム、Blob 退避、機密情報の redact 処理。' },
+            { no: '09', from: 'dispatch', to: 'writer', route: 'dispatch → writer', desc: '圧縮済み ToolResult（Blob 参照 ID 含む）を append-only JSONL へ追記。' },
+            { no: '10', from: 'dispatch', to: 'provider', route: 'dispatch → provider', desc: '結果を文脈へ戻し、次の推論ターンを開始。' },
+          ]
+        : [
+            { no: '01', from: 'provider', to: 'dispatch', route: 'provider → dispatch', desc: 'Model response emits a ToolCall normalized into soiacode-protocol types.' },
+            { no: '02', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: 'Invoke before_tool_call mount (policy/extensions can allow, deny, or rewrite args).' },
+            { no: '03', from: 'mounts', to: 'approval', route: 'mounts → approval', desc: 'Built-in rules split compound commands and evaluate deny > ask > allow & protected paths.' },
+            { no: '04', from: 'approval', to: 'approval', route: 'approval [ask / never]', desc: 'If confirmation is required: ask interactively, or auto-deny under never / unattended.' },
+            { no: '05', from: 'approval', to: 'writer', route: 'approval → writer', desc: 'Persist approval decision before running; write failure safely aborts as deny.' },
+            { no: '06', from: 'dispatch', to: 'tools', route: 'dispatch → tools', desc: 'Execute inside workspace guard / optional OS sandbox / remote-exec endpoint.' },
+            { no: '07', from: 'tools', to: 'dispatch', route: 'tools → dispatch', desc: 'Return raw execution output plus exit status and sandbox markers.' },
+            { no: '08', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: 'Invoke after_tool_result: trim noisy output, offload blobs, and redact secrets.' },
+            { no: '09', from: 'dispatch', to: 'writer', route: 'dispatch → writer', desc: 'Append compact ToolResult (plus blob reference id) to append-only JSONL.' },
+            { no: '10', from: 'dispatch', to: 'provider', route: 'dispatch → provider', desc: 'Feed result back into next provider turn.' },
+          ];
   const cur = steps[stepIdx] ?? steps[0];
   return (
-    <div className="sc-diagram" aria-label={zh ? '单次工具调用审批全链路时序' : 'Tool call sequence'}>
+    <div className="sc-diagram" aria-label={t('单次工具调用审批全链路时序', 'Tool call sequence', 'ツール実行承認フロー時系列')}>
       <div className="sc-diagram-head">
-        <span className="sc-diagram-title">{zh ? 'TOOL SEQUENCE · 单次工具调用全链路（10 步可点选推演）' : 'TOOL SEQUENCE · 10-STEP INTERACTIVE WALKTHROUGH'}</span>
+        <span className="sc-diagram-title">{t('TOOL SEQUENCE · 单次工具调用全链路（10 步可点选推演）', 'TOOL SEQUENCE · 10-STEP INTERACTIVE WALKTHROUGH', 'TOOL SEQUENCE · 10 ステップ対話シーケンス')}</span>
         <div className="sc-seq-controls">
           <div className="sc-seq-btns">
             <button type="button" onClick={() => setStepIdx((s) => (s - 1 + steps.length) % steps.length)}>
-              {zh ? '上一步' : 'Prev'}
+              {t('上一步', 'Prev', '前へ')}
             </button>
             <button type="button" onClick={() => setStepIdx((s) => (s + 1) % steps.length)}>
-              {zh ? '下一步' : 'Next'}
+              {t('下一步', 'Next', '次へ')}
             </button>
           </div>
         </div>
@@ -1656,78 +2291,79 @@ function SoiaCodeToolSequenceDiagram({ zh }: { zh: boolean }) {
   );
 }
 
-function SoiaCodeCrateDiagram({ zh }: { zh: boolean }) {
+function SoiaCodeCrateDiagram({ locale }: { locale: LandingLocaleCode }) {
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
   return (
-    <div className="sc-diagram" aria-label={zh ? 'SoiaCode Crate 五层工程架构' : 'SoiaCode Rust crate layers'}>
+    <div className="sc-diagram" aria-label={t('SoiaCode Crate 五层工程架构', 'SoiaCode Rust crate layers', 'SoiaCode Rust クレート 5 層構成')}>
       <div className="sc-diagram-head">
-        <span className="sc-diagram-title">{zh ? 'WORKSPACE CRATES · 严格 L4 → L0 单向依赖矩阵' : 'WORKSPACE CRATES · STRICT L4 → L0 HIERARCHY'}</span>
-        <span className="sc-diagram-sub">{zh ? '同层互不依赖，旁路与外围独立演进' : 'No sibling coupling, strict IO isolation'}</span>
+        <span className="sc-diagram-title">{t('WORKSPACE CRATES · 严格 L4 → L0 单向依赖矩阵', 'WORKSPACE CRATES · STRICT L4 → L0 HIERARCHY', 'WORKSPACE CRATES · 厳格な L4 → L0 単方向依存階層')}</span>
+        <span className="sc-diagram-sub">{t('同层互不依赖，旁路与外围独立演进', 'No sibling coupling, strict IO isolation', '同階層依存なし · IO 境界の徹底分離')}</span>
       </div>
 
       <div className="sc-band is-cyan">
-        <div className="sc-band-head"><span className="sc-band-tag">{zh ? 'L4 · 入口层（只接线）' : 'L4 · ENTRYPOINTS'}</span></div>
+        <div className="sc-band-head"><span className="sc-band-tag">{t('L4 · 入口层（只接线）', 'L4 · ENTRYPOINTS', 'L4 · エントリポイント層')}</span></div>
         <div className="sc-node-grid cols-2">
-          <div className="sc-node"><strong>soiacode</strong><span>{zh ? '命令 si：组装各 crate 与运行模式' : 'CLI binary & assembler'}</span></div>
-          <div className="sc-node"><strong>soiacode-rpc / -acp</strong><span>{zh ? 'stdio JSON-RPC 与编辑器 ACP 协议适配' : 'stdio JSON-RPC & ACP'}</span></div>
-          <div className="sc-node"><strong>soiacode-sdk</strong><span>{zh ? '稳定 Rust 库门面（CLI/RPC/ACP 均建在其上）' : 'Stable Rust embedding facade'}</span></div>
+          <div className="sc-node"><strong>soiacode</strong><span>{t('命令 si：组装各 crate 与运行模式', 'CLI binary & assembler', 'CLI si バイナリ統合')}</span></div>
+          <div className="sc-node"><strong>soiacode-rpc / -acp</strong><span>{t('stdio JSON-RPC 与编辑器 ACP 协议适配', 'stdio JSON-RPC & ACP', 'stdio JSON-RPC / エディタ ACP')}</span></div>
+          <div className="sc-node"><strong>soiacode-sdk</strong><span>{t('稳定 Rust 库门面（CLI/RPC/ACP 均建在其上）', 'Stable Rust embedding facade', '安定版 Rust 組込みファサード')}</span></div>
         </div>
       </div>
 
       <div className="sc-band is-violet">
-        <div className="sc-band-head"><span className="sc-band-tag">{zh ? 'L3 · 能力层' : 'L3 · CAPABILITIES'}</span></div>
+        <div className="sc-band-head"><span className="sc-band-tag">{t('L3 · 能力层', 'L3 · CAPABILITIES', 'L3 · 機能層')}</span></div>
         <div className="sc-node-grid">
-          <div className="sc-node"><strong>soiacode-tools</strong><span>{zh ? '5 内置工具 + 本机环境' : 'Built-in tools'}</span></div>
-          <div className="sc-node"><strong>soiacode-context</strong><span>{zh ? 'AGENTS.md / 规则来源' : 'Context sources'}</span></div>
-          <div className="sc-node"><strong>soiacode-config</strong><span>{zh ? '三级配置与 trust.json' : 'Config & trust'}</span></div>
-          <div className="sc-node"><strong>soiacode-extension</strong><span>{zh ? '扩展进程 / MCP / 远端环境宿主' : 'Extension subprocess host'}</span></div>
+          <div className="sc-node"><strong>soiacode-tools</strong><span>{t('5 内置工具 + 本机环境', 'Built-in tools', '5 組込みツール')}</span></div>
+          <div className="sc-node"><strong>soiacode-context</strong><span>{t('AGENTS.md / 规则来源', 'Context sources', 'AGENTS.md・規則読込')}</span></div>
+          <div className="sc-node"><strong>soiacode-config</strong><span>{t('三级配置与 trust.json', 'Config & trust', '3 段階設定・trust.json')}</span></div>
+          <div className="sc-node"><strong>soiacode-extension</strong><span>{t('扩展进程 / MCP / 远端环境宿主', 'Extension subprocess host', '拡張／MCP サブプロセスホスト')}</span></div>
         </div>
       </div>
 
       <div className="sc-band is-amber">
-        <div className="sc-band-head"><span className="sc-band-tag">{zh ? 'L2–L1 · 内核与基础层' : 'L2–L1 · CORE LOOP & FOUNDATIONS'}</span></div>
+        <div className="sc-band-head"><span className="sc-band-tag">{t('L2–L1 · 内核与基础层', 'L2–L1 · CORE LOOP & FOUNDATIONS', 'L2–L1 · コアループ・基盤層')}</span></div>
         <div className="sc-node-grid">
           <div className="sc-node">
-            <div className="sc-node-top"><strong>soiacode-agent</strong><span className="sc-badge core">L2 {zh ? '内核' : 'Core'}</span></div>
-            <span>{zh ? 'agent 循环与工具派发' : 'Agent loop & dispatch'}</span>
+            <div className="sc-node-top"><strong>soiacode-agent</strong><span className="sc-badge core">L2 {t('内核', 'Core', 'コア')}</span></div>
+            <span>{t('agent 循环与工具派发', 'Agent loop & dispatch', 'ループ制御とツール実行')}</span>
           </div>
           <div className="sc-node">
-            <div className="sc-node-top"><strong>soiacode-provider</strong><span className="sc-badge core">L1 {zh ? '内核' : 'Core'}</span></div>
-            <span>{zh ? '5 种 LLM 线协议（Gemini/Bedrock 可选 feature）' : '5 wire protocols'}</span>
+            <div className="sc-node-top"><strong>soiacode-provider</strong><span className="sc-badge core">L1 {t('内核', 'Core', 'コア')}</span></div>
+            <span>{t('5 种 LLM 线协议（Gemini/Bedrock 可选 feature）', '5 wire protocols', '5 種 LLM プロトコル')}</span>
           </div>
           <div className="sc-node">
-            <div className="sc-node-top"><strong>soiacode-session</strong><span className="sc-badge core">L1 {zh ? '内核' : 'Core'}</span></div>
-            <span>{zh ? 'JSONL 树存储与 Blob 旁路' : 'JSONL store & blobs'}</span>
+            <div className="sc-node-top"><strong>soiacode-session</strong><span className="sc-badge core">L1 {t('内核', 'Core', 'コア')}</span></div>
+            <span>{t('JSONL 树存储与 Blob 旁路', 'JSONL store & blobs', 'JSONL 木記録と Blob 退避')}</span>
           </div>
           <div className="sc-node">
             <div className="sc-node-top"><strong>soiacode-mcp</strong><span className="sc-badge opt">L1</span></div>
-            <span>{zh ? '外部 MCP 客户端' : 'MCP client'}</span>
+            <span>{t('外部 MCP 客户端', 'MCP client', '外部 MCP クライアント')}</span>
           </div>
           <div className="sc-node">
-            <div className="sc-node-top"><strong>soiacode-sandbox</strong><span className="sc-badge opt">L1 {zh ? '可选' : 'Opt'}</span></div>
-            <span>{zh ? 'feature 默认关闭' : 'Disabled by default'}</span>
+            <div className="sc-node-top"><strong>soiacode-sandbox</strong><span className="sc-badge opt">L1 {t('可选', 'Opt', '任意')}</span></div>
+            <span>{t('feature 默认关闭', 'Disabled by default', '既定無効 feature')}</span>
           </div>
         </div>
       </div>
 
       <div className="sc-band is-slate">
-        <div className="sc-band-head"><span className="sc-band-tag">{zh ? 'L0 · 底层（唯一 IO 边界）与旁路' : 'L0 · PRIMITIVES & BYPASS CRATES'}</span></div>
+        <div className="sc-band-head"><span className="sc-band-tag">{t('L0 · 底层（唯一 IO 边界）与旁路', 'L0 · PRIMITIVES & BYPASS CRATES', 'L0 · 最下層（唯一の IO 境界）とバイパス')}</span></div>
         <div className="sc-node-grid cols-3">
           <div className="sc-node">
-            <div className="sc-node-top"><strong>soiacode-http</strong><span className="sc-badge base">{zh ? '唯一联网' : 'HTTP'}</span></div>
-            <span>{zh ? '代理、自定义 CA、TLS、请求头脱敏' : 'Proxy, custom CA, header redact'}</span>
+            <div className="sc-node-top"><strong>soiacode-http</strong><span className="sc-badge base">{t('唯一联网', 'HTTP', '通信境界')}</span></div>
+            <span>{t('代理、自定义 CA、TLS、请求头脱敏', 'Proxy, custom CA, header redact', 'プロキシ・CA・ヘッダ秘匿')}</span>
           </div>
           <div className="sc-node">
-            <div className="sc-node-top"><strong>soiacode-local</strong><span className="sc-badge base">{zh ? '唯一本地IO' : 'OS'}</span></div>
-            <span>{zh ? '原子写、路径解析、进程组起停' : 'Atomic write, paths, process groups'}</span>
+            <div className="sc-node-top"><strong>soiacode-local</strong><span className="sc-badge base">{t('唯一本地IO', 'OS', 'OS 境界')}</span></div>
+            <span>{t('原子写、路径解析、进程组起停', 'Atomic write, paths, process groups', '原子的書込・パス・プロセス管理')}</span>
           </div>
           <div className="sc-node">
-            <div className="sc-node-top"><strong>soiacode-protocol</strong><span className="sc-badge core">{zh ? '零 IO' : 'Zero-IO'}</span></div>
-            <span>{zh ? '全仓与扩展唯一类型真源' : 'Single type source of truth'}</span>
+            <div className="sc-node-top"><strong>soiacode-protocol</strong><span className="sc-badge core">{t('零 IO', 'Zero-IO', 'Zero-IO')}</span></div>
+            <span>{t('全仓与扩展唯一类型真源', 'Single type source of truth', '全クレート唯一の型定義源')}</span>
           </div>
         </div>
         <div className="sc-node-grid cols-2">
-          <div className="sc-node"><strong>{zh ? '旁路（tui / testkit / eval）' : 'Bypass (tui / testkit / eval)'}</strong><span>{zh ? '仅限终端 UI、假厂商回放与离线评估，不反侵入内核' : 'Optional TUI & offline harness/eval'}</span></div>
-          <div className="sc-node"><strong>{zh ? '外围（extkit / ext-* / svc-* / exec）' : 'Peripherals (extkit / ext-* / svc-* / exec)'}</strong><span>{zh ? '只依赖 protocol，作为独立二进制与子进程演进' : 'Depend only on protocol, evolve out-of-process'}</span></div>
+          <div className="sc-node"><strong>{t('旁路（tui / testkit / eval）', 'Bypass (tui / testkit / eval)', 'バイパス（tui / testkit / eval）')}</strong><span>{t('仅限终端 UI、假厂商回放与离线评估，不反侵入内核', 'Optional TUI & offline harness/eval', '端末 UI・擬似再生・評価専用')}</span></div>
+          <div className="sc-node"><strong>{t('外围（extkit / ext-* / svc-* / exec）', 'Peripherals (extkit / ext-* / svc-* / exec)', '周辺（extkit / ext-* / svc-* / exec）')}</strong><span>{t('只依赖 protocol，作为独立二进制与子进程演进', 'Depend only on protocol, evolve out-of-process', 'protocol のみに依存しプロセス外で進化')}</span></div>
         </div>
       </div>
     </div>
@@ -1737,22 +2373,32 @@ function SoiaCodeCrateDiagram({ zh }: { zh: boolean }) {
 /** SoiaCode (si) — architecture & specification detail page grounded in soiacode/docs. */
 export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
   const href = (path: string) => hrefFor(path, locale);
-  const zh = isZh(locale);
-  const toc: ReadonlyArray<{ id: string; label: string }> = zh
-    ? [
-        { id: 'what', label: '1. 它是做什么的' },
-        { id: 'support', label: '2. 支持什么能力' },
-        { id: 'boundaries', label: '3. 精确边界与安全' },
-        { id: 'architecture', label: '4. 工程分层与隔离' },
-        { id: 'roadmap', label: '5. 路线与当前进度' },
-      ]
-    : [
-        { id: 'what', label: '1. What it does' },
-        { id: 'support', label: '2. What it supports' },
-        { id: 'boundaries', label: '3. Exact boundaries' },
-        { id: 'architecture', label: '4. Crate architecture' },
-        { id: 'roadmap', label: '5. Roadmap & status' },
-      ];
+  const lang = langOf(locale);
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
+  const toc: ReadonlyArray<{ id: string; label: string }> =
+    lang === 'zh'
+      ? [
+          { id: 'what', label: '1. 它是做什么的' },
+          { id: 'support', label: '2. 支持什么能力' },
+          { id: 'boundaries', label: '3. 精确边界与安全' },
+          { id: 'architecture', label: '4. 工程分层与隔离' },
+          { id: 'roadmap', label: '5. 路线与当前进度' },
+        ]
+      : lang === 'ja'
+        ? [
+            { id: 'what', label: '1. 何をするか' },
+            { id: 'support', label: '2. 対応機能・拡張' },
+            { id: 'boundaries', label: '3. 厳密な境界と安全' },
+            { id: 'architecture', label: '4. クレート階層と分離' },
+            { id: 'roadmap', label: '5. ロードマップと現在地' },
+          ]
+        : [
+            { id: 'what', label: '1. What it does' },
+            { id: 'support', label: '2. What it supports' },
+            { id: 'boundaries', label: '3. Exact boundaries' },
+            { id: 'architecture', label: '4. Crate architecture' },
+            { id: 'roadmap', label: '5. Roadmap & status' },
+          ];
 
   return (
     <SubpageLayout active="product" locale={locale}>
@@ -1762,23 +2408,27 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
         </nav>
         <header className="catalog-head">
           <span className="label">
-            {zh
-              ? 'SOIA 家族 · 方案与架构设计阶段（0.0.1 M1 进行中 · MIT）'
-              : 'SOIA family · architecture & design stage (0.0.1 M1 active · MIT)'}
+            {t(
+              'SOIA 家族 · 方案与架构设计阶段（0.0.1 M1 进行中 · MIT）',
+              'SOIA family · architecture & design stage (0.0.1 M1 active · MIT)',
+              'SOIA ファミリー · アーキテクチャ設計段階 (0.0.1 M1 進行中 · MIT)',
+            )}
           </span>
           <h1 className="display">SoiaCode (si)</h1>
           <p className="lead">
-            {zh
-              ? '用 Rust 编写的轻量 Coding Agent 内核与命令行工具。核心宗旨是「人守住注意力，系统守住安全」（Your attention is all it needs.）——把极小、可审查、高确定性的循环与权限网关留在单二进制内核，把协作、常驻、浏览器、团队策略与远程执行全部解耦为独立扩展。'
-              : 'A lightweight Rust coding agent kernel and CLI (si). Built around “humans guard attention, the system guards safety” (Your attention is all it needs.) — keeping a minimal, auditable agent loop and permission gateway in one static binary while decoupling daemons, team policies, browsers, and remote execution into extensions.'}
+            {t(
+              '用 Rust 编写的轻量 Coding Agent 内核与命令行工具。核心宗旨是「人守住注意力，系统守住安全」（Your attention is all it needs.）——把极小、可审查、高确定性的循环与权限网关留在单二进制内核，把协作、常驻、浏览器、团队策略与远程执行全部解耦为独立扩展。',
+              'A lightweight Rust coding agent kernel and CLI (si). Built around “humans guard attention, the system guards safety” (Your attention is all it needs.) — keeping a minimal, auditable agent loop and permission gateway in one static binary while decoupling daemons, team policies, browsers, and remote execution into extensions.',
+              'Rust 製の軽量 Coding Agent カーネル兼 CLI（si）。「人が注意力を守り、システムが安全を守る」（Your attention is all it needs.）を掲げ、最小・監査可能なループと権限ゲートウェイを単一バイナリに閉じ、常駐サーバーやブラウザ操作・チーム方針・遠隔実行を拡張へと完全に疎結合化します。',
+            )}
           </p>
         </header>
 
-        <SoiaCodeProductDiagram zh={zh} />
+        <SoiaCodeProductDiagram locale={locale} />
 
         <div className="tutorial-detail-layout">
           <aside className="missing-toc">
-            <span>{zh ? '本页目录' : 'On this page'}</span>
+            <span>{t('本页目录', 'On this page', '目次')}</span>
             {toc.map((item) => (
               <a href={`#${item.id}`} key={item.id}>{item.label}</a>
             ))}
@@ -1786,184 +2436,194 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
 
           <div className="missing-article">
             <section id="what">
-              <h2>{zh ? '1. 它到底做什么的' : '1. What it actually does'}</h2>
+              <h2>{t('1. 它到底做什么的', '1. What it actually does', '1. 何をするツールか')}</h2>
               <p>
-                {zh
-                  ? 'SoiaCode 不是一套重型 IDE 或托管 SaaS，而是一个可独立部署的 Agent 执行内核（命令行 si）。它专注解决三件事：低噪声地与模型对话改代码、在每次工具调用前把风险挡在确定性权限关口、以及把完整过程写成可回放、可分叉的明文会话树。'
-                  : 'SoiaCode is not a heavyweight IDE or hosted SaaS control plane. It is a standalone Rust agent kernel (si) focused on three jobs: coding cleanly with low context noise, enforcing deterministic permission checks before every side effect, and persisting an append-only, replayable session tree.'}
+                {t(
+                  'SoiaCode 不是一套重型 IDE 或托管 SaaS，而是一个可独立部署的 Agent 执行内核（命令行 si）。它专注解决三件事：低噪声地与模型对话改代码、在每次工具调用前把风险挡在确定性权限关口、以及把完整过程写成可回放、可分叉的明文会话树。',
+                  'SoiaCode is not a heavyweight IDE or hosted SaaS control plane. It is a standalone Rust agent kernel (si) focused on three jobs: coding cleanly with low context noise, enforcing deterministic permission checks before every side effect, and persisting an append-only, replayable session tree.',
+                  'SoiaCode は重量級 IDE やクラウド SaaS ではなく、単体動作する Rust 製 Agent 実行カーネル（CLI si）です。低ノイズな対話コーディング、全ツール実行前の決定論的権限チェック、再生・分岐可能な平文 JSONL セッション木の永続化の 3 点に集中します。',
+                )}
               </p>
 
               <div className="soiacode-pill-row">
-                {(zh
-                  ? ['人守住注意力', '系统守住安全', '单二进制极小内核', '外围独立演化', '默认零遥测']
-                  : ['Attention first', 'System-enforced safety', 'Single static binary', 'Independent peripheral evolution', 'Zero telemetry by default']
-                ).map((pill) => (
+                {(t(
+                  ['人守住注意力', '系统守住安全', '单二进制极小内核', '外围独立演化', '默认零遥测'],
+                  ['Attention first', 'System-enforced safety', 'Single static binary', 'Independent peripheral evolution', 'Zero telemetry by default'],
+                  ['注意力優先', 'システム強制の安全性', '単一静的バイナリ', '周辺機能の独立進化', '既定ゼロテレメトリ'],
+                )).map((pill) => (
                   <span className="soiacode-pill" key={pill}>{pill}</span>
                 ))}
               </div>
 
-              <h3>{zh ? '核心工作机制' : 'Core runtime mechanics'}</h3>
+              <h3>{t('核心工作机制', 'Core runtime mechanics', 'コア動作メカニズム')}</h3>
               <ul>
                 <li>
-                  {zh
-                    ? '省注意力与上下文工程：系统提示词保持短小；工具输出先经过裁剪（Trim）和大文本旁路落盘（Blob offloading，会话里只留引用）再进入上下文；只在权限审批、风险写入与方向确认时打断人。'
-                    : 'Attention & context engineering: short system prompt; tool outputs are trimmed and large blobs are offloaded with references before entering model context, interrupting humans only on approvals, risk, or direction.'}
+                  {t(
+                    '省注意力与上下文工程：系统提示词保持短小；工具输出先经过裁剪（Trim）和大文本旁路落盘（Blob offloading，会话里只留引用）再进入上下文；只在权限审批、风险写入与方向确认时打断人。',
+                    'Attention & context engineering: short system prompt; tool outputs are trimmed and large blobs are offloaded with references before entering model context, interrupting humans only on approvals, risk, or direction.',
+                    '注意力とコンテキスト工学：システムプロンプトを極小に保ち、ツール出力はトリムおよび Blob 退避（参照 ID のみ記録）を経てからモデルへ入力。承認や高リスク変更時のみ人に確認します。',
+                  )}
                 </li>
                 <li>
-                  {zh
-                    ? '只追加树状会话（Append-only JSONL）：每个会话落盘为一份明文 .jsonl（在线可直接 grep / tail），每条记录带 id 与 parentId 构成树。/tree 可在同一文件任意节点长出新分支，/fork 复制路径与快照成独立新会话；edit 前自动保留文件快照。'
-                    : 'Append-only tree sessions (JSONL): each session writes plain .jsonl records with id and parentId. /tree branches inside the same file; /fork copies lineage and blobs into an independent session; pre-edit file snapshots stay referenced.'}
+                  {t(
+                    '只追加树状会话（Append-only JSONL）：每个会话落盘为一份明文 .jsonl（在线可直接 grep / tail），每条记录带 id 与 parentId 构成树。/tree 可在同一文件任意节点长出新分支，/fork 复制路径与快照成独立新会话；edit 前自动保留文件快照。',
+                    'Append-only tree sessions (JSONL): each session writes plain .jsonl records with id and parentId. /tree branches inside the same file; /fork copies lineage and blobs into an independent session; pre-edit file snapshots stay referenced.',
+                    '追記専用ツリー型セッション（JSONL）：各レコードに id / parentId を持たせ /tree で同ファイル内分岐、/fork で系統ごと新規複製。edit 前のファイルスナップショットも自動保持されます。',
+                  )}
                 </li>
                 <li>
-                  {zh
-                    ? '长任务 = 长会话：不另造第二套脱离会话的任务循环，通过上下文压缩摘要、Steer（即时注入下一轮）与 FollowUp（排队等当前轮完成）推进长程工作，支持断点恢复与多会话共享同一 si 进程。'
-                    : 'Long task = long session: no separate orchestration engine outside sessions; long runs advance via compaction summaries, Steer/FollowUp queues, and clean resume across sessions inside one si process.'}
+                  {t(
+                    '长任务 = 长会话：不另造第二套脱离会话的任务循环，通过上下文压缩摘要、Steer（即时注入下一轮）与 FollowUp（排队等当前轮完成）推进长程工作，支持断点恢复与多会话共享同一 si 进程。',
+                    'Long task = long session: no separate orchestration engine outside sessions; long runs advance via compaction summaries, Steer/FollowUp queues, and clean resume across sessions inside one si process.',
+                    '長時間タスク = 長期セッション：別立てのエンジンを作らず、要約圧縮と Steer / FollowUp キューにより同一 si プロセス内で中断・再開をシームレスに扱います。',
+                  )}
                 </li>
               </ul>
 
-              <SoiaCodeSystemDiagram zh={zh} />
+              <SoiaCodeSystemDiagram locale={locale} />
             </section>
 
             <section id="support">
-              <h2>{zh ? '2. 它支持什么能力' : '2. What it supports'}</h2>
+              <h2>{t('2. 它支持什么能力', '2. What it supports', '2. 対応機能と拡張性')}</h2>
               <p>
-                {zh
-                  ? '内核保持最小闭环，常用开发场景直接开箱；更重的工作流、常驻运维、浏览器操控和团队规则全部通过 34 个官方扩展与标准协议按需安装。'
-                  : 'The core stays small out of the box, while heavier workflows, daemons, browser driving, and org policies load cleanly through 34 official extensions and standard protocols.'}
+                {t(
+                  '内核保持最小闭环，常用开发场景直接开箱；更重的工作流、常驻运维、浏览器操控和团队规则全部通过 34 个官方扩展与标准协议按需安装。',
+                  'The core stays small out of the box, while heavier workflows, daemons, browser driving, and org policies load cleanly through 34 official extensions and standard protocols.',
+                  'カーネル自体は極小に保ちつつ、高度なワークフローや常駐デーモン・ブラウザ操作・組織ルールは 34 種の公式拡張と標準プロトコル経由で必要な分だけ導入できます。',
+                )}
               </p>
 
               <div className="skill-table-wrap">
                 <table className="skill-cap-table">
                   <thead>
                     <tr>
-                      <th>{zh ? '能力维度' : 'Capability'}</th>
-                      <th>{zh ? '具体支持范围（来自 docs 规格）' : 'Supported scope (from docs)'}</th>
+                      <th>{t('能力维度', 'Capability', '機能領域')}</th>
+                      <th>{t('具体支持范围（来自 docs 规格）', 'Supported scope (from docs)', '仕様上の対応範囲')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td><strong>{zh ? '5 种运行方式' : '5 run modes'}</strong></td>
+                      <td><strong>{t('5 种运行方式', '5 run modes', '5 つの実行モード')}</strong></td>
                       <td>
-                        {zh
-                          ? 'si（Line-mode 终端交互）、si -p "任务"（Print 无交互脚本/CI 排障）、si --mode rpc（stdio JSON-RPC 长期驱动）、si --mode acp（Zed 等编辑器接入）、soiacode-sdk（Rust 库门面直接嵌入宿主）。'
-                          : 'si (interactive line-mode terminal), si -p "task" (print/CI mode), si --mode rpc (long-lived stdio JSON-RPC), si --mode acp (editors like Zed), and soiacode-sdk (Rust crate embedding).'}
+                        {t(
+                          'si（Line-mode 终端交互）、si -p "任务"（Print 无交互脚本/CI 排障）、si --mode rpc（stdio JSON-RPC 长期驱动）、si --mode acp（Zed 等编辑器接入）、soiacode-sdk（Rust 库门面直接嵌入宿主）。',
+                          'si (interactive line-mode terminal), si -p "task" (print/CI mode), si --mode rpc (long-lived stdio JSON-RPC), si --mode acp (editors like Zed), and soiacode-sdk (Rust crate embedding).',
+                          'si（対話 CLI）、si -p "task"（単発 print/CI 用）、si --mode rpc（常駐 stdio JSON-RPC）、si --mode acp（Zed 等エディタ連携）、soiacode-sdk（Rust 組込クレート）。',
+                        )}
                       </td>
                     </tr>
                     <tr>
-                      <td><strong>{zh ? '5 个内置工具' : '5 built-in tools'}</strong></td>
+                      <td><strong>{t('5 个内置工具', '5 built-in tools', '5 組込みツール')}</strong></td>
                       <td>
-                        {zh
-                          ? 'read、write、edit、命令执行（bash / powershell）、grep。其余专业能力全部不硬编码进内核。'
-                          : 'read, write, edit, command execution (bash / powershell), and grep. Everything else lives outside the core.'}
+                        {t(
+                          'read、write、edit、命令执行（bash / powershell）、grep。其余专业能力全部不硬编码进内核。',
+                          'read, write, edit, command execution (bash / powershell), and grep. Everything else lives outside the core.',
+                          'read / write / edit / コマンド実行（bash・powershell）/ grep の 5 つのみ。それ以外はすべてカーネル外に分離。',
+                        )}
                       </td>
                     </tr>
                     <tr>
-                      <td><strong>{zh ? '5 种模型线协议' : '5 wire protocols'}</strong></td>
+                      <td><strong>{t('5 种模型线协议', '5 wire protocols', '5 種 LLM プロトコル')}</strong></td>
                       <td>
-                        {zh
-                          ? 'soiacode-provider 支持 Anthropic、OpenAI Chat、OpenAI Responses，以及按 feature 编入的 Gemini 与 Bedrock。'
-                          : 'soiacode-provider supports Anthropic, OpenAI Chat, OpenAI Responses, plus feature-gated Gemini and Bedrock.'}
+                        {t(
+                          'soiacode-provider 支持 Anthropic、OpenAI Chat、OpenAI Responses，以及按 feature 编入的 Gemini 与 Bedrock。',
+                          'soiacode-provider supports Anthropic, OpenAI Chat, OpenAI Responses, plus feature-gated Gemini and Bedrock.',
+                          'Anthropic / OpenAI Chat / OpenAI Responses に加え、feature 指定で Gemini と Bedrock にも対応。',
+                        )}
                       </td>
                     </tr>
                     <tr>
-                      <td><strong>{zh ? '扩展与 MCP 生态' : 'Extensions & MCP'}</strong></td>
+                      <td><strong>{t('扩展与 MCP 生态', 'Extensions & MCP', '拡張・MCP エコシステム')}</strong></td>
                       <td>
-                        {zh
-                          ? '内置 MCP 客户端 + soiacode-extkit 扩展开发套件；官方提供 8 大类共 34 个可扩展包（si install <名>），运行在独立子进程或通过 si <服务> 独立启动。'
-                          : 'Built-in MCP client + soiacode-extkit SDK; 34 official extensions across 8 categories via si install <name>, running as isolated subprocesses or standalone si <service> processes.'}
+                        {t(
+                          '内置 MCP 客户端 + soiacode-extkit 扩展开发套件；官方提供 8 大类共 34 个可扩展包（si install <名>），运行在独立子进程或通过 si <服务> 独立启动。',
+                          'Built-in MCP client + soiacode-extkit SDK; 34 official extensions across 8 categories via si install <name>, running as isolated subprocesses or standalone si <service> processes.',
+                          '内蔵 MCP クライアント＋ soiacode-extkit SDK。si install <名> で 8 分野 34 種の拡張を独立プロセスとして導入可能。',
+                        )}
                       </td>
                     </tr>
                     <tr>
-                      <td><strong>{zh ? '数据落盘目录' : 'Local state layout'}</strong></td>
+                      <td><strong>{t('数据落盘目录', 'Local state layout', 'ローカル保存先')}</strong></td>
                       <td>
-                        {zh
-                          ? '集中存于 ~/.soiacode/（sessions、settings.json、trust.json、extensions、bin、confirmed.json、serve、logs、crashes.jsonl、audit），支持项目级 .soiacode/ 与环境变量引用（"$ENV_VAR"）。'
-                          : 'Stored under ~/.soiacode/ (sessions, settings.json, trust.json, extensions, bin, confirmed.json, serve, logs, crashes.jsonl, audit), with project-level .soiacode/ and "$ENV_VAR" secret refs.'}
+                        {t(
+                          '集中存于 ~/.soiacode/（sessions、settings.json、trust.json、extensions、bin、confirmed.json、serve、logs、crashes.jsonl、audit），支持项目级 .soiacode/ 与环境变量引用（"$ENV_VAR"）。',
+                          'Stored under ~/.soiacode/ (sessions, settings.json, trust.json, extensions, bin, confirmed.json, serve, logs, crashes.jsonl, audit), with project-level .soiacode/ and "$ENV_VAR" secret refs.',
+                          '~/.soiacode/ 配下に集約し、プロジェクト固有の .soiacode/ および "$ENV_VAR" 参照に対応。',
+                        )}
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              <h3>{zh ? '34 个官方扩展全景（按能力域）' : '34 official extensions by capability domain'}</h3>
+              <h3>{t('34 个官方扩展全景（按能力域）', '34 official extensions by capability domain', '34 公式拡張パッケージ全体像')}</h3>
               <ul>
                 <li>
-                  <strong>{zh ? '多智能体与长任务编排' : 'Multi-agent & task workflows'}：</strong>
+                  <strong>{t('多智能体与长任务编排', 'Multi-agent & task workflows', 'マルチ Agent・長時間タスク')}：</strong>
                   <span className="skill-inline-code">subagent</span> <span className="skill-inline-code">handoff</span> <span className="skill-inline-code">taskboard</span> <span className="skill-inline-code">jobs-panel</span> <span className="skill-inline-code">goal</span> <span className="skill-inline-code">memory</span> <span className="skill-inline-code">codemode</span> <span className="skill-inline-code">hooks</span> <span className="skill-inline-code">intercom</span> <span className="skill-inline-code">agent-claude</span> <span className="skill-inline-code">agent-copilot</span> <span className="skill-inline-code">agent-bridge</span>
                 </li>
                 <li>
-                  <strong>{zh ? '代码索引、网页、浏览器与行内补全' : 'Code LSP, web, browser & inline'}：</strong>
-                  <span className="skill-inline-code">lsp</span>（{zh ? '接本机已有语言服务器，编辑后自动附诊断' : 'connects local LSPs with post-edit diagnostics'}）、
-                  <span className="skill-inline-code">web</span>（{zh ? '抓取与搜索，支持月度次数/费用封顶' : 'fetch & search with monthly caps'}）、
-                  <span className="skill-inline-code">browser</span>（{zh ? '驱动本机 Chrome，独立临时 profile，提交表单必问人' : 'isolated Chrome sessions; form submits ask every time'}）、
-                  <span className="skill-inline-code">inline</span>（{zh ? 'si inline lsp 编辑器灰字行内补全' : 'LSP inline FIM/chat completion'}）
+                  <strong>{t('代码索引、网页、浏览器与行内补全', 'Code LSP, web, browser & inline', 'LSP・Web・ブラウザ・補完')}：</strong>
+                  <span className="skill-inline-code">lsp</span>, <span className="skill-inline-code">web</span>, <span className="skill-inline-code">browser</span>, <span className="skill-inline-code">inline</span>
                 </li>
                 <li>
-                  <strong>{zh ? '治理规则与请求脱敏' : 'Governance & redaction'}：</strong>
-                  <span className="skill-inline-code">policy</span>（{zh ? '系统/用户/项目三级 policy.json，禁推主干、拦私钥写入、依赖白名单' : '3-tier policy.json for protected branches, secret content & deps'}）、
-                  <span className="skill-inline-code">redact</span>（{zh ? '发往模型前把密钥替换为占位符，执行前还原，原文只留本机' : 'placeholder secret redaction on requests, unredacted only at local exec'}）
+                  <strong>{t('治理规则与请求脱敏', 'Governance & redaction', '統制ルール・機密マスキング')}：</strong>
+                  <span className="skill-inline-code">policy</span>, <span className="skill-inline-code">redact</span>
                 </li>
                 <li>
-                  <strong>{zh ? '执行环境、资源与沙箱辅助' : 'Remote exec, resources & sandbox helpers'}：</strong>
-                  <span className="skill-inline-code">remote-exec</span>（{zh ? 'SSH / 容器 / runsc / krun / kubectl + 远端 soiacode-exec' : 'SSH / container / microVM / custom cmd via soiacode-exec'}）、
-                  <span className="skill-inline-code">resources</span>（{zh ? 'CPU/内存/磁盘统计与电池低电量并发限流' : 'CPU/RAM/disk telemetry & battery concurrency throttling'}）、
-                  <span className="skill-inline-code">sandbox-bwrap</span>、<span className="skill-inline-code">sandbox-acl</span>、<span className="skill-inline-code">writable-dirs</span>
+                  <strong>{t('执行环境、资源与沙箱辅助', 'Remote exec, resources & sandbox helpers', '遠隔実行・リソース・サンドボックス')}：</strong>
+                  <span className="skill-inline-code">remote-exec</span>, <span className="skill-inline-code">resources</span>, <span className="skill-inline-code">sandbox-bwrap</span>, <span className="skill-inline-code">sandbox-acl</span>, <span className="skill-inline-code">writable-dirs</span>
                 </li>
                 <li>
-                  <strong>{zh ? '常驻后台、事件与定时恢复' : 'Daemon, events & durable recovery'}：</strong>
-                  <span className="skill-inline-code">serve</span>（{zh ? '常驻托管会话 + read/prompt/approve/admin 分级 token' : 'background daemon + scoped tokens'}）、
-                  <span className="skill-inline-code">event-sources</span>（GitHub / Webhook / Telegram）、
-                  <span className="skill-inline-code">schedule</span>、<span className="skill-inline-code">durable</span>（{zh ? '宿主机重启后受限自动续跑' : 'restart resume with maxContinues guard'}）、
-                  <span className="skill-inline-code">dispatch</span>（{zh ? '事件自动建专责会话跟进' : 'auto-routed execution sessions'}）
+                  <strong>{t('常驻后台、事件与定时恢复', 'Daemon, events & durable recovery', '常駐・イベント・自動復旧')}：</strong>
+                  <span className="skill-inline-code">serve</span>, <span className="skill-inline-code">event-sources</span>, <span className="skill-inline-code">schedule</span>, <span className="skill-inline-code">durable</span>, <span className="skill-inline-code">dispatch</span>
                 </li>
                 <li>
-                  <strong>{zh ? '对外服务与数据观测路由' : 'External protocols, search, storage & routing'}：</strong>
-                  <span className="skill-inline-code">mcp-server</span>、<span className="skill-inline-code">a2a</span>（Agent2Agent）、
-                  <span className="skill-inline-code">session-search</span>（{zh ? '模型查本会话摘要原文 / 人跨会话检索' : 'in-session recall & human cross-session search'}）、
-                  <span className="skill-inline-code">metrics</span>（OTLP {zh ? '只传指标标签，不传代码与正文' : 'numeric telemetry only, never prompts/paths'}）、
-                  <span className="skill-inline-code">storage</span>（SQLite / S3 / Tiered）、
-                  <span className="skill-inline-code">router</span>（{zh ? '主模型过载回退与按规则切换模型' : 'fallback chains & cost/rule routing'}）
+                  <strong>{t('对外服务与数据观测路由', 'External protocols, search, storage & routing', '外部公開・検索・ストレージ・ルーティング')}：</strong>
+                  <span className="skill-inline-code">mcp-server</span>, <span className="skill-inline-code">a2a</span>, <span className="skill-inline-code">session-search</span>, <span className="skill-inline-code">metrics</span>, <span className="skill-inline-code">storage</span>, <span className="skill-inline-code">router</span>
                 </li>
               </ul>
 
-              <SoiaCodePeripheralDiagram zh={zh} />
+              <SoiaCodePeripheralDiagram locale={locale} />
             </section>
 
             <section id="boundaries">
-              <h2>{zh ? '3. 精确边界：做什么、不做什么、怎么拦' : '3. Exact boundaries & safety model'}</h2>
+              <h2>{t('3. 精确边界：做什么、不做什么、怎么拦', '3. Exact boundaries & safety model', '3. 厳密な境界と安全性モデル')}</h2>
 
               <div className="soiacode-grid-2">
                 <div className="soiacode-box is-in">
-                  <h3>{zh ? '产品边界内（内核负责）' : 'Inside product boundary'}</h3>
+                  <h3>{t('产品边界内（内核负责）', 'Inside product boundary', 'カーネルの責務範囲')}</h3>
                   <ul>
-                    <li>{zh ? 'Agent 推理与工具调度闭环' : 'Agent loop & tool dispatch kernel'}</li>
-                    <li>{zh ? '4 种入口模式（交互 / print / RPC / ACP）+ Rust SDK' : '4 run modes (CLI / print / RPC / ACP) + SDK'}</li>
-                    <li>{zh ? '5 个内置工具与默认工作区路径检查' : '5 built-in tools & workspace path guards'}</li>
-                    <li>{zh ? '10 个治理挂载点、权限引擎与审批记录' : '10 governance mounts, permission & approval log'}</li>
-                    <li>{zh ? 'Append-only JSONL 会话树、快照与 Blob 旁路' : 'JSONL tree sessions, snapshots & blob offload'}</li>
-                    <li>{zh ? '--no-session 下仍写入只追加审计日志（~/.soiacode/audit/）' : 'Audit-only log even under --no-session'}</li>
-                    <li>{zh ? '扩展宿主进程管理与 MCP 客户端' : 'Extension subprocess host & MCP client'}</li>
+                    <li>{t('Agent 推理与工具调度闭环', 'Agent loop & tool dispatch kernel', '推論ループとツール実行制御')}</li>
+                    <li>{t('4 种入口模式（交互 / print / RPC / ACP）+ Rust SDK', '4 run modes (CLI / print / RPC / ACP) + SDK', '4 種の起動モード + Rust SDK')}</li>
+                    <li>{t('5 个内置工具与默认工作区路径检查', '5 built-in tools & workspace path guards', '5 組込みツールとパス境界検査')}</li>
+                    <li>{t('10 个治理挂载点、权限引擎与审批记录', '10 governance mounts, permission & approval log', '10 フック、権限エンジン、承認記録')}</li>
+                    <li>{t('Append-only JSONL 会话树、快照与 Blob 旁路', 'JSONL tree sessions, snapshots & blob offload', '追記専用 JSONL・スナップショット・Blob 退避')}</li>
+                    <li>{t('--no-session 下仍写入只追加审计日志（~/.soiacode/audit/）', 'Audit-only log even under --no-session', '--no-session 時も監査ログへ記録')}</li>
+                    <li>{t('扩展宿主进程管理与 MCP 客户端', 'Extension subprocess host & MCP client', '拡張サブプロセス管理と MCP クライアント')}</li>
                   </ul>
                 </div>
                 <div className="soiacode-box is-out">
-                  <h3>{zh ? '产品边界外（内核明确不做）' : 'Outside product boundary'}</h3>
+                  <h3>{t('产品边界外（内核明确不做）', 'Outside product boundary', 'カーネル外へ分離する範囲')}</h3>
                   <ul>
-                    <li>{zh ? '图形桌面壳（由上层如 SoiaDeck 或编辑器承担）' : 'Desktop GUI shell (handled by SoiaDeck or editors)'}</li>
-                    <li>{zh ? 'SaaS 托管控制面与账号中心' : 'Hosted SaaS control plane or user cloud sync'}</li>
-                    <li>{zh ? '硬编码企业策略（交由 policy 扩展或宿主挂载点实现）' : 'Hardcoded org policy (delegated to policy extension)'}</li>
-                    <li>{zh ? '默认必开的外部重沙箱（soiacode-sandbox 为可选编译项）' : 'Mandatory heavy sandbox (soiacode-sandbox is opt-in)'}</li>
-                    <li>{zh ? '常驻守护、MCP Server、A2A 网关、远端容器编排适配' : 'Daemon serve, MCP server, A2A gateway, managed sandbox drivers'}</li>
-                    <li>{zh ? '默认遥测上报（Zero telemetry by default）' : 'Default telemetry (zero telemetry by default)'}</li>
-                    <li>{zh ? '扩展在远端/容器中执行时不复制用户凭据到远端' : 'Credentials stay local during remote-exec'}</li>
+                    <li>{t('图形桌面壳（由上层如 SoiaDeck 或编辑器承担）', 'Desktop GUI shell (handled by SoiaDeck or editors)', 'GUI デスクトップ殻（SoiaDeck 等が担当）')}</li>
+                    <li>{t('SaaS 托管控制面与账号中心', 'Hosted SaaS control plane or user cloud sync', 'SaaS 制御面・クラウド同期')}</li>
+                    <li>{t('硬编码企业策略（交由 policy 扩展或宿主挂载点实现）', 'Hardcoded org policy (delegated to policy extension)', '組織ポリシーのハードコード')}</li>
+                    <li>{t('默认必开的外部重沙箱（soiacode-sandbox 为可选编译项）', 'Mandatory heavy sandbox (soiacode-sandbox is opt-in)', '重量級サンドボックスの強制組込')}</li>
+                    <li>{t('常驻守护、MCP Server、A2A 网关、远端容器编排适配', 'Daemon serve, MCP server, A2A gateway, managed sandbox drivers', '常駐サーバー・MCP/A2A 公開・遠隔実行')}</li>
+                    <li>{t('默认遥测上报（Zero telemetry by default）', 'Default telemetry (zero telemetry by default)', '既定でのテレメトリ送信（ゼロテレメトリ）')}</li>
+                    <li>{t('扩展在远端/容器中执行时不复制用户凭据到远端', 'Credentials stay local during remote-exec', '遠隔実行先へのユーザー認証情報の複製')}</li>
                   </ul>
                 </div>
               </div>
 
-              <h3>{zh ? '10 个治理挂载点与审批铁律' : '10 governance mounts & decision precedence'}</h3>
+              <h3>{t('10 个治理挂载点与审批铁律', '10 governance mounts & decision precedence', '10 個の統制フックと承認優先順位')}</h3>
               <p>
-                {zh
-                  ? '每一次用户输入、模型请求、工具调用与回合结束，都必须经过内置挂载点链条，确保策略扩展、脱敏扩展与宿主应用能以确定性顺序介入：'
-                  : 'Every turn transitions through 10 deterministic mount points so built-in permissions, redact, policy, or host SDK hooks can inspect, rewrite, ask, or block cleanly:'}
+                {t(
+                  '每一次用户输入、模型请求、工具调用与回合结束，都必须经过内置挂载点链条，确保策略扩展、脱敏扩展与宿主应用能以确定性顺序介入：',
+                  'Every turn transitions through 10 deterministic mount points so built-in permissions, redact, policy, or host SDK hooks can inspect, rewrite, ask, or block cleanly:',
+                  '入力・モデル通信・ツール呼出・ターン終了のすべてが 10 個の決定的フックを通過し、ポリシー検証や機密マスキングを確実に適用します：',
+                )}
               </p>
               <div className="soiacode-pill-row">
                 {[
@@ -1983,62 +2643,74 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
               </div>
               <ul>
                 <li>
-                  <strong>{zh ? '优先级铁律 deny > ask > allow' : 'Precedence deny > ask > allow'}：</strong>
-                  {zh
-                    ? '一旦命中任何一条 deny 即拒绝；复合 shell 命令会拆分成子命令逐段判定，不因第一段无害就放行整条命令。'
-                    : 'Any deny wins immediately; compound shell commands are split and evaluated per segment.'}
+                  <strong>{t('优先级铁律 deny > ask > allow', 'Precedence deny > ask > allow', '優先鉄則 deny > ask > allow')}：</strong>
+                  {t(
+                    '一旦命中任何一条 deny 即拒绝；复合 shell 命令会拆分成子命令逐段判定，不因第一段无害就放行整条命令。',
+                    'Any deny wins immediately; compound shell commands are split and evaluated per segment.',
+                    'deny に 1 つでも該当すれば即拒否。複合シェルコマンドはサブコマンド単位に分解して検証します。',
+                  )}
                 </li>
                 <li>
-                  <strong>{zh ? '写保护敏感路径' : 'Write-protected paths'}：</strong>
-                  {zh
-                    ? '.git/、.soiacode/、si 数据目录及 shell 启动脚本（如 .zshrc）即便在工作区内，默认也会触发 ask 确认（仅显式 bypass 例外）。'
-                    : '.git/, .soiacode/, data dirs, and shell rc files always trigger ask even inside workspace (unless bypass).'}
+                  <strong>{t('写保护敏感路径', 'Write-protected paths', '書き込み保護対象パス')}：</strong>
+                  {t(
+                    '.git/、.soiacode/、si 数据目录及 shell 启动脚本（如 .zshrc）即便在工作区内，默认也会触发 ask 确认（仅显式 bypass 例外）。',
+                    '.git/, .soiacode/, data dirs, and shell rc files always trigger ask even inside workspace (unless bypass).',
+                    '.git/、.soiacode/、si データディレクトリ、シェル設定（.zshrc 等）はワークスペース内でも確認待ちになります。',
+                  )}
                 </li>
                 <li>
-                  <strong>{zh ? '三种权限模式（Shift+Tab 切换）' : 'Three modes (Shift+Tab)'}：</strong>
-                  {zh
-                    ? 'plan（只读探索）、default（工作区内按规则自动读写，越界/执行/敏感写入问人）、bypass（显式全放行）。当策略为 never 或无人值守超时，所有 ask 一律按拒绝处理。'
-                    : 'plan (read-only), default (workspace writes allowed with prompts on risk), bypass (explicitly permissive). Unattended or never approval always resolves ask as deny.'}
+                  <strong>{t('三种权限模式（Shift+Tab 切换）', 'Three modes (Shift+Tab)', '3 つの権限モード（Shift+Tab 切替）')}：</strong>
+                  {t(
+                    'plan（只读探索）、default（工作区内按规则自动读写，越界/执行/敏感写入问人）、bypass（显式全放行）。当策略为 never 或无人值守超时，所有 ask 一律按拒绝处理。',
+                    'plan (read-only), default (workspace writes allowed with prompts on risk), bypass (explicitly permissive). Unattended or never approval always resolves ask as deny.',
+                    'plan（読取専用）、default（範囲外・危険操作のみ確認）、bypass（明示許可）。無人環境または never 設定時は全 ask を拒否します。',
+                  )}
                 </li>
               </ul>
 
-              <SoiaCodeToolSequenceDiagram zh={zh} />
+              <SoiaCodeToolSequenceDiagram locale={locale} />
 
               <div className="soiacode-note">
-                {zh
-                  ? '沙箱边界原则：权限检查决定「许不许」，可选沙箱（soiacode-sandbox，默认关闭 feature）保证「放行了也越不了界」。支持从无沙箱 → 内置（macOS Seatbelt / Linux Landlock+seccomp / Windows 受限令牌+ACL，增强禁网需一次性管理员 si sandbox setup）→ bubblewrap → 容器 / gVisor / krun 微虚机 → remote-exec（soiacode-exec）7 档演进；要求受限模式但底层不支持时，命令直接拒绝执行，绝不静默降级。'
-                  : 'Sandbox discipline: permissions decide whether an action is allowed; the optional sandbox (soiacode-sandbox, compiled out by default) guarantees allowed commands still cannot cross boundaries across 7 isolation tiers. When a restricted mode is requested on an unsupported host, commands refuse to run rather than silently downgrading.'}
+                {t(
+                  '沙箱边界原则：权限检查决定「许不许」，可选沙箱（soiacode-sandbox，默认关闭 feature）保证「放行了也越不了界」。支持从无沙箱 → 内置（macOS Seatbelt / Linux Landlock+seccomp / Windows 受限令牌+ACL，增强禁网需一次性管理员 si sandbox setup）→ bubblewrap → 容器 / gVisor / krun 微虚机 → remote-exec（soiacode-exec）7 档演进；要求受限模式但底层不支持时，命令直接拒绝执行，绝不静默降级。',
+                  'Sandbox discipline: permissions decide whether an action is allowed; the optional sandbox (soiacode-sandbox, compiled out by default) guarantees allowed commands still cannot cross boundaries across 7 isolation tiers. When a restricted mode is requested on an unsupported host, commands refuse to run rather than silently downgrading.',
+                  'サンドボックス原則：権限チェックが「許可するか」を決め、任意のサンドボックス（soiacode-sandbox・既定無効）が「許可しても越境させない」ことを保証します。OS 非対応環境で制限モードが指定された場合、無言ダウングレードはせず実行を拒否します。',
+                )}
               </div>
             </section>
 
             <section id="architecture">
-              <h2>{zh ? '4. 工程 Crate 分层与隔离纪律' : '4. Engineering crate layers & isolation'}</h2>
+              <h2>{t('4. 工程 Crate 分层与隔离纪律', '4. Engineering crate layers & isolation', '4. クレート階層設計と分離規律')}</h2>
               <p>
-                {zh
-                  ? '整个 Rust workspace 遵循严格的 L4 → L0 单向向下依赖。任何业务 crate 都禁止绕过抽象直接触网或触系统资源：全仓只有 L0 的 soiacode-http 能直接发起 HTTP/HTTPS 请求（统一代理、自定义 CA 与请求头脱敏），只有 soiacode-local 封装进程起停与文件原子写入，而 soiacode-protocol 作为零 IO 唯一类型真源让核心、SDK、扩展与 RPC/ACP 保持契约一致。'
-                  : 'The Rust workspace enforces strict downward dependencies from L4 to L0. Only L0 soiacode-http performs network IO (centralizing proxies, custom CA, and header redaction), only L0 soiacode-local wraps OS process/file primitives, and zero-IO soiacode-protocol serves as the single source of truth across kernel, SDK, extensions, RPC, and ACP.'}
+                {t(
+                  '整个 Rust workspace 遵循严格的 L4 → L0 单向向下依赖。任何业务 crate 都禁止绕过抽象直接触网或触系统资源：全仓只有 L0 的 soiacode-http 能直接发起 HTTP/HTTPS 请求（统一代理、自定义 CA 与请求头脱敏），只有 soiacode-local 封装进程起停与文件原子写入，而 soiacode-protocol 作为零 IO 唯一类型真源让核心、SDK、扩展与 RPC/ACP 保持契约一致。',
+                  'The Rust workspace enforces strict downward dependencies from L4 to L0. Only L0 soiacode-http performs network IO (centralizing proxies, custom CA, and header redaction), only L0 soiacode-local wraps OS process/file primitives, and zero-IO soiacode-protocol serves as the single source of truth across kernel, SDK, extensions, RPC, and ACP.',
+                  'ワークスペース全体で L4 → L0 への厳格な単方向依存を遵守。HTTP/HTTPS 通信は L0 の soiacode-http のみに、OS ファイル・プロセス操作は soiacode-local のみに限定し、soiacode-protocol が Zero-IO の単一型真実源を担います。',
+                )}
               </p>
 
-              <SoiaCodeCrateDiagram zh={zh} />
+              <SoiaCodeCrateDiagram locale={locale} />
             </section>
 
             <section id="roadmap">
-              <h2>{zh ? '5. 版本路线与当前真实状态' : '5. Roadmap & current status'}</h2>
+              <h2>{t('5. 版本路线与当前真实状态', '5. Roadmap & current status', '5. ロードマップと現在地')}</h2>
               <p>
-                {zh
-                  ? '当前处于架构定稿与详细设计阶段（0.0.1 M1 进行中），仓库内沉淀了完整的架构决策记录、用户规格、协议设计及可读站点，尚未发布可用 Rust 代码实现与二进制下载包。后续规划按 11 个里程碑渐进交付：'
-                  : 'Currently in active architecture & detailed design (0.0.1 M1) with complete specs and decision records, prior to releasing Rust source crates or binaries. Planned across 11 incremental milestones:'}
+                {t(
+                  '当前处于架构定稿与详细设计阶段（0.0.1 M1 进行中），仓库内沉淀了完整的架构决策记录、用户规格、协议设计及可读站点，尚未发布可用 Rust 代码实现与二进制下载包。后续规划按 11 个里程碑渐进交付：',
+                  'Currently in active architecture & detailed design (0.0.1 M1) with complete specs and decision records, prior to releasing Rust source crates or binaries. Planned across 11 incremental milestones:',
+                  '現在は設計確定および詳細設計段階（0.0.1 M1 進行中）にあり、設計判断記録（ADR）・ユーザー仕様・プロトコル定義を整備済みです（Rust 実装バイナリはまだ公開配布前）。今後 11 のマイルストーンで段階的に提供します：',
+                )}
               </p>
               <ul>
-                <li><strong>0.0.1 – 0.0.2（进行中 → 下一步）</strong>：{zh ? '协议/HTTP/本机工具底座、单会话终端交互与 print/RPC 入口、权限挂载点闭环。' : 'Core L0–L4 crates, interactive CLI / print / RPC entrypoints, and mount/permission loop.'}</li>
-                <li><strong>0.0.3 – 0.0.6</strong>：{zh ? '会话树分叉与压缩、上下文工程、MCP 客户端与扩展宿主/extkit，以及首批官方核心扩展。' : 'Session tree fork/compaction, context engineering, MCP client, extension host & extkit.'}</li>
-                <li><strong>0.0.7 – 0.0.10</strong>：{zh ? 'ACP 编辑器接入、常驻 serve / event-sources / durable、多智能体编排与对外 mcp-server / a2a 服务。' : 'ACP integration, serve daemon / durable / events, subagent workflows, mcp-server & a2a.'}</li>
-                <li><strong>0.0.11</strong>：{zh ? '可选编译的 os-native 原生沙箱后端（默认保持关闭，不侵入最小核心）。' : 'Opt-in os-native sandbox feature (disabled by default to keep the minimal core pure).'}</li>
+                <li><strong>0.0.1 – 0.0.2</strong>：{t('协议/HTTP/本机工具底座、单会话终端交互与 print/RPC 入口、权限挂载点闭环。', 'Core L0–L4 crates, interactive CLI / print / RPC entrypoints, and mount/permission loop.', '基盤クレート（L0–L4）、対話 CLI / print / RPC 入口、権限フック閉ループ。')}</li>
+                <li><strong>0.0.3 – 0.0.6</strong>：{t('会话树分叉与压缩、上下文工程、MCP 客户端与扩展宿主/extkit，以及首批官方核心扩展。', 'Session tree fork/compaction, context engineering, MCP client, extension host & extkit.', 'セッション分岐・要約圧縮、文脈工学、MCP クライアントと extkit 拡張ホスト。')}</li>
+                <li><strong>0.0.7 – 0.0.10</strong>：{t('ACP 编辑器接入、常驻 serve / event-sources / durable、多智能体编排与对外 mcp-server / a2a 服务。', 'ACP integration, serve daemon / durable / events, subagent workflows, mcp-server & a2a.', 'ACP エディタ統合、serve / durable、マルチ Agent 連携と mcp-server / a2a 公開。')}</li>
+                <li><strong>0.0.11</strong>：{t('可选编译的 os-native 原生沙箱后端（默认保持关闭，不侵入最小核心）。', 'Opt-in os-native sandbox feature (disabled by default to keep the minimal core pure).', 'オプトインの os-native サンドボックス（既定無効で最小コアを汚染しない）。')}</li>
               </ul>
 
               <div className="missing-cta">
                 <a className="btn btn-primary" href={href('/soiadeck/')}>SoiaDeck</a>
-                <a className="btn btn-ghost" href={href('/skills/')}>{zh ? '看开源技能' : 'Open skills'}</a>
+                <a className="btn btn-ghost" href={href('/skills/')}>{t('看开源技能', 'Open skills', '公開スキルを見る')}</a>
               </div>
             </section>
           </div>
@@ -2051,78 +2723,116 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
 /** SOIA Runtime — tutorial-detail template. */
 export function SoiaRuntimePage({ locale }: { locale: LandingLocaleCode }) {
   const href = (path: string) => hrefFor(path, locale);
-  const zh = isZh(locale);
-  const sections: ReadonlyArray<{ id: string; title: string; body: string; image?: string; alt?: string }> = zh
-    ? [
-        {
-          id: 'what',
-          title: 'Model → Harness → Agent OS',
-          body: 'SOIA（System, Orchestration, Intelligence, Assurance）的目标，是把天生无状态、易漂移、易失控的大模型能力，组织成可感知、可治理、可恢复、可审计、可长期运行的工程系统。核心公式：Agent = Model + Local State + Tool Interface；Harness = Runtime Control Plane around Agent；Agent OS = Workspace + Harness + Ledger + Policy + A2A + Channel + Apps。',
-          image: '/soia/products/soia-agent-os-layers.png',
-          alt: '模型、Harness 与 Agent OS 分层职责图',
-        },
-        {
-          id: 'loop',
-          title: '最小可实现闭环与四大原语',
-          body: '系统是否进入 Agent OS 阶段的唯一判据，是打通「Task → AgentRun → RunLedger → CapabilityPolicy → SensorResult → Evidence」6 步闭环。围绕 Workspace（项目与身份唯一真源）、AgentRun（可恢复事件流）、Capability（工具调用前权限与预算闸门）和 Ledger（不可篡改事实账本），所有动作都可回放、可审计。',
-          image: '/soia/products/soia-agent-os-loop.png',
-          alt: '最小可实现 Agent OS 6 步闭环图',
-        },
-        {
-          id: 'modules',
-          title: 'M1–M8 一级内核与乙路线重构',
-          body: '架构由 9 层 Stack、19 个 UUIDv7 主键（IDS）和 M1–M8 八个一级系统边界构成：Wave 1 先建 M1（工作区与身份）、M5（能力白名单 deny-by-default）与 M6（9 类账本 + Hash Chain）；Wave 2 启动 M3（会话与 AgentRun）；Wave 3 补齐 M2（任务图）、M4（记忆与上下文）与 M7（评估恢复与审批）；Wave 4 接入 M8（网关与 8 大产品表面）。代码采用「乙路线」隔离：在新建净土目录 runtime/crates/kernel/ 落地新契约，冻结旧 crate，避免原语继续分散。',
-          image: '/soia/products/soia-agent-os-modules.png',
-          alt: 'SOIA Agent OS M1-M8 八个一级模块与四波演进图',
-        },
-        {
-          id: 'topologies',
-          title: '7 大产品形态 · 8 大表面 · 5 种部署拓扑',
-          body: '产品层覆盖 CLI（含精简 loop 模式）、Desktop（Tauri 2 + React 19）、Gateway、Edge Relay、Cloud Gateway、Agent Server 与 MCP Server，围绕保护深层注意力的 8 大表面展开；部署上支持从单机 Desktop / CLI，到 Desktop + Local Gateway daemon、Edge Relay 穿透唤起，再到云网关 + Agent Server 的 5 种渐进拓扑。',
-          image: '/soia/products/soia-agent-os-topologies.png',
-          alt: 'SOIA Agent OS 5 种最小部署拓扑图',
-        },
-        {
-          id: 'docs',
-          title: '架构规格与开源状态',
-          body: '全部工程方法论、产品方法论、M1–M8 分册、Harness 蓝图与状态看板维护在 soia-docs，开源运行时代码位于 soia-team/soia（MIT）；架构处于 R019 冻结终检通过、等待 D-05 动工（Wave 1 first-gate 与 P0 安全修复）阶段。',
-        },
-      ]
-    : [
-        {
-          id: 'what',
-          title: 'Model → Harness → Agent OS',
-          body: 'SOIA (System, Orchestration, Intelligence, Assurance) turns stateless, drifting LLM capabilities into observable, governable, recoverable, and auditable engineering systems. Formula: Agent = Model + Local State + Tool Interface; Harness = Runtime Control Plane around Agent; Agent OS = Workspace + Harness + Ledger + Policy + A2A + Channel + Apps.',
-          image: '/soia/products/soia-agent-os-layers.png',
-          alt: 'Model, Harness and Agent OS layers',
-        },
-        {
-          id: 'loop',
-          title: 'Minimum viable loop & core primitives',
-          body: 'The criterion for entering the Agent OS stage is closing the 6-step fact loop: Task → AgentRun → RunLedger → CapabilityPolicy → SensorResult → Evidence, built on Workspace, AgentRun, Capability, and immutable Ledger primitives.',
-          image: '/soia/products/soia-agent-os-loop.png',
-          alt: 'Minimum Viable Agent OS loop',
-        },
-        {
-          id: 'modules',
-          title: 'M1–M8 modules & clean-kernel refactoring',
-          body: 'Structured across a 9-layer stack, 19 UUIDv7 primary keys, and 8 first-class modules (M1 Workspace, M2 Task, M3 AgentRun, M4 Memory, M5 Capability, M6 Ledger, M7 Eval/Approval, M8 Gateway/Surface). Under Route B, new contracts live in an isolated runtime/crates/kernel/ boundary while legacy crates stay frozen.',
-          image: '/soia/products/soia-agent-os-modules.png',
-          alt: 'SOIA Agent OS M1-M8 modules overview',
-        },
-        {
-          id: 'topologies',
-          title: '7 products · 8 surfaces · 5 deployment topologies',
-          body: 'Seven deliverables (CLI, Desktop, Gateway, Edge Relay, Cloud Gateway, Agent Server, MCP Server) project 8 shared surfaces across 5 deployment topologies — from single-machine Desktop/CLI to Edge Relay and Cloud Gateway clusters.',
-          image: '/soia/products/soia-agent-os-topologies.png',
-          alt: 'SOIA Agent OS 5 deployment topologies',
-        },
-        {
-          id: 'docs',
-          title: 'Specification & repository status',
-          body: 'All methodology specs, M1–M8 blueprints, Harness reference, and status boards live in soia-docs; the MIT open-source repository is at soia-team/soia, ready for D-05 architecture freeze and Wave 1 first-gate execution.',
-        },
-      ];
+  const lang = langOf(locale);
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
+  const sections: ReadonlyArray<{ id: string; title: string; body: string; image?: string; alt?: string }> =
+    lang === 'zh'
+      ? [
+          {
+            id: 'what',
+            title: 'Model → Harness → Agent OS',
+            body: 'SOIA（System, Orchestration, Intelligence, Assurance）的目标，是把天生无状态、易漂移、易失控的大模型能力，组织成可感知、可治理、可恢复、可审计、可长期运行的工程系统。核心公式：Agent = Model + Local State + Tool Interface；Harness = Runtime Control Plane around Agent；Agent OS = Workspace + Harness + Ledger + Policy + A2A + Channel + Apps。',
+            image: '/soia/products/soia-agent-os-layers.png',
+            alt: '模型、Harness 与 Agent OS 分层职责图',
+          },
+          {
+            id: 'loop',
+            title: '最小可实现闭环与四大原语',
+            body: '系统是否进入 Agent OS 阶段的唯一判据，是打通「Task → AgentRun → RunLedger → CapabilityPolicy → SensorResult → Evidence」6 步闭环。围绕 Workspace（项目与身份唯一真源）、AgentRun（可恢复事件流）、Capability（工具调用前权限与预算闸门）和 Ledger（不可篡改事实账本），所有动作都可回放、可审计。',
+            image: '/soia/products/soia-agent-os-loop.png',
+            alt: '最小可实现 Agent OS 6 步闭环图',
+          },
+          {
+            id: 'modules',
+            title: 'M1–M8 一级内核与乙路线重构',
+            body: '架构由 9 层 Stack、19 个 UUIDv7 主键（IDS）和 M1–M8 八个一级系统边界构成：Wave 1 先建 M1（工作区与身份）、M5（能力白名单 deny-by-default）与 M6（9 类账本 + Hash Chain）；Wave 2 启动 M3（会话与 AgentRun）；Wave 3 补齐 M2（任务图）、M4（记忆与上下文）与 M7（评估恢复与审批）；Wave 4 接入 M8（网关与 8 大产品表面）。代码采用「乙路线」隔离：在新建净土目录 runtime/crates/kernel/ 落地新契约，冻结旧 crate，避免原语继续分散。',
+            image: '/soia/products/soia-agent-os-modules.png',
+            alt: 'SOIA Agent OS M1-M8 八个一级模块与四波演进图',
+          },
+          {
+            id: 'topologies',
+            title: '7 大产品形态 · 8 大表面 · 5 种部署拓扑',
+            body: '产品层覆盖 CLI（含精简 loop 模式）、Desktop（Tauri 2 + React 19）、Gateway、Edge Relay、Cloud Gateway、Agent Server 与 MCP Server，围绕保护深层注意力的 8 大表面展开；部署上支持从单机 Desktop / CLI，到 Desktop + Local Gateway daemon、Edge Relay 穿透唤起，再到云网关 + Agent Server 的 5 种渐进拓扑。',
+            image: '/soia/products/soia-agent-os-topologies.png',
+            alt: 'SOIA Agent OS 5 种最小部署拓扑图',
+          },
+          {
+            id: 'docs',
+            title: '架构规格与开源状态',
+            body: '全部工程方法论、产品方法论、M1–M8 分册、Harness 蓝图与状态看板维护在 soia-docs，开源运行时代码位于 soia-team/soia（MIT）；架构处于 R019 冻结终检通过、等待 D-05 动工（Wave 1 first-gate 与 P0 安全修复）阶段。',
+          },
+        ]
+      : lang === 'ja'
+        ? [
+            {
+              id: 'what',
+              title: 'Model → Harness → Agent OS',
+              body: 'SOIA（System, Orchestration, Intelligence, Assurance）は、ステートレスでドリフトしやすい LLM を観測・統制・復元・監査・長期稼働可能な工学システムへ昇華させます。定義式：Agent = Model + Local State + Tool Interface、Harness = Runtime Control Plane around Agent、Agent OS = Workspace + Harness + Ledger + Policy + A2A + Channel + Apps。',
+              image: '/soia/products/soia-agent-os-layers.png',
+              alt: 'Model / Harness / Agent OS 階層設計図',
+            },
+            {
+              id: 'loop',
+              title: '最小実現可能ループと 4 原語',
+              body: 'Agent OS 到達の基準は「Task → AgentRun → RunLedger → CapabilityPolicy → SensorResult → Evidence」の 6 ステップ閉ループの貫通です。Workspace・AgentRun・Capability・不変 Ledger の 4 原語により、すべての判断と副作用が再生・監査可能になります。',
+              image: '/soia/products/soia-agent-os-loop.png',
+              alt: '最小 Agent OS 6 ステップループ',
+            },
+            {
+              id: 'modules',
+              title: 'M1–M8 モジュールとクリーンカーネル再構築',
+              body: '9 層スタック・19 個の UUIDv7 主キー・8 つの第一級境界モジュール（M1 Workspace, M2 Task, M3 AgentRun, M4 Memory, M5 Capability, M6 Ledger, M7 Eval/Approval, M8 Gateway/Surface）で構成。既存クレートを凍結し新規領域 runtime/crates/kernel/ に新契約を隔離構築します。',
+              image: '/soia/products/soia-agent-os-modules.png',
+              alt: 'SOIA Agent OS M1-M8 モジュール構成',
+            },
+            {
+              id: 'topologies',
+              title: '7 プロダクト形態 · 8 サーフェス · 5 配置トポロジ',
+              body: 'CLI / Desktop (Tauri 2 + React 19) / Gateway / Edge Relay / Cloud Gateway / Agent Server / MCP Server の 7 形態を備え、ローカル単機構成から Edge Relay・クラウドクラスターまで 5 通りのトポロジへ段階拡張できます。',
+              image: '/soia/products/soia-agent-os-topologies.png',
+              alt: 'SOIA Agent OS 5 配置トポロジ',
+            },
+            {
+              id: 'docs',
+              title: '設計仕様とリポジトリ状況',
+              body: '全方法論・M1–M8 仕様・Harness 設計は soia-docs にて管理され、オープンソースランタイムは soia-team/soia（MIT ライセンス）で公開しています。',
+            },
+          ]
+        : [
+            {
+              id: 'what',
+              title: 'Model → Harness → Agent OS',
+              body: 'SOIA (System, Orchestration, Intelligence, Assurance) turns stateless, drifting LLM capabilities into observable, governable, recoverable, and auditable engineering systems. Formula: Agent = Model + Local State + Tool Interface; Harness = Runtime Control Plane around Agent; Agent OS = Workspace + Harness + Ledger + Policy + A2A + Channel + Apps.',
+              image: '/soia/products/soia-agent-os-layers.png',
+              alt: 'Model, Harness and Agent OS layers',
+            },
+            {
+              id: 'loop',
+              title: 'Minimum viable loop & core primitives',
+              body: 'The criterion for entering the Agent OS stage is closing the 6-step fact loop: Task → AgentRun → RunLedger → CapabilityPolicy → SensorResult → Evidence, built on Workspace, AgentRun, Capability, and immutable Ledger primitives.',
+              image: '/soia/products/soia-agent-os-loop.png',
+              alt: 'Minimum Viable Agent OS loop',
+            },
+            {
+              id: 'modules',
+              title: 'M1–M8 modules & clean-kernel refactoring',
+              body: 'Structured across a 9-layer stack, 19 UUIDv7 primary keys, and 8 first-class modules (M1 Workspace, M2 Task, M3 AgentRun, M4 Memory, M5 Capability, M6 Ledger, M7 Eval/Approval, M8 Gateway/Surface). Under Route B, new contracts live in an isolated runtime/crates/kernel/ boundary while legacy crates stay frozen.',
+              image: '/soia/products/soia-agent-os-modules.png',
+              alt: 'SOIA Agent OS M1-M8 modules overview',
+            },
+            {
+              id: 'topologies',
+              title: '7 products · 8 surfaces · 5 deployment topologies',
+              body: 'Seven deliverables (CLI, Desktop, Gateway, Edge Relay, Cloud Gateway, Agent Server, MCP Server) project 8 shared surfaces across 5 deployment topologies — from single-machine Desktop/CLI to Edge Relay and Cloud Gateway clusters.',
+              image: '/soia/products/soia-agent-os-topologies.png',
+              alt: 'SOIA Agent OS 5 deployment topologies',
+            },
+            {
+              id: 'docs',
+              title: 'Specification & repository status',
+              body: 'All methodology specs, M1–M8 blueprints, Harness reference, and status boards live in soia-docs; the MIT open-source repository is at soia-team/soia, ready for D-05 architecture freeze and Wave 1 first-gate execution.',
+            },
+          ];
   return (
     <SubpageLayout active="product" locale={locale}>
       <article className="missing-page tutorial-detail">
@@ -2130,22 +2840,24 @@ export function SoiaRuntimePage({ locale }: { locale: LandingLocaleCode }) {
           <a href={href('/')}>SOIA</a><span>/</span><span>SOIA Agent OS</span>
         </nav>
         <header className="catalog-head">
-          <span className="label">{zh ? 'SOIA 家族 · Agent OS 规格与开源底座 · MIT' : 'SOIA family · Agent OS spec & open-source runtime · MIT'}</span>
+          <span className="label">{t('SOIA 家族 · Agent OS 规格与开源底座 · MIT', 'SOIA family · Agent OS spec & open-source runtime · MIT', 'SOIA ファミリー · Agent OS 仕様・OSS 基盤 · MIT')}</span>
           <h1 className="display">SOIA Agent OS</h1>
           <p className="lead">
-            {zh
-              ? '本地优先、Provider 中立、可审计的 Agent OS：以 Model → Harness → Agent OS 分层和 M1–M8 内核，把大模型转化为可验证的长期工作系统。'
-              : 'A local-first, provider-neutral, auditable Agent OS: Model → Harness → Agent OS layers and M1–M8 kernels turning LLMs into verifiable long-running systems.'}
+            {t(
+              '本地优先、Provider 中立、可审计的 Agent OS：以 Model → Harness → Agent OS 分层和 M1–M8 内核，把大模型转化为可验证的长期工作系统。',
+              'A local-first, provider-neutral, auditable Agent OS: Model → Harness → Agent OS layers and M1–M8 kernels turning LLMs into verifiable long-running systems.',
+              'ローカルファースト・プロバイダー中立・監査可能な Agent OS：Model → Harness → Agent OS 階層と M1–M8 カーネルで LLM を検証可能な長期運用システムへ変革。',
+            )}
           </p>
         </header>
         <ZoomableFigure
           src="/soia/products/soia-agent-os-layers.png"
-          alt={zh ? 'SOIA Agent OS 分层架构总览' : 'SOIA Agent OS layered architecture'}
-          zh={zh}
+          alt={t('SOIA Agent OS 分层架构总览', 'SOIA Agent OS layered architecture', 'SOIA Agent OS 階層アーキテクチャ')}
+          locale={locale}
         />
         <div className="tutorial-detail-layout">
           <aside className="missing-toc">
-            <span>{zh ? '本页内容' : 'On this page'}</span>
+            <span>{t('本页内容', 'On this page', '目次')}</span>
             {sections.map((section) => (
               <a href={`#${section.id}`} key={section.id}>{section.title}</a>
             ))}
@@ -2159,7 +2871,7 @@ export function SoiaRuntimePage({ locale }: { locale: LandingLocaleCode }) {
                   <ZoomableFigure
                     src={section.image}
                     alt={section.alt ?? section.title}
-                    zh={zh}
+                    locale={locale}
                     lazy
                     marginTop={18}
                   />
