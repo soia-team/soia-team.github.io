@@ -451,6 +451,19 @@ type Domain = {
 
 export const SKILL_DOMAINS: readonly Domain[] = [
   {
+    slug: 'meta',
+    plugin: 'soia-meta',
+    repo: 'https://github.com/soia-team/soia-open-skills',
+    tokens: '~250',
+    cover: '/soia/domains/cover-meta.png',
+    name: { zh: '生态 Meta（核心包）', en: 'Meta (Core)', ja: 'エコシステム Meta（中核）' },
+    blurb: {
+      zh: '所有 SOIA 技能的市场总入口与核心元包：按需求找技能、同步到多个 AI 宿主、规范提示词并发布更新。',
+      en: 'Core marketplace portal & meta skills: discover skills by need, sync hosts, clarify prompts, and release.',
+      ja: '全スキルのハブ兼マーケットプレイス中核：要件検索・ホスト同期・プロンプト構造化・リリース管理。',
+    },
+  },
+  {
     slug: 'pkm',
     plugin: 'soia-pkm-vault',
     repo: 'https://github.com/soia-team/soia-open-pkm-vault-skills',
@@ -487,19 +500,6 @@ export const SKILL_DOMAINS: readonly Domain[] = [
       zh: '飞书、ProcessOn 落成本地文件；成文、传统构图配图；公众号 / 小红书 / X 只建草稿，绝不自动群发。',
       en: 'Feishu and ProcessOn to local files; drafts and images; WeChat / Rednote / X drafts only — never auto-publish.',
       ja: 'Feishu や ProcessOn をローカル保存し、執筆と図版生成。WeChat / RED / X は下書きのみ作成し自動投稿しません。',
-    },
-  },
-  {
-    slug: 'meta',
-    plugin: 'soia-meta',
-    repo: 'https://github.com/soia-team/soia-open-skills',
-    tokens: '~250',
-    cover: '/soia/domains/cover-meta.png',
-    name: { zh: '生态 Meta', en: 'Meta', ja: 'エコシステム Meta' },
-    blurb: {
-      zh: '技能越来越多，最麻烦的是不知道该叫谁。按需求检索、同步、发布，并把提示词写清楚。',
-      en: 'Find, sync, release, and clarify prompts across the whole skill family.',
-      ja: '要件に合うスキル検索、リンク同期、リリース、プロンプト明確化を担うメタツール群。',
     },
   },
 ];
@@ -815,6 +815,40 @@ function matchesSkillQuery(
   return q.split(/\s+/).every((token) => haystack.includes(token));
 }
 
+const HOT_SKILLS: ReadonlySet<string> = new Set([
+  // Core Meta
+  'soia-meta-find-skill',
+  'soia-meta-sync-skills',
+  // PKM Vault daily essentials
+  'soia-pkm-query-vault',
+  'soia-pkm-clip-web',
+  'soia-pkm-clip-wechat-article',
+  'soia-pkm-bootstrap-vault-obsidian',
+  'soia-pkm-maintain-vault-health',
+  'soia-pkm-distill-article-opinion',
+  'soia-pkm-translate-article-zh',
+  // Dev & CLI dispatch essentials
+  'soia-dev-agent-cli-dispatch',
+  'soia-dev-implement-task',
+  'soia-dev-review-code',
+  'soia-dev-enforce-coding-protocol',
+  'soia-dev-github-ops',
+  // Office high-frequency essentials
+  'soia-cwork-feishu-cli',
+  'soia-media-compose-article-draft',
+]);
+
+function HotBadge({ locale }: { locale: LandingLocaleCode }) {
+  return (
+    <span className="sk-hot-badge">
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M8.9 1.3c.2 1.8-.8 3-1.9 4-.8.8-1.4 1.6-1.4 2.8a2.4 2.4 0 0 0 4.8 0c0-.7-.2-1.3-.6-1.8 1.7.7 2.8 2.4 2.8 4.4A4.6 4.6 0 0 1 8 15.3 4.6 4.6 0 0 1 3.4 10.7c0-2.5 1.5-4.3 2.9-5.8.9-1 1.7-2 2.6-3.6Z" />
+      </svg>
+      {t3(locale, '常用推荐', 'Popular', '定番')}
+    </span>
+  );
+}
+
 function SkillCatalogCard({
   doc,
   locale,
@@ -825,9 +859,10 @@ function SkillCatalogCard({
   const href = (path: string) => hrefFor(path, locale);
   const domain = domainOf(doc.domain);
   const subcat = subcategoryOf(doc.domain, doc.name);
+  const isHot = HOT_SKILLS.has(doc.name);
   const summary = langOf(locale) === 'zh' ? doc.tagline : pick(locale, doc.pain);
   return (
-    <article className="sk-card">
+    <article className={`sk-card${isHot ? ' is-hot' : ''}`}>
       <a className="sk-card-main" href={href(`/skills/${doc.domain}/${doc.name}/`)}>
         <div className="sk-card-head">
           <div className="sk-card-title-wrap">
@@ -838,6 +873,7 @@ function SkillCatalogCard({
         </div>
         <p className="sk-card-desc">{summary}</p>
         <div className="sk-card-tags">
+          {isHot ? <HotBadge locale={locale} /> : null}
           {domain ? (
             <span className={`sk-tag-domain is-${domain.slug}`}>
               {pick(locale, domain.name)}
@@ -870,7 +906,9 @@ export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
   const [query, setQuery] = useState('');
   const [domainFilter, setDomainFilter] = useState<'all' | SkillDomainSlug>('all');
   const [subcatFilter, setSubcatFilter] = useState<string>('all');
+  const [onlyHot, setOnlyHot] = useState(false);
   const [sortBy, setSortBy] = useState<'default' | 'az' | 'za'>('default');
+  const [installTab, setInstallTab] = useState<'plugin' | 'workbuddy' | 'single'>('plugin');
 
   const availableSubcats =
     domainFilter === 'all'
@@ -883,6 +921,7 @@ export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
   };
 
   const filteredSkills = SKILL_DOCS.filter((doc) => {
+    if (onlyHot && !HOT_SKILLS.has(doc.name)) return false;
     if (domainFilter !== 'all' && doc.domain !== domainFilter) return false;
     if (subcatFilter !== 'all') {
       const sub = subcategoryOf(doc.domain, doc.name);
@@ -891,15 +930,20 @@ export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
     return matchesSkillQuery(doc, query, locale);
   });
 
+  const domainRank = new Map<string, number>(SKILL_DOMAINS.map((d, i) => [d.slug, i]));
   const sortedSkills =
     sortBy === 'default'
-      ? filteredSkills
+      ? [...filteredSkills].sort((a, b) => {
+          const domCmp = (domainRank.get(a.domain) ?? 99) - (domainRank.get(b.domain) ?? 99);
+          if (domCmp !== 0) return domCmp;
+          return Number(HOT_SKILLS.has(b.name)) - Number(HOT_SKILLS.has(a.name));
+        })
       : [...filteredSkills].sort((a, b) => {
           const cmp = a.name.localeCompare(b.name);
           return sortBy === 'az' ? cmp : -cmp;
         });
 
-  const hasFilters = Boolean(query.trim()) || domainFilter !== 'all' || subcatFilter !== 'all' || sortBy !== 'default';
+  const hasFilters = Boolean(query.trim()) || domainFilter !== 'all' || subcatFilter !== 'all' || onlyHot || sortBy !== 'default';
 
   return (
     <SubpageLayout active="plugins" locale={locale}>
@@ -911,48 +955,43 @@ export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
           </span>
           <h1>
             {t(
-              '为 Claude Code、Codex 与你的 Agent 设计的开源 Skill',
-              'Open-source skills built for Claude Code, Codex, and your agent',
-              'Claude Code・Codex・WorkBuddy のための公開スキル集',
+              '为 Claude Code、Codex 与 WorkBuddy 设计的开源 Skill 市场',
+              'Open-source skills & plugins built for Claude Code, Codex, and WorkBuddy',
+              'Claude Code・Codex・WorkBuddy のための公開スキル・プラグイン基盤',
             )}
           </h1>
           <p className="lead">
             {t(
-              '涵盖知识库管理、代码工程规范、办公协同与技能元工具 4 大领域共 47 个开源技能。每个条目均源自真源 SKILL.md，带明确边界护栏，按项目级单技能最小安装。',
-              'Explore 47 public skills across PKM, Engineering, Office & Content, and Meta tooling. Grounded in upstream SKILL.md specs with explicit guardrails and project-scoped installs.',
-              'PKM（27）・Dev（9）・Office（7）・Meta（4）の 4 領域・計 47 スキルを収録。すべて一次ソース SKILL.md に基づき、明確な安全境界とともにプロジェクト単位で導入できます。',
+              '以核心元包 soia-open-skills（Meta）为市场门户，串联 PKM（27）、Dev（9）、Office（7）共 47 个公开技能。既支持整域插件/角色化专家模式，也支持项目级单技能最小安装。',
+              'Anchored by the core portal soia-open-skills (Meta), spanning 47 open skills across Meta (4), PKM (27), Dev (9), and Office (7). Install via host plugins, WorkBuddy role experts, or single-skill project scope.',
+              '中核ポータル soia-open-skills（Meta）を起点に、PKM (27)・Dev (9)・Office (7) の計 47 スキルを統合。プラグイン形式・WorkBuddy エキスパート形式・プロジェクト単体導入の 3 方式に対応。',
             )}
           </p>
           <div className="sk-hero-actions">
             <a className="btn btn-primary" href="#catalog">
               {t('浏览全部 47 个 Skill ↓', 'Browse all 47 skills ↓', '全 47 スキルを探す ↓')}
             </a>
-            <a
-              className="btn btn-ghost"
-              href="https://github.com/soia-team/soia-open-skills"
-              target="_blank"
-              rel="noreferrer noopener"
-            >
-              GitHub (soia-open-skills) ↗
+            <a className="btn btn-ghost" href="#install-modes">
+              {t('宿主安装指南（插件 / 专家模式）↓', 'Host Install: Plugins & Experts ↓', '導入ガイド（プラグイン / エキスパート）↓')}
             </a>
           </div>
         </header>
 
         <section className="sk-facts" aria-label={t('技能库统计事实', 'Skill catalog facts', 'スキルカタログ概要')}>
           <div className="sk-fact">
-            <span className="sk-fact-label">SKILLS</span>
-            <strong>{t('47 个开源技能', '47 Public Skills', '47 個の公開スキル')}</strong>
-            <span>{t('PKM 27 · Dev 9 · Office 7 · Meta 4，基于真源 SKILL.md 整理', 'PKM 27 · Dev 9 · Office 7 · Meta 4 from source SKILL.md', 'PKM 27・Dev 9・Office 7・Meta 4（SKILL.md 一次情報準拠）')}</span>
+            <span className="sk-fact-label">CORE &amp; DOMAINS</span>
+            <strong>{t('Meta 核心 + 3 大领域 · 47 技能', 'Meta Core + 3 Domains · 47 Skills', 'Meta 中核 + 3 領域 · 47 スキル')}</strong>
+            <span>{t('Meta (4) 为核心市场门户，联动 PKM (27) · Dev (9) · Office (7)', 'Meta (4) is the core portal linking PKM (27) · Dev (9) · Office (7)', 'Meta (4) がマーケット中核となり PKM・Dev・Office を連携')}</span>
           </div>
           <div className="sk-fact">
-            <span className="sk-fact-label">REPOSITORIES</span>
-            <strong>{t('4 个独立领域仓库', '4 Domain Repositories', '4 つの独立リポジトリ')}</strong>
-            <span>{t('每张卡片直链 GitHub 源码与完整机制说明', 'Every card links cleanly to upstream SKILL.md source', 'すべてのカードから GitHub ソースへ直接リンク')}</span>
+            <span className="sk-fact-label">PLUGIN &amp; EXPERT MODES</span>
+            <strong>{t('插件模式 · 专家模式', 'Plugin & Expert Modes', 'プラグイン・エキスパート形式')}</strong>
+            <span>{t('Claude Code / Codex 装域插件，WorkBuddy 装角色化专家（不召唤不占上下文）', 'Domain plugins for Claude/Codex; role experts for WorkBuddy desktop', 'Claude / Codex はドメインプラグイン、WorkBuddy はロール別エキスパート導入')}</span>
           </div>
           <div className="sk-fact">
-            <span className="sk-fact-label">HOSTS &amp; LICENSE</span>
-            <strong>{t('MIT · 按项目级最小安装', 'MIT · Project-scoped', 'MIT · プロジェクト単位導入')}</strong>
-            <span>{t('明确宿主（Claude Code / Codex / WorkBuddy），绝不静默扩散', 'Explicit host targeting without silent global overrides', 'ホスト明示・単一スキル単位で安全に導入')}</span>
+            <span className="sk-fact-label">SINGLE-SKILL SCOPE</span>
+            <strong>{t('MIT · 支持单技能最小安装', 'MIT · Project-scoped npx', 'MIT · プロジェクト単体導入')}</strong>
+            <span>{t('明确宿主与作用域，绝不未授权覆盖全局环境或自动同步副本', 'Explicit host & scope without silent global overrides', 'ホストと適用スコープを明示しグローバル設定を汚染しません')}</span>
           </div>
         </section>
 
@@ -1058,6 +1097,7 @@ export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
                 setQuery('');
                 setDomainFilter('all');
                 setSubcatFilter('all');
+                setOnlyHot(false);
                 setSortBy('default');
               }}
             >
@@ -1075,6 +1115,13 @@ export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
             )}
           </span>
           <div className="sk-domain-pills" role="tablist" aria-label={t('快速切换领域', 'Quick domain filter', '領域クイック切替')}>
+            <button
+              type="button"
+              className={`sk-domain-pill is-hot-pill${onlyHot ? ' is-active' : ''}`}
+              onClick={() => setOnlyHot((v) => !v)}
+            >
+              {t(`🔥 常用推荐 (${HOT_SKILLS.size})`, `🔥 Popular (${HOT_SKILLS.size})`, `🔥 定番 (${HOT_SKILLS.size})`)}
+            </button>
             <button
               type="button"
               className={`sk-domain-pill${domainFilter === 'all' ? ' is-active' : ''}`}
@@ -1109,6 +1156,7 @@ export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
                   setQuery('');
                   setDomainFilter('all');
                   setSubcatFilter('all');
+                  setOnlyHot(false);
                 }}
               >
                 {t('显示全部 47 个技能', 'Show all 47 skills', '全 47 スキルを表示')}
@@ -1117,38 +1165,249 @@ export function SkillsHubPage({ locale }: { locale: LandingLocaleCode }) {
           )}
         </section>
 
-        <section className="sk-section-head">
+        <section className="sk-section-head" id="install-modes">
           <div className="sk-section-eyebrow">
             <span className="sk-section-num">02</span>
-            <span>{t('使用流程', 'HOW TO USE', '導入の流れ')}</span>
+            <span>{t('宿主安装体系 · 整域插件 & 专家模式', 'HOST INSTALL MODES · PLUGINS & EXPERTS', 'ホスト別導入 · プラグイン / エキスパート')}</span>
           </div>
-          <h2>{t('三步选对 Skill，并在 Claude Code、Codex 或 WorkBuddy 中运行', 'Pick, inspect, and run any SOIA skill in 3 steps', '3 ステップで選んでローカル CLI に導入')}</h2>
+          <h2>
+            {t(
+              'Claude Code / Codex 插件模式、WorkBuddy 专家模式与单技能安装对照',
+              'Install via Host Plugins (Claude / Codex), Role Experts (WorkBuddy), or Single Skill',
+              'Claude Code / Codex プラグイン・WorkBuddy エキスパート・単体導入の使い分け',
+            )}
+          </h2>
+          <p>
+            {t(
+              '每个 SOIA 领域仓（以核心包 soia-open-skills 为市场入口）同时是一份 Claude 插件、Codex 插件与 WorkBuddy 角色化专家包——源码不复制，按你的宿主习惯选装即可：',
+              'Every SOIA domain repository serves simultaneously as a Claude plugin, a Codex plugin, and a WorkBuddy expert bundle without duplicating skill sources:',
+              '各領域リポジトリ（soia-open-skills がマーケットポータル）は同時に Claude / Codex プラグインおよび WorkBuddy エキスパートパッケージとして機能します：',
+            )}
+          </p>
         </section>
 
-        <div className="sk-guide-list">
-          <div className="sk-guide-card">
-            <span className="sk-guide-no">01</span>
-            <div className="sk-guide-body">
-              <strong>{t('按任务与子类筛选，而不是死记命令名', 'Filter by task & domain rather than memorizing slugs', 'コマンド暗記不要：領域と目的で絞り込む')}</strong>
-              <p>{t('不知道叫哪个技能时，可以直接在上面搜关键词，或者直接装入并调用 soia-meta-find-skill，让 Agent 帮你从 47 个技能里挑最合适的那一个。', 'Search by problem keyword above, or install soia-meta-find-skill so your coding agent picks the right skill automatically.', '上の検索バーで目的を探すか、soia-meta-find-skill を導入してエージェントに最適スキルを選ばせます。')}</p>
-            </div>
-          </div>
-          <div className="sk-guide-card">
-            <span className="sk-guide-no">02</span>
-            <div className="sk-guide-body">
-              <strong>{t('点开详情核查机制、前置要求与硬性底线', 'Inspect steps, prerequisites & hard guardrails', '詳細ページで動作手順と安全ガードレールを確認')}</strong>
-              <p>{t('每个技能页都基于上游 SKILL.md 与真实脚本列出「分步机制」「能力对照」和「绝不越界规则」（如公众号只建草稿不群发、Git 操作隔离工作树）。', 'Every detail page extracts step-by-step execution mechanics and non-negotiable safety guardrails straight from source.', '各詳細ページには SKILL.md 準拠のステップ、入出力対照、絶対越えない安全境界を明記しています。')}</p>
-            </div>
-          </div>
-          <div className="sk-guide-card">
-            <span className="sk-guide-no">03</span>
-            <div className="sk-guide-body">
-              <strong>{t('项目级单技能安装，装好直接说人话触发', 'Install at project scope and trigger in plain language', 'プロジェクト単位で導入し自然な日本語・英語・中国語で実行')}</strong>
-              <p>{t('默认只在当前项目安装指定单个技能到对应宿主目录（.agents/skills/<name>/），不静默改写全局环境。', 'Installs cleanly into your project workspace without mutating global host configs.', '既定では対象プロジェクト配下のみに単体導入し、グローバル環境を勝手に汚しません。')}</p>
-              <pre className="sk-guide-code"><code>{`npx skills add https://github.com/soia-team/soia-open-pkm-vault-skills --skill soia-pkm-query-vault`}</code></pre>
-            </div>
-          </div>
+        <div className="sk-install-tabs" role="tablist" aria-label={t('选择宿主安装模式', 'Choose host install mode', '導入モードを選択')}>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={installTab === 'plugin'}
+            className={`sk-install-tab${installTab === 'plugin' ? ' is-active' : ''}`}
+            onClick={() => setInstallTab('plugin')}
+          >
+            {t('路线 B · Claude Code / Codex 插件模式（推荐整域）', 'Plugin Mode · Claude Code / Codex', 'プラグイン形式 · Claude Code / Codex')}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={installTab === 'workbuddy'}
+            className={`sk-install-tab${installTab === 'workbuddy' ? ' is-active' : ''}`}
+            onClick={() => setInstallTab('workbuddy')}
+          >
+            {t('专家模式 · WorkBuddy 角色化专家（桌面端推荐）', 'Expert Mode · WorkBuddy Desktop', 'エキスパート形式 · WorkBuddy')}
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={installTab === 'single'}
+            className={`sk-install-tab${installTab === 'single' ? ' is-active' : ''}`}
+            onClick={() => setInstallTab('single')}
+          >
+            {t('路线 A · 项目级单技能安装（npx 通用 60+ 宿主）', 'Single Skill · Project-scoped npx', '単体導入 · プロジェクト npx')}
+          </button>
         </div>
+
+        {installTab === 'plugin' && (
+          <div className="sk-install-panel">
+            <div className="sk-install-grid">
+              <div className="sk-install-card">
+                <div className="sk-install-card-head">
+                  <strong>Claude Code · {t('插件市场模式', 'Plugin Marketplace', 'プラグインモード')}</strong>
+                  <span className="sk-install-badge">{t('支持 enable/disable', 'Switchable', '有効/無効切替')}</span>
+                </div>
+                <p>
+                  {t(
+                    '1) 先注册核心市场 soia-open-skills；2) 先装核心包 soia-meta@soia（~250 tok）再按需安装域插件。插件缓存在 ~/.claude/plugins/cache/，与 ~/.agents/skills 互相独立，不用时随时 disable 归零上下文成本。',
+                    'Register soia-open-skills as the marketplace, install core soia-meta@soia first (~250 tok), then add any domain plugin. Disable unused domains anytime for zero context cost.',
+                    'まず soia-open-skills マーケットを登録し、中核の soia-meta@soia（~250 tok）や必要なドメインを追加。不要時は disable でコンテキスト負荷をゼロにできます。',
+                  )}
+                </p>
+                <div className="skd-cmd-box">
+                  <code>claude plugin marketplace add soia-team/soia-open-skills</code>
+                  <CopyButton text="claude plugin marketplace add soia-team/soia-open-skills" locale={locale} />
+                </div>
+                <div className="skd-cmd-box">
+                  <code>claude plugin install soia-meta@soia</code>
+                  <CopyButton text="claude plugin install soia-meta@soia" locale={locale} />
+                </div>
+                <div className="skd-cmd-box">
+                  <code>claude plugin install soia-pkm-vault@soia</code>
+                  <CopyButton text="claude plugin install soia-pkm-vault@soia" locale={locale} />
+                </div>
+              </div>
+
+              <div className="sk-install-card">
+                <div className="sk-install-card-head">
+                  <strong>Codex CLI · {t('市场插件模式', 'Marketplace Plugin', 'プラグインモード')}</strong>
+                  <span className="sk-install-badge">{t('原生 marketplace.json', 'Native format', '公式マニフェスト対応')}</span>
+                </div>
+                <p>
+                  {t(
+                    'Codex 读取根仓 .agents/plugins/marketplace.json。先添加市场，再安装核心 Meta 与所需领域插件。用 codex plugin list 或 codex debug prompt-input 检查实际挂载路径。',
+                    'Codex reads .agents/plugins/marketplace.json. Register the marketplace, add core soia-meta@soia and domains, and verify via codex plugin list.',
+                    'Codex は .agents/plugins/marketplace.json を参照します。マーケット追加後に soia-meta@soia 等を導入し、codex plugin list で確認できます。',
+                  )}
+                </p>
+                <div className="skd-cmd-box">
+                  <code>codex plugin marketplace add soia-team/soia-open-skills</code>
+                  <CopyButton text="codex plugin marketplace add soia-team/soia-open-skills" locale={locale} />
+                </div>
+                <div className="skd-cmd-box">
+                  <code>codex plugin add soia-meta@soia</code>
+                  <CopyButton text="codex plugin add soia-meta@soia" locale={locale} />
+                </div>
+                <div className="skd-cmd-box">
+                  <code>codex plugin add soia-dev@soia</code>
+                  <CopyButton text="codex plugin add soia-dev@soia" locale={locale} />
+                </div>
+              </div>
+            </div>
+
+            <div className="sk-install-note">
+              <strong>{t('机制提示（重要）：', 'Host Mechanism Note:', '仕組み上の注意：')}</strong>
+              {t(
+                'Claude Code 的插件缓存与 npx 共享目录相互独立；而 Codex 的插件是叠加在 ~/.agents/skills 共享真源之上的（Codex 实际技能 = 共享真源 + 已装插件 + 内置技能），因此 Codex 若想减少常驻索引，应精简 ~/.agents/skills 只留高频，长尾用 soia-meta-find-skill 按需找；可选整域插件：soia-meta（核心 Meta · 4）、soia-pkm-vault（PKM · 27）、soia-dev（Dev · 9）、soia-cwork-office（Office · 7）。',
+                'Claude plugins stay isolated from ~/.agents/skills, whereas Codex stacks plugins on top of ~/.agents/skills. Available plugins: soia-meta (Core · 4), soia-pkm-vault (27), soia-dev (9), soia-cwork-office (7).',
+                'Claude のプラグインは ~/.agents/skills と分離されますが、Codex は ~/.agents/skills の上に加算ロードされます。提供プラグイン：soia-meta (中核·4) / soia-pkm-vault (27) / soia-dev (9) / soia-cwork-office (7)。',
+              )}
+            </div>
+          </div>
+        )}
+
+        {installTab === 'workbuddy' && (
+          <div className="sk-install-panel">
+            <div className="sk-install-grid">
+              <div className="sk-install-card">
+                <div className="sk-install-card-head">
+                  <strong>WorkBuddy · {t('角色化专家模式（推荐）', 'Role-Based Expert Mode', 'ロール別エキスパートモード')}</strong>
+                  <span className="sk-install-badge">{t('不召唤不占上下文', 'On-demand summon', '呼び出し時のみ展開')}</span>
+                </div>
+                <p>
+                  {t(
+                    'WorkBuddy 没有 CLI，且开关粒度不是普通插件而是「角色化专家」（一个域仓 = 一位带人设与全域技能的专家）。直接对已有 AI 助手说「装到 WorkBuddy」，或运行安装脚本将核心包 soia-meta（及所需域）写入硬编码目录并登记市场：',
+                    'WorkBuddy desktop switches by Role Experts (one repo = one expert persona bundled with its domain skills, zero cost until summoned). Run the bundled installer from soia-open-skills or tell your agent “Install to WorkBuddy”:',
+                    'WorkBuddy はプラグインではなく「エキスパート単位（1 リポジトリ = 1 専門家）」で切り替え、召喚しない限りコンテキストを消費しません。スクリプトで導入して再起動します：',
+                  )}
+                </p>
+                <div className="skd-cmd-box">
+                  <code>python3 skills/soia-meta-skill-release/scripts/install_workbuddy_experts.py soia-meta</code>
+                  <CopyButton text="python3 skills/soia-meta-skill-release/scripts/install_workbuddy_experts.py soia-meta" locale={locale} />
+                </div>
+                <div className="skd-cmd-box">
+                  <code>python3 skills/soia-meta-skill-release/scripts/install_workbuddy_experts.py soia-meta soia-pkm-vault</code>
+                  <CopyButton text="python3 skills/soia-meta-skill-release/scripts/install_workbuddy_experts.py soia-meta soia-pkm-vault" locale={locale} />
+                </div>
+                <p>
+                  {t(
+                    '装完重启 WorkBuddy 客户端，到【专家·技能·连接器 → 我的专家】召唤对应专家，输入「你有多少个可用技能」即可验证全域技能已在场。',
+                    'Restart WorkBuddy after installing and summon the expert from My Experts.',
+                    '導入後に WorkBuddy を再起動し、【マイエキスパート】から召喚して利用スキル数を確認できます。',
+                  )}
+                </p>
+              </div>
+
+              <div className="sk-install-card">
+                <div className="sk-install-card-head">
+                  <strong>{t('4 位公开角色化专家对照', '4 Public Role Experts', '公開 4 エキスパート一覧')}</strong>
+                  <span className="sk-install-badge">my-experts</span>
+                </div>
+                <div className="skill-table-wrap">
+                  <table className="skill-cap-table">
+                    <thead>
+                      <tr>
+                        <th>{t('插件 / 专家 ID', 'Expert ID', 'エキスパート ID')}</th>
+                        <th>{t('花名 / 角色', 'Role Persona', 'ロール名')}</th>
+                        <th>{t('携带技能数', 'Skills', '収録数')}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><code>soia-meta</code></td>
+                        <td><strong>Soia Meta</strong> · {t('技能生态管家', 'Skill Ecosystem Manager', 'エコシステム管理')}</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td><code>soia-pkm-vault</code></td>
+                        <td><strong>Soia Vault</strong> · {t('知识库管家', 'Knowledge Vault Curator', 'PKM 管理')}</td>
+                        <td>27</td>
+                      </tr>
+                      <tr>
+                        <td><code>soia-dev</code></td>
+                        <td><strong>Soia Dev</strong> · {t('软件工程师', 'Software Engineer', 'エンジニアリング')}</td>
+                        <td>9</td>
+                      </tr>
+                      <tr>
+                        <td><code>soia-cwork-office</code></td>
+                        <td><strong>Soia Cowork</strong> · {t('办公与内容助手', 'Office & Content Aide', 'オフィス・執筆')}</td>
+                        <td>7</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div className="sk-install-note">
+              <strong>{t('WorkBuddy 装载约束（必读）：', 'WorkBuddy Loading Rules:', 'WorkBuddy 導入時の制約：')}</strong>
+              {t(
+                '① 自建专家只认硬编码路径 ~/.workbuddy/plugins/marketplaces/my-experts/plugins/<专家名>/（并在 my-experts/.codebuddy-plugin/marketplace.json 追加记录），换名目录或填 URL 不会显示；② 不能用软链（官方校验器会 resolve() 穿透判失败），必须放实体 checkout 克隆；③ 若不走专家模式，也可用 soia-meta-sync-skills 只把个别技能软链到 ~/.workbuddy/skills（全局常驻，无法按专家召唤隔离）。',
+                'WorkBuddy only scans physical directories inside ~/.workbuddy/plugins/marketplaces/my-experts/plugins/<name>/ with relative paths in marketplace.json; symlinks fail path resolution.',
+                'WorkBuddy は ~/.workbuddy/plugins/marketplaces/my-experts/plugins/<名>/ 配下の実体チェックアウトと相対パス定義のみを認識します（シンボリックリンクは解決検査で弾かれます）。',
+              )}
+            </div>
+          </div>
+        )}
+
+        {installTab === 'single' && (
+          <div className="sk-install-panel">
+            <div className="sk-install-grid">
+              <div className="sk-install-card">
+                <div className="sk-install-card-head">
+                  <strong>{t('第一步：先给项目装核心发现入口', 'Step 1: Add core finder skill', 'Step 1: 中核の検索スキルを導入')}</strong>
+                  <span className="sk-install-badge">{t('推荐起点', 'Start here', '推奨')}</span>
+                </div>
+                <p>
+                  {t(
+                    '默认只在当前工作项目安装（写入 .agents/skills/），不加 -g 不改全局。给 Codex / Claude Code / Antigravity / Cursor / Windsurf 等任意宿主装上 soia-meta-find-skill 后，说「帮我找个整理知识库的技能」即可自动路由：',
+                    'Installs cleanly into current project (.agents/skills/) without mutating global config. Replace codex with claude-code or your target CLI:',
+                    '現在のプロジェクトのみへ単体導入（-g なしでグローバルを汚しません）。codex の部分は claude-code 等に変更可能：',
+                  )}
+                </p>
+                <div className="skd-cmd-box">
+                  <code>npx skills add soia-team/soia-open-skills -a codex -s soia-meta-find-skill</code>
+                  <CopyButton text="npx skills add soia-team/soia-open-skills -a codex -s soia-meta-find-skill" locale={locale} />
+                </div>
+              </div>
+
+              <div className="sk-install-card">
+                <div className="sk-install-card-head">
+                  <strong>{t('跨 60+ 宿主同步与增量管理', 'Multi-host sync & management', '複数ホスト同期と管理')}</strong>
+                  <span className="sk-install-badge">dry-run</span>
+                </div>
+                <p>
+                  {t(
+                    'Codex / Cursor / Zed / Gemini CLI 直读共享 ~/.agents/skills；Claude Code 由 npx 自动建链；Windsurf / Trae / Qoder / Kimi / OpenCode 需先运行 soia-meta-sync-skills 做 --dry-run 核对后再建软链。',
+                    'Check installed skills or dry-run multi-host symlink sync via soia-meta-sync-skills before copying across CLI directories.',
+                    'Codex / Cursor / Gemini CLI は ~/.agents/skills を共有参照。他ツールへの同期は --dry-run で事前確認して実施します。',
+                  )}
+                </p>
+                <div className="skd-cmd-box">
+                  <code>npx skills add soia-team/soia-open-pkm-vault-skills -a claude-code -s soia-pkm-query-vault</code>
+                  <CopyButton text="npx skills add soia-team/soia-open-pkm-vault-skills -a claude-code -s soia-pkm-query-vault" locale={locale} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </article>
     </SubpageLayout>
   );
@@ -1264,12 +1523,14 @@ export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; s
             <div className="craft-list">
               {group.items.map((skill) => {
                 runningIndex += 1;
+                const isHot = HOT_SKILLS.has(skill.name);
                 return (
-                  <a className="craft-row" href={href(`/skills/${slug}/${skill.name}/`)} key={skill.name}>
+                  <a className={`craft-row${isHot ? ' is-hot' : ''}`} href={href(`/skills/${slug}/${skill.name}/`)} key={skill.name}>
                     <span className="craft-index">{String(runningIndex).padStart(2, '0')}</span>
                     <span>
                       <strong>
                         {pick(locale, skill.title)}
+                        {isHot ? <HotBadge locale={locale} /> : null}
                         <span className="skill-row-tech">{skill.name}{skill.version ? ` · v${skill.version}` : ''}</span>
                       </strong>
                       <small>{skill.tagline}</small>
@@ -1457,6 +1718,7 @@ export function SkillDetailPage({ locale, slug, skill }: { locale: LandingLocale
             <h1 className="display">{friendlyTitle}<span className="dot">.</span></h1>
             <p className="lead">{zh ? doc.tagline : pick(locale, doc.pain)}</p>
             <div className="sk-card-tags" style={{ marginBottom: 18 }}>
+              {HOT_SKILLS.has(doc.name) ? <HotBadge locale={locale} /> : null}
               <span className={`sk-tag-domain is-${domain.slug}`}>{domainLabel}</span>
               {subcatLabel ? <span className="sk-tag-sub">{subcatLabel}</span> : null}
               <span className="sk-tag-sub">MIT</span>
@@ -1645,12 +1907,19 @@ export function SkillDetailPage({ locale, slug, skill }: { locale: LandingLocale
                 ) : (
                   <p>{t('见完整文档的安装节。', 'See the install section in the full doc.', '詳細はフルドキュメントをご覧ください。')}</p>
                 )}
+                <div className="skd-cmd-box">
+                  <code>{`python3 skills/soia-meta-skill-release/scripts/install_workbuddy_experts.py ${domain.plugin}`}</code>
+                  <CopyButton text={`python3 skills/soia-meta-skill-release/scripts/install_workbuddy_experts.py ${domain.plugin}`} locale={locale} />
+                </div>
                 <p className="skill-prose" style={{ margin: 0 }}>
                   {t(
-                    'Claude Code、Codex 与 WorkBuddy 全支持；默认项目级（.agents/skills/）、明确宿主、单个技能，不擅自做全局覆盖。',
-                    'Supported on Claude Code, Codex, and WorkBuddy. Project-scoped by default — never silently writes global configs.',
-                    'Claude Code / Codex / WorkBuddy に対応。既定で対象プロジェクト配下へ単体導入されます。',
+                    '默认项目级单技能（.agents/skills/）；如需按整域以插件模式（Claude Code / Codex）或角色化专家模式（WorkBuddy）安装，',
+                    'Default is project-scoped single skill (.agents/skills/); for whole-domain Claude/Codex plugins or WorkBuddy role experts, see ',
+                    '既定はプロジェクト単体導入（.agents/skills/）です。Claude/Codex プラグイン形式や WorkBuddy エキスパート形式の詳細は ',
                   )}
+                  <a href={href('/skills/#install-modes')}>
+                    {t('查看插件/专家安装说明 →', 'plugin & expert install guide →', '導入モード一覧 →')}
+                  </a>
                 </p>
               </div>
             </section>

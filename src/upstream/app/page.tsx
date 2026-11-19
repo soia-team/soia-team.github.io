@@ -178,10 +178,10 @@ const FOOTER_USE_CASE_HREFS = [
 ] as const;
 
 const FOOTER_SKILL_DOMAINS = [
+  { name: 'Meta (Core)', href: '/skills/meta/' },
   { name: 'PKM Vault', href: '/skills/pkm/' },
   { name: 'Dev', href: '/skills/dev/' },
   { name: 'Office', href: '/skills/office/' },
-  { name: 'Meta', href: '/skills/meta/' },
 ] as const;
 
 
@@ -505,7 +505,7 @@ export default function Page({
               </p>
               <img
                 className='hero-mark'
-                src='/soia/products/soiadeck-icon.png'
+                src='/soia/soia-family-mark.svg'
                 width={72}
                 height={72}
                 alt=''
@@ -855,6 +855,7 @@ export default function Page({
                   are driven by the enhancers in `pages/index.astro`. */}
               <div className='lab-dock' data-lab-dock data-reveal>
                 {([
+                  { label: 'Meta', href: href('/skills/meta/'), preview: '/soia/domains/cover-meta.png' },
                   {
                     label: 'PKM',
                     href: href('/skills/pkm/'),
@@ -870,7 +871,6 @@ export default function Page({
                     href: href('/skills/office/'),
                     preview: '/soia/domains/cover-office.png',
                   },
-                  { label: 'Meta', href: href('/skills/meta/'), preview: '/soia/domains/cover-meta.png' },
                   { label: 'SoiaDeck', href: href('/soiadeck/'), preview: '/soia/products/soiadeck-home.png' },
                   { label: 'Mobile', href: href('/soiadeck/'), preview: '/soia/products/soiadeck-phone.png' },
                 ] as ReadonlyArray<{

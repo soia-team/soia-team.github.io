@@ -80,10 +80,10 @@ export function CompactFooter({ locale }: { locale: LandingLocaleCode }) {
             <li><a href={href('/soia/')}>SOIA Runtime</a></li>
           </ul></div>
           <div className="sub-footer-col"><h5>{t3('技能域', 'Skills', 'スキル領域')}</h5><ul>
+            <li><a href={href('/skills/meta/')}>Meta (Core)</a></li>
             <li><a href={href('/skills/pkm/')}>PKM Vault</a></li>
             <li><a href={href('/skills/dev/')}>Dev</a></li>
             <li><a href={href('/skills/office/')}>Office</a></li>
-            <li><a href={href('/skills/meta/')}>Meta</a></li>
           </ul></div>
           <div className="sub-footer-col"><h5>{t3('资源', 'Resources', 'リソース')}</h5><ul>
             <li><a href={href('/about/')}>{t3('关于', 'About', '概要')}</a></li>

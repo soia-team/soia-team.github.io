@@ -1,0 +1,8 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="16" fill="#111827"/>
+  <!-- Minimalist SOIA 4-layer Agent Family mark: 3 white nodes + 1 live emerald core -->
+  <rect x="14" y="14" width="16" height="16" rx="5" fill="#FFFFFF"/>
+  <rect x="34" y="14" width="16" height="16" rx="8" fill="#4ADE80"/>
+  <rect x="14" y="34" width="16" height="16" rx="5" fill="#FFFFFF" fill-opacity="0.82"/>
+  <rect x="34" y="34" width="16" height="16" rx="5" fill="#FFFFFF"/>
+</svg>

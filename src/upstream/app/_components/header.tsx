@@ -134,7 +134,7 @@ export function Header({
         <a href={homeBrandHref} className='brand'>
           <img
             className='brand-logo'
-            src='/soia/products/soiadeck-icon.png'
+            src='/soia/soia-family-mark.svg'
             alt='SOIA'
             width={40}
             height={40}
@@ -234,10 +234,10 @@ export function Header({
                   </a>
                   <ul className='nav-mega-list'>
                     {[
+                      { name: 'Meta', href: '/skills/meta/' },
                       { name: 'PKM Vault', href: '/skills/pkm/' },
                       { name: 'Dev', href: '/skills/dev/' },
                       { name: 'Office', href: '/skills/office/' },
-                      { name: 'Meta', href: '/skills/meta/' },
                     ].map((domain) => (
                       <li key={domain.name}>
                         <a href={href(domain.href)}>
@@ -325,6 +325,11 @@ export function Header({
               </a>
               <ul className='nav-dropdown' aria-label={productMenuCopy.plugins}>
                 <li>
+                  <a href={href('/skills/meta/')}>
+                    <span className='dropdown-name'>Meta</span>
+                  </a>
+                </li>
+                <li>
                   <a href={href('/skills/pkm/')}>
                     <span className='dropdown-name'>
                       {productMenuCopy.pluginItems.templates}
@@ -343,11 +348,6 @@ export function Header({
                     <span className='dropdown-name'>
                       {productMenuCopy.pluginItems.systems}
                     </span>
-                  </a>
-                </li>
-                <li>
-                  <a href={href('/skills/meta/')}>
-                    <span className='dropdown-name'>Meta</span>
                   </a>
                 </li>
               </ul>

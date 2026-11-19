@@ -136,182 +136,182 @@ export function AboutPage({ locale }: { locale: LandingLocaleCode }) {
   const lang = languageKey(locale);
   const href = (path: string) => hrefFor(path, locale);
 
+  const family =
+    lang === 'zh'
+      ? [
+          {
+            ord: '01 · 家族当前主角 · 桌面作业台',
+            badge: '即将开源 · macOS arm64',
+            name: 'SoiaDeck',
+            desc: '面向日常开发的跨端 AI 作业台：由本机 daemon + 桌面端 + 手机端看 Diff/审批 + NAT 加密中继 + 本地 MLX 组成，统一并行驱动 19 个现有 Coding Agent，不绑定模型也不强迫重学工作流。',
+            to: href('/soiadeck/'),
+            cta: '查看 SoiaDeck 架构 →',
+          },
+          {
+            ord: '02 · 已开源技能生态 · CLI 能力层',
+            badge: '已开源 · MIT · 47 技能',
+            name: 'Open Skills 技能生态',
+            desc: '按项目级最小范围（.agents/skills/）装入 Claude Code、Codex 或 WorkBuddy 的公开能力集：涵盖知识库 PKM（27）、工程 Dev（9）、办公 Office（7）、生态 Meta（4），装好说人话即可调用。',
+            to: href('/skills/'),
+            cta: '浏览全部 47 个技能 →',
+          },
+          {
+            ord: '03 · 独立轻量内核 · 命令行 Agent',
+            badge: '设计定稿阶段 · 0.0.1 M1 · MIT',
+            name: 'SoiaCode (si)',
+            desc: '用 Rust 编写的单二进制极小 Coding Agent 内核。「人守住注意力，系统守住安全」——只保留 5 个内置工具与 10 个挂载点，其余能力通过 34 个独立扩展与 MCP 按需挂载。',
+            to: href('/soiacode/'),
+            cta: '阅读系统边界与规格 →',
+          },
+          {
+            ord: '04 · 底层 Agent OS 与方法论底座',
+            badge: 'github.com/soia-team/soia · MIT',
+            name: 'SOIA Runtime (Agent OS)',
+            desc: '家族名称里的核心底座仓（SOIA = System, Orchestration, Intelligence, Assurance），定义 Model → Harness → Agent OS 架构分层、M1–M8 一级边界与六步最小闭环；方法论文档全量托管于 soia-docs。',
+            to: href('/soia/'),
+            cta: '查看 SOIA Runtime 演进 →',
+          },
+        ]
+      : lang === 'ja'
+        ? [
+            {
+              ord: '01 · 現在の主力 · デスクトップ作業台',
+              badge: '公開予定 OSS · macOS arm64',
+              name: 'SoiaDeck',
+              desc: '日常開発向けの統合 AI 作業台。ローカル daemon・デスクトップ・モバイル承認・暗号化リレー・ローカル MLX を備え、19 種の Coding Agent と Diff 承認をベンダーロックインなしで一元管理します。',
+              to: href('/soiadeck/'),
+              cta: 'SoiaDeck アーキテクチャを見る →',
+            },
+            {
+              ord: '02 · 公開済みエコシステム · スキル層',
+              badge: 'オープンソース · MIT · 47 スキル',
+              name: 'Open Skills スキル群',
+              desc: 'Claude Code / Codex / WorkBuddy にプロジェクト単位で導入できる公開スキル集。PKM (27)・Dev (9)・Office (7)・Meta (4) の計 47 スキルを最小スコープで利用できます。',
+              to: href('/skills/'),
+              cta: '47 スキルを探す →',
+            },
+            {
+              ord: '03 · 独立軽量カーネル · Rust CLI',
+              badge: '設計確定段階 · 0.0.1 M1 · MIT',
+              name: 'SoiaCode (si)',
+              desc: 'Rust 製の単一バイナリ型 Coding Agent カーネル。「人が注意力を守り、システムが安全を守る」を軸に 5 組込みツールと 10 フックのみを内蔵し、34 の拡張へ疎結合に分離します。',
+              to: href('/soiacode/'),
+              cta: '境界仕様と設計を読む →',
+            },
+            {
+              ord: '04 · 家族の基盤 · Agent OS ランタイム',
+              badge: 'github.com/soia-team/soia · MIT',
+              name: 'SOIA Runtime (Agent OS)',
+              desc: 'SOIA ファミリーの中で具体的な Agent OS 基盤を担うリポジトリ（System, Orchestration, Intelligence, Assurance）。Model → Harness → Agent OS 階層と M1–M8 境界仕様（soia-docs）を定義します。',
+              to: href('/soia/'),
+              cta: 'SOIA Runtime の仕様を見る →',
+            },
+          ]
+        : [
+            {
+              ord: '01 · LEAD PRODUCT · WORKBENCH',
+              badge: 'Coming OSS · macOS arm64',
+              name: 'SoiaDeck',
+              desc: 'Cross-device workbench for daily coding — combining a persistent local daemon, desktop UI, mobile Diff approvals, encrypted NAT relay, and local MLX router across 19 existing coding agents.',
+              to: href('/soiadeck/'),
+              cta: 'Explore SoiaDeck →',
+            },
+            {
+              ord: '02 · OPEN ECOSYSTEM · SKILL LAYER',
+              badge: 'Open Source · MIT · 47 Skills',
+              name: 'Open Skills',
+              desc: 'Project-scoped skills installed directly into Claude Code, Codex, or WorkBuddy — 47 transparent workflows across PKM Vault (27), Dev (9), Office (7), and Meta (4).',
+              to: href('/skills/'),
+              cta: 'Browse all 47 skills →',
+            },
+            {
+              ord: '03 · STANDALONE KERNEL · RUST CLI',
+              badge: 'Design Stage · 0.0.1 M1 · MIT',
+              name: 'SoiaCode (si)',
+              desc: 'Single-binary Rust coding agent kernel built around “humans guard attention, the system guards safety” — keeping 5 built-in tools & 10 mounts while offloading 34 peripherals.',
+              to: href('/soiacode/'),
+              cta: 'Read boundaries & specs →',
+            },
+            {
+              ord: '04 · FOUNDATION · AGENT OS BASE',
+              badge: 'github.com/soia-team/soia · MIT',
+              name: 'SOIA Runtime (Agent OS)',
+              desc: 'The foundational Agent OS repository inside the family (System, Orchestration, Intelligence, Assurance) — defining the Model → Harness → Agent OS stack and M1–M8 specs in soia-docs.',
+              to: href('/soia/'),
+              cta: 'View SOIA Runtime specs →',
+            },
+          ];
+
   const thesis =
     lang === 'zh'
       ? {
-          problemTitle: '为什么今天的 AI Coding 仍然像聊天框？',
+          problemTitle: '为什么不做一个封闭云桌面，而拆出四个互补成员？',
           problemBody:
-            '瓶颈早就不是模型单轮有多聪明，而是外围控制面没有闭合：工作区没有收敛为唯一真源，权限审批、事实账本、记忆检索与跨端调度各自分裂——许多工具干脆把代码、密钥与会话关进单家云黑盒。',
-          solutionTitle: 'SOIA 的解法：Workspace-first Agent OS',
+            '不同用户与阶段要的东西不一样：有人明天就要把 Claude Code / Codex 接入 Obsidian 干活（需要 Open Skills），有人要多设备管 19 个 Agent 审批 Diff（需要 SoiaDeck），也有工程团队只要极小独立 Rust 内核（SoiaCode）或完整 Agent OS 规范（SOIA Runtime）。',
+          solutionTitle: '清晰的职责边界，而非混为一谈的单体壳',
           solutionBody:
-            '我们不绑死模型也不制造闭源云墙。无论你在桌面端、手机端还是终端 CLI 干活，底层始终共享同一套可审计工作区、权限关口、事件流与事实账本——让你用已有的 CLI 订阅与本地模型真正可控地跑长任务。',
+            '「SOIA 家族（The Agent Family）」是整体产品版图，「SOIA Runtime（Agent OS）」则是其中专注底座规格与原语的一员。四个层级共用本地工作区真源与安全审计哲学，又可以按需单独选用、独立演进。',
         }
       : lang === 'ja'
         ? {
-            problemTitle: 'なぜ AI コーディングはいまだチャット枠に見えるのか？',
+            problemTitle: 'なぜ単一クラウド IDE にせず 4 層へ分けたのか？',
             problemBody:
-              'ボトルネックはモデル単体の知能ではなく制御面の欠如にあります。ワークスペースが単一真実源にならず、権限承認・監査台帳・メモリ・端末間ディスパッチが分断され、多くのツールはコードや鍵をクラウドのブラックボックスに閉じ込めます。',
-            solutionTitle: 'SOIA の解：Workspace-first Agent OS',
+              '今すぐ既存 CLI で使える公開スキルが欲しい人（Open Skills）、19 種の Agent と Diff 承認を一画面で束ねたい人（SoiaDeck）、極小 Rust カーネルや Agent OS 基盤仕様が必要なチーム（SoiaCode / SOIA Runtime）では、求められる粒度が異なるためです。',
+            solutionTitle: '家族全体の構成と SOIA Runtime の明確な分離',
             solutionBody:
-              'モデルをロックインせずクラウド壁も作りません。デスクトップ・モバイル・CLI のどれから使っても、監査可能な単一ワークスペース、明示的権限ゲート、append-only 台帳を共有し、既存の CLI 契約やローカルモデルで長時間タスクを制御可能にします。',
+              '「SOIA ファミリー」は製品エコシステム全体の総称であり、「SOIA Runtime」はその中の Agent OS 基盤リポジトリです。ローカル真実源と監査可能な設計思想を共有しつつ、必要なレイヤーだけを独立導入できます。',
           }
         : {
-            problemTitle: 'Why AI coding still stalls like chat',
+            problemTitle: 'Why four focused layers instead of one monolithic cloud box?',
             problemBody:
-              'The bottleneck is no longer single-turn model IQ — it is a fragmented harness. Workspaces are not the source of truth, permissions and audit ledgers are missing, and sessions trap code inside proprietary cloud black boxes.',
-            solutionTitle: 'SOIA’s answer: Workspace-first Agent OS',
+              'Developers adopt AI tooling at different layers: installable project skills for existing CLIs (Open Skills), multi-agent desktop/mobile orchestration (SoiaDeck), a minimal standalone Rust loop (SoiaCode), or full Agent OS runtime primitives (SOIA Runtime).',
+            solutionTitle: 'Clear distinction: SOIA Family vs SOIA Runtime',
             solutionBody:
-              'Desktop, mobile, and CLI share one observable workspace, explicit permission gate, and append-only ledger — plugging straight into the coding CLI subscriptions and local models you already own.',
+              '“SOIA” as a family refers to the whole local-first ecosystem across all four products; “SOIA Runtime” is specifically the foundational Agent OS repo (soia-team/soia). Every layer stays composable with zero vendor lock-in.',
           };
 
   const primitives =
     lang === 'zh'
       ? [
-          { code: '01 · Workspace', tag: '唯一真源', desc: '保存项目路径、Git Worktree、任务与配置。无论桌面、手机还是 CLI 接入，永远面向同一份本地客观事实。' },
-          { code: '02 · AgentRun', tag: '可恢复事件流', desc: '把一次执行拆成可观察、可插话纠偏（Steer）、可断点恢复、可分叉探索的透明会话树。' },
-          { code: '03 · Capability', tag: '权限与预算关口', desc: '高危命令、工作区外写入、外部联网与费用动作执行前必须过明确规则与人工授权闸门。' },
-          { code: '04 · Ledger', tag: '不可篡改账本', desc: '工具调用、审批决策与文件快照全部 append-only 落盘（JSONL），出事不靠截图回忆，而是逐帧回放。' },
+          { code: '01 · Workspace', tag: '工作区真源', desc: 'SOIA Agent OS 与 SoiaDeck 共享的核心 premise：仓库路径、Git Worktree 与配置留在本地，跨端始终面向同一份客观事实。' },
+          { code: '02 · AgentRun', tag: '可恢复事件流', desc: '把一次执行抽象成可观察、可随时插话纠偏（Steer）、可断点恢复与分叉探索的会话树，而不是阅后即焚聊天框。' },
+          { code: '03 · Capability', tag: '权限与预算关口', desc: '高危命令、工作区外写入、外部联网与费用动作执行前必须过明确规则与人工审批，deny > ask > allow。' },
+          { code: '04 · Ledger', tag: 'append-only 账本', desc: '工具调用、审批决策与文件快照全部以明文 JSONL 追加落盘，出问题可逐帧回放与审计，不靠事后截图猜测。' },
         ]
       : lang === 'ja'
         ? [
-            { code: '01 · Workspace', tag: '単一真実源', desc: 'リポジトリパス、Git Worktree、タスクと設定をローカルに保持し、デスクトップ・モバイル・CLI すべてで同一の事実を参照します。' },
-            { code: '02 · AgentRun', tag: '復元可能ストリーム', desc: '実行を観測可能・途中介入（Steer）可能・チェックポイント復元可能・分岐探索可能なイベントツリーとして扱います。' },
-            { code: '03 · Capability', tag: '権限・予算ゲート', desc: '高リスクコマンド、ワークスペース外書き込み、外部通信や課金操作は、実行前に明示ルールと承認ゲートを通過します。' },
-            { code: '04 · Ledger', tag: '追記専用台帳', desc: 'ツール呼び出し、承認判断、ファイルスナップショットをすべて append-only JSONL へ記録し、後からフレーム単位で再生できます。' },
+            { code: '01 · Workspace', tag: '単一真実源', desc: 'SOIA Runtime と SoiaDeck に共通する前提。リポジトリ・Worktree・設定をローカルに保持し、全端末で同一の事実を参照します。' },
+            { code: '02 · AgentRun', tag: '復元可能ストリーム', desc: '実行を観測・途中介入（Steer）・チェックポイント復元・分岐探索が可能なセッションツリーとして扱います。' },
+            { code: '03 · Capability', tag: '権限・予算ゲート', desc: '高リスクコマンド、領域外書き込み、外部通信や課金操作は、実行前に明示ルールと承認ゲートを通過します。' },
+            { code: '04 · Ledger', tag: '追記専用台帳', desc: 'ツール呼び出し・承認判断・スナップショットを append-only JSONL へ記録し、後から正確に監査・再生できます。' },
           ]
         : [
-            { code: '01 · Workspace', tag: 'Source of Truth', desc: 'Repos, worktrees, tasks, and config stay local so every client sees one authoritative state.' },
-            { code: '02 · AgentRun', tag: 'Recoverable Stream', desc: 'Turns run as observable, steerable, forkable event streams instead of ephemeral chat tabs.' },
-            { code: '03 · Capability', tag: 'Permission Gate', desc: 'Shell exec, out-of-workspace edits, network, and spend checks pass explicit rules first.' },
+            { code: '01 · Workspace', tag: 'Source of Truth', desc: 'Repos, Git worktrees, tasks, and config stay local so SoiaDeck and CLI tools always act on one authoritative state.' },
+            { code: '02 · AgentRun', tag: 'Recoverable Stream', desc: 'Execution runs as observable, steerable, forkable event trees instead of fragile chat tabs.' },
+            { code: '03 · Capability', tag: 'Permission Gate', desc: 'Shell exec, out-of-workspace writes, network calls, and spend checks pass explicit rules and approvals first.' },
             { code: '04 · Ledger', tag: 'Append-Only Audit', desc: 'Every tool invocation, approval decision, and file snapshot lands in plain JSONL for exact replay.' },
-          ];
-
-  const family =
-    lang === 'zh'
-      ? [
-          {
-            ord: '01 · LEAD PRODUCT',
-            badge: '即将开源 · macOS arm64',
-            name: 'SoiaDeck',
-            desc: '跨端 AI 作业台：本机 daemon + 桌面 / 手机 / 加密中继 / 本地 MLX，统一并行驱动 19 个 Coding Agent，处理审批与 Diff。',
-            to: href('/soiadeck/'),
-            cta: '查看 SoiaDeck 架构 →',
-          },
-          {
-            ord: '02 · CORE KERNEL',
-            badge: '设计定稿阶段 · 0.0.1 M1',
-            name: 'SoiaCode (si)',
-            desc: '用 Rust 编写的轻量 Agent 内核。「人守住注意力，系统守住安全」——5 内置工具、10 挂载点与 34 个可扩展外围。',
-            to: href('/soiacode/'),
-            cta: '阅读系统边界与规格 →',
-          },
-          {
-            ord: '03 · OPEN ECOSYSTEM',
-            badge: '已开源 · MIT · 47 技能',
-            name: 'Open Skills 技能生态',
-            desc: '覆盖知识库 PKM（27）、工程 Dev（9）、办公 Office（7）、生态 Meta（4），按项目级最小范围装入宿主 CLI。',
-            to: href('/skills/'),
-            cta: '按分类浏览 47 个技能 →',
-          },
-          {
-            ord: '04 · AGENT OS BASE',
-            badge: 'github.com/soia-team/soia',
-            name: 'SOIA Runtime',
-            desc: '面向 Model → Harness → Agent OS 演进的底层运行时、方法论规格与六步最小闭环原语。',
-            to: href('/soia/'),
-            cta: '查看 Agent OS 演进 →',
-          },
-        ]
-      : lang === 'ja'
-        ? [
-            {
-              ord: '01 · LEAD PRODUCT',
-              badge: '公開予定 OSS · macOS arm64',
-              name: 'SoiaDeck',
-              desc: 'ローカル daemon＋デスクトップ／モバイル／暗号化 NAT リレー／ローカル MLX を備え、19 種の Coding Agent と Diff 承認を統合する作業台。',
-              to: href('/soiadeck/'),
-              cta: 'SoiaDeck アーキテクチャを見る →',
-            },
-            {
-              ord: '02 · CORE KERNEL',
-              badge: '設計確定段階 · 0.0.1 M1',
-              name: 'SoiaCode (si)',
-              desc: 'Rust 製の極小エージェントカーネル。「人が注意力を守り、システムが安全を守る」——5 組み込みツールと 10 マウントポイント。',
-              to: href('/soiacode/'),
-              cta: '境界仕様と設計を読む →',
-            },
-            {
-              ord: '03 · OPEN ECOSYSTEM',
-              badge: 'オープンソース · MIT · 47 スキル',
-              name: 'Open Skills エコシステム',
-              desc: 'PKM (27) / Dev (9) / Office (7) / Meta (4) の計 47 スキルをプロジェクト単位の最小スコープで CLI ホストへ導入。',
-              to: href('/skills/'),
-              cta: '47 スキルをカテゴリ別に見る →',
-            },
-            {
-              ord: '04 · AGENT OS BASE',
-              badge: 'github.com/soia-team/soia',
-              name: 'SOIA Runtime',
-              desc: 'Model → Harness → Agent OS への進化を支える基盤ランタイム、方法論仕様と 6 ステップ最小閉ループ原語。',
-              to: href('/soia/'),
-              cta: 'Agent OS 仕様を見る →',
-            },
-          ]
-        : [
-            {
-              ord: '01 · LEAD PRODUCT',
-              badge: 'Coming OSS · macOS arm64',
-              name: 'SoiaDeck',
-              desc: 'Cross-device workbench with local daemon, mobile diff approvals, encrypted NAT relay, MLX router, and 19 coding agent adapters.',
-              to: href('/soiadeck/'),
-              cta: 'Explore SoiaDeck →',
-            },
-            {
-              ord: '02 · CORE KERNEL',
-              badge: 'Design Stage · 0.0.1 M1',
-              name: 'SoiaCode (si)',
-              desc: 'Minimal Rust agent kernel built on “humans guard attention, the system guards safety” — 5 built-in tools & 10 mounts.',
-              to: href('/soiacode/'),
-              cta: 'Read boundaries & specs →',
-            },
-            {
-              ord: '03 · OPEN ECOSYSTEM',
-              badge: 'Open Source · MIT · 47 Skills',
-              name: 'Open Skills',
-              desc: '47 public workflow skills across PKM Vault (27), Dev (9), Office (7), and Meta (4) for Claude Code, Codex & WorkBuddy.',
-              to: href('/skills/'),
-              cta: 'Browse all 47 skills →',
-            },
-            {
-              ord: '04 · AGENT OS BASE',
-              badge: 'github.com/soia-team/soia',
-              name: 'SOIA Runtime',
-              desc: 'Underlying Model → Harness → Agent OS primitives, specifications, and closed-loop ledger architecture.',
-              to: href('/soia/'),
-              cta: 'View Agent OS specs →',
-            },
           ];
 
   const guardrails =
     lang === 'zh'
       ? [
-          { title: '默认零遥测、代码留本机', desc: '仓库文件、会话树与 API 凭据都在自己硬件里；NAT 中继只转发密文不留存原文。' },
-          { title: '自带订阅与模型，拒绝锁死', desc: '直接复用已有 Claude Code / Codex / Cursor 等 CLI 订阅或本机 MLX 模型。' },
-          { title: '草稿优先与逐条人工审批', desc: '公众号 / 小红书 / X 只建草稿不群发；命令执行与越界写入必须先经确认。' },
-          { title: '工程诚实、边界透明', desc: '现阶段明确标注仅发布 macOS arm64、SoiaCode 尚无二进制包，不靠空话凑功能表。' },
+          { title: '默认零遥测、代码留本机', desc: '仓库文件、会话树与 API 凭据都在自己硬件里；SoiaDeck NAT 中继只转发密文不留存原文。' },
+          { title: '自带订阅与模型，拒绝锁死', desc: '直接复用已有 Claude Code / Codex / Cursor 等 CLI 订阅或本机 Apple Silicon MLX 模型。' },
+          { title: '草稿优先与逐条人工审批', desc: 'Open Skills 中涉及公众号 / 小红书 / X 的技能只建草稿不群发；风险命令与越界写入先问后做。' },
+          { title: '工程诚实、边界透明', desc: '明确区分各成员真实阶段——Open Skills 已开源、SoiaDeck 即将开源（macOS arm64）、SoiaCode 尚在设计定稿阶段，绝不虚标能力。' },
         ]
       : lang === 'ja'
         ? [
-            { title: 'ゼロテレメトリ・ローカル所有', desc: 'リポジトリや JSONL セッション、API 鍵は自分のマシンに留まり、NAT リレーは暗号文のみを転送します。' },
+            { title: 'ゼロテレメトリ・ローカル所有', desc: 'リポジトリ・JSONL セッション・API 鍵は自分のマシンに留まり、NAT リレーは暗号文のみを転送します。' },
             { title: '既存サブスク・ローカルモデル活用', desc: 'お手持ちの Claude Code / Codex / Cursor 契約やローカル MLX モデルをベンダーロックインなしで再利用。' },
-            { title: '下書き優先と明示的な承認ゲート', desc: 'SNS 連携スキルは下書き生成のみに留め、危険コマンドや境界外書き込みは必ず確認待ちで停止します。' },
-            { title: '誠実なステータス表記', desc: 'macOS arm64 対象や SoiaCode の設計段階といった現状の境界をありのまま公開し、誇張しません。' },
+            { title: '下書き優先と明示的な承認ゲート', desc: 'SNS 連携スキルは下書き作成のみに留め、危険コマンドや領域外書き込みは必ず確認待ちで停止します。' },
+            { title: '誠実なステータス表記', desc: 'Open Skills（公開済）、SoiaDeck（公開準備中・macOS arm64）、SoiaCode（設計段階）の現在地を正確に明記します。' },
           ]
         : [
             { title: 'Zero Telemetry & Local Ownership', desc: 'Repos, session JSONL trees, and credentials stay on your machines; relay sees ciphertext only.' },
             { title: 'Bring Your Subscriptions', desc: 'Reuse existing Claude Code, Codex, or local MLX models without vendor lock-in.' },
             { title: 'Draft-first & Explicit Approval', desc: 'Publishing skills create drafts only; risky commands and writes pause for explicit confirmation.' },
-            { title: 'Honest Release Scope', desc: 'Clear status labels across every repo — no vaporware download promises for unverified targets.' },
+            { title: 'Honest Release Scope', desc: 'Clear status labels across every family member — no vaporware download promises.' },
           ];
 
   return (
@@ -319,62 +319,27 @@ export function AboutPage({ locale }: { locale: LandingLocaleCode }) {
       <article className="about-editorial" data-od-id="about">
         <header className="about-hero-box">
           <div className="about-hero-acronym">
-            SYSTEM · ORCHESTRATION · INTELLIGENCE · ASSURANCE
+            {lang === 'zh'
+              ? 'THE SOIA AGENT FAMILY · 四层本地优先 AI 工程产品版图'
+              : lang === 'ja'
+                ? 'THE SOIA AGENT FAMILY · 4 層のローカル優先 AI 工学エコシステム'
+                : 'THE SOIA AGENT FAMILY · 4-LAYER LOCAL-FIRST AI ECOSYSTEM'}
           </div>
-          <h1>{lang === 'zh' ? '关于 SOIA' : lang === 'ja' ? 'SOIA について' : 'About SOIA'}<span>.</span></h1>
+          <h1>{lang === 'zh' ? '关于 SOIA 家族' : lang === 'ja' ? 'SOIA ファミリーについて' : 'About the SOIA Family'}<span>.</span></h1>
           <p className="about-hero-lead">
             {lang === 'zh'
-              ? '大模型天生无状态、易漂移；SOIA（Structured Orchestration for Intelligent Agents）的工作，是把它组织成可感知、可治理、可恢复、可审计的本地优先工程系统。'
+              ? 'SOIA（soia-team）是一个本地优先、开放可审计的 Agent 工程家族，而不是单一软件：它涵盖日常主导工作的跨端作业台 SoiaDeck、即装即用的 47 个 Open Skills、极小 Rust 内核 SoiaCode，以及作为整个家族底层理论与运行时底座的 SOIA Agent OS（soia-team/soia）。'
               : lang === 'ja'
-                ? 'LLM は本来ステートレスでドリフトしやすい性質を持ちます。SOIA（Structured Orchestration for Intelligent Agents）はそれを観測・統制・復元・監査可能なローカルファーストの工学システムへ束ねます。'
-                : 'LLMs are stateless and drift by nature. SOIA (Structured Orchestration for Intelligent Agents) turns them into an observable, governable, recoverable, and auditable local-first engineering system.'}
+                ? 'SOIA（soia-team）は単一のツールではなく、ローカル優先・監査可能な 4 層プロダクトからなる AI エージェントファミリーです。主力作業台 SoiaDeck、すぐ使える 47 の公開スキル Open Skills、極小 Rust カーネル SoiaCode、そして基盤ランタイム SOIA Agent OS（soia-team/soia）で構成されています。'
+                : 'SOIA (soia-team) is a four-layer, local-first engineering family — not a single monolith. It spans the SoiaDeck workbench, 47 MIT Open Skills, the minimal SoiaCode Rust kernel, and the foundational SOIA Agent OS runtime repo (soia-team/soia).'}
           </p>
         </header>
 
         <section className="about-sec">
           <div className="about-sec-head">
             <div>
-              <span>01 · {lang === 'zh' ? '核心判断' : lang === 'ja' ? '基本命題' : 'THE THESIS'}</span>
-              <h2>{lang === 'zh' ? '为什么造 SOIA，而不是再套一个聊天壳' : lang === 'ja' ? 'なぜチャットラッパーではなく Agent OS を作るのか' : 'Why build an Agent OS instead of another chat wrapper'}</h2>
-            </div>
-          </div>
-          <div className="about-compare">
-            <div className="about-compare-card">
-              <strong>{thesis.problemTitle}</strong>
-              <p>{thesis.problemBody}</p>
-            </div>
-            <div className="about-compare-card is-soia">
-              <strong>{thesis.solutionTitle}</strong>
-              <p>{thesis.solutionBody}</p>
-            </div>
-          </div>
-        </section>
-
-        <section className="about-sec">
-          <div className="about-sec-head">
-            <div>
-              <span>02 · {lang === 'zh' ? '四大核心原语' : lang === 'ja' ? '4 つのコア原語' : 'CORE PRIMITIVES'}</span>
-              <h2>{lang === 'zh' ? '让 AI 从一次性对话进入工程控制平面' : lang === 'ja' ? '単発プロンプトから工学的な制御平面へ' : 'From one-off prompts to a closed engineering control plane'}</h2>
-            </div>
-          </div>
-          <div className="about-primitives">
-            {primitives.map((p) => (
-              <div className="about-prim-card" key={p.code}>
-                <div className="about-prim-top">
-                  <code>{p.code}</code>
-                  <span>{p.tag}</span>
-                </div>
-                <p>{p.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="about-sec">
-          <div className="about-sec-head">
-            <div>
-              <span>03 · {lang === 'zh' ? '产品与生态版图' : lang === 'ja' ? 'プロダクト構成' : 'THE SOIA FAMILY'}</span>
-              <h2>{lang === 'zh' ? '从开源技能到桌面作业台，再到极小 Rust 内核' : lang === 'ja' ? '公開スキル・デスクトップ作業台・極小 Rust カーネルの 4 層構成' : 'How the four SOIA layers fit together'}</h2>
+              <span>01 · {lang === 'zh' ? 'SOIA 家族成员' : lang === 'ja' ? 'SOIA ファミリー構成' : 'THE SOIA FAMILY'}</span>
+              <h2>{lang === 'zh' ? '先认识 SOIA 家族的四层版图与各自定位' : lang === 'ja' ? '4 つの製品レイヤーとそれぞれの役割' : 'Four distinct layers across desktop workbench, skills, kernel, and OS'}</h2>
             </div>
           </div>
           <div className="about-family-grid">
@@ -392,8 +357,47 @@ export function AboutPage({ locale }: { locale: LandingLocaleCode }) {
           </div>
         </section>
 
+        <section className="about-sec">
+          <div className="about-sec-head">
+            <div>
+              <span>02 · {lang === 'zh' ? '家族定位与职责边界' : lang === 'ja' ? 'ファミリー全体と基盤の切り分け' : 'ARCHITECTURE & ROLE SPLIT'}</span>
+              <h2>{lang === 'zh' ? '为什么把家族拆成四层，并把 Runtime 单独作为底座' : lang === 'ja' ? 'なぜ 4 層に分け、Runtime を基盤リポジトリとして独立させたのか' : 'Separating the overall SOIA Family from the underlying SOIA Runtime'}</h2>
+            </div>
+          </div>
+          <div className="about-compare">
+            <div className="about-compare-card">
+              <strong>{thesis.problemTitle}</strong>
+              <p>{thesis.problemBody}</p>
+            </div>
+            <div className="about-compare-card is-soia">
+              <strong>{thesis.solutionTitle}</strong>
+              <p>{thesis.solutionBody}</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="about-sec">
+          <div className="about-sec-head">
+            <div>
+              <span>03 · {lang === 'zh' ? '底座通用原语（源自 SOIA Agent OS）' : lang === 'ja' ? '共通基盤原語（SOIA Agent OS 由来）' : 'SHARED PRIMITIVES (SOIA AGENT OS)'}</span>
+              <h2>{lang === 'zh' ? '把 AI 对话拉进可恢复、可审批的工程控制平面' : lang === 'ja' ? '対話 AI を復元・監査可能な工学制御平面へ' : 'Four primitives shared across SoiaDeck & SOIA Runtime'}</h2>
+            </div>
+          </div>
+          <div className="about-primitives">
+            {primitives.map((p) => (
+              <div className="about-prim-card" key={p.code}>
+                <div className="about-prim-top">
+                  <code>{p.code}</code>
+                  <span>{p.tag}</span>
+                </div>
+                <p>{p.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="about-dark-band">
-          <h2>{lang === 'zh' ? '我们坚持的工程底线（Anti-goals）' : lang === 'ja' ? '私たちが越えない工学的境界（Anti-goals）' : 'Engineering boundaries we never cross'}</h2>
+          <h2>{lang === 'zh' ? 'SOIA 家族共同坚持的工程底线（Anti-goals）' : lang === 'ja' ? 'SOIA ファミリーが越えない工学的境界（Anti-goals）' : 'Engineering boundaries across the entire SOIA family'}</h2>
           <div className="about-dark-grid">
             {guardrails.map((g) => (
               <div className="about-dark-item" key={g.title}>
@@ -405,6 +409,7 @@ export function AboutPage({ locale }: { locale: LandingLocaleCode }) {
           <div className="info-cta-actions">
             <a className="btn btn-primary" href={href('/soiadeck/')}>SoiaDeck</a>
             <a className="btn btn-ghost" href={href('/skills/')}>{lang === 'zh' ? '浏览 47 个开源技能 ↗' : lang === 'ja' ? '47 公開スキルを見る ↗' : 'Browse 47 skills ↗'}</a>
+            <a className="btn btn-ghost" href={href('/soia/')}>SOIA Runtime ↗</a>
             <a className="btn btn-ghost" href={REPO_DISCUSSIONS} target="_blank" rel="noreferrer noopener">GitHub Discussions ↗</a>
           </div>
         </section>
