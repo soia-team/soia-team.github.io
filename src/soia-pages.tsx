@@ -1171,6 +1171,7 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
   const href = (path: string) => hrefFor(path, locale);
   const zh = isZh(locale);
   const [heroTab, setHeroTab] = useState(0);
+  const [agentFilter, setAgentFilter] = useState<'all' | 'supported' | 'experimental' | 'planned'>('all');
 
   const heroTabs: ReadonlyArray<{ label: string; src: string; alt: string; note: string }> = zh
     ? [
@@ -1320,35 +1321,60 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
                 <h2>{section.title}</h2>
                 <p>{section.body}</p>
                 {section.id === 'agents' && (
-                  <ol className="agent-detail-list">
-                    {CODING_AGENTS_19.map((agent, idx) => {
-                      const levelText =
-                        agent.level === 'supported'
-                          ? zh ? '正式支持' : 'Supported'
-                          : agent.level === 'experimental'
-                            ? zh ? '试验接入' : 'Experimental'
-                            : zh ? '计划接入' : 'Planned';
-                      return (
-                        <li className="agent-detail-row" key={agent.id}>
-                          <div className="agent-detail-top">
-                            <div className="agent-detail-id">
-                              <span className="agent-detail-idx">{String(idx + 1).padStart(2, '0')}</span>
-                              <strong>{agent.name}</strong>
-                              <code>{agent.id}</code>
-                              {agent.cmd !== agent.id && <code>cmd: {agent.cmd}</code>}
-                            </div>
-                            <span className={`agent-level-badge is-${agent.level}`}>{levelText}</span>
-                          </div>
-                          <div className="agent-detail-meta">
-                            <span><strong>{zh ? '协议' : 'Protocol'}:</strong> {pick(locale, agent.protocol)}</span>
-                            <span><strong>{zh ? '版本' : 'Version'}:</strong> {pick(locale, agent.version)}</span>
-                            <span><strong>{zh ? '认证' : 'Auth'}:</strong> {pick(locale, agent.auth)}</span>
-                          </div>
-                          <p className="agent-detail-desc">{pick(locale, agent.detail)}</p>
-                        </li>
-                      );
-                    })}
-                  </ol>
+                  <>
+                    <div className="agent-filter-bar" role="tablist" aria-label={zh ? '按接入状态筛选 Agent' : 'Filter agents by status'}>
+                      {(
+                        [
+                          { id: 'all', label: zh ? '全部' : 'All', count: CODING_AGENTS_19.length },
+                          { id: 'supported', label: zh ? '正式支持' : 'Supported', count: CODING_AGENTS_19.filter((a) => a.level === 'supported').length },
+                          { id: 'experimental', label: zh ? '试验接入' : 'Experimental', count: CODING_AGENTS_19.filter((a) => a.level === 'experimental').length },
+                          { id: 'planned', label: zh ? '计划接入' : 'Planned', count: CODING_AGENTS_19.filter((a) => a.level === 'planned').length },
+                        ] as const
+                      ).map((tab) => (
+                        <button
+                          type="button"
+                          key={tab.id}
+                          className={agentFilter === tab.id ? 'is-active' : undefined}
+                          onClick={() => setAgentFilter(tab.id)}
+                        >
+                          {tab.label}
+                          <span className="count">{tab.count}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <ol className="agent-detail-list">
+                      {CODING_AGENTS_19
+                        .map((agent, origIdx) => ({ agent, origIdx }))
+                        .filter(({ agent }) => agentFilter === 'all' || agent.level === agentFilter)
+                        .map(({ agent, origIdx }) => {
+                          const levelText =
+                            agent.level === 'supported'
+                              ? zh ? '正式支持' : 'Supported'
+                              : agent.level === 'experimental'
+                                ? zh ? '试验接入' : 'Experimental'
+                                : zh ? '计划接入' : 'Planned';
+                          return (
+                            <li className="agent-detail-row" key={agent.id}>
+                              <div className="agent-detail-top">
+                                <div className="agent-detail-id">
+                                  <span className="agent-detail-idx">{String(origIdx + 1).padStart(2, '0')}</span>
+                                  <strong>{agent.name}</strong>
+                                  <code>{agent.id}</code>
+                                  {agent.cmd !== agent.id && <code>cmd: {agent.cmd}</code>}
+                                </div>
+                                <span className={`agent-level-badge is-${agent.level}`}>{levelText}</span>
+                              </div>
+                              <div className="agent-detail-meta">
+                                <span><strong>{zh ? '协议' : 'Protocol'}:</strong> {pick(locale, agent.protocol)}</span>
+                                <span><strong>{zh ? '版本' : 'Version'}:</strong> {pick(locale, agent.version)}</span>
+                                <span><strong>{zh ? '认证' : 'Auth'}:</strong> {pick(locale, agent.auth)}</span>
+                              </div>
+                              <p className="agent-detail-desc">{pick(locale, agent.detail)}</p>
+                            </li>
+                          );
+                        })}
+                    </ol>
+                  </>
                 )}
                 {section.id === 'philosophy' && (
                   <div className="deck-philosophy-grid">
@@ -1382,6 +1408,332 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
   );
 }
 
+/** SoiaCode (si) — native HTML interactive architecture diagrams grounded in soiacode/docs. */
+function SoiaCodeProductDiagram({ zh }: { zh: boolean }) {
+  return (
+    <section className="sc-diagram sc-hero-diagram" aria-label={zh ? 'SoiaCode 五层产品架构' : 'SoiaCode 5-layer product architecture'}>
+      <div className="sc-diagram-head">
+        <span className="sc-diagram-title">{zh ? 'PRODUCT ARCHITECTURE · 五层产品架构总览' : 'PRODUCT ARCHITECTURE · 5-LAYER OVERVIEW'}</span>
+        <span className="sc-diagram-sub">{zh ? '人守住注意力 · 系统守住安全' : 'Humans guard attention · System guards safety'}</span>
+      </div>
+
+      <div className="sc-band is-cyan">
+        <div className="sc-band-head">
+          <span className="sc-band-tag">{zh ? 'L4 之外 · 调用方（谁在用 si）' : 'CALLERS · WHO DRIVES SI'}</span>
+          <span className="sc-band-note">{zh ? '开发者交互 / CI 脚本 / 编辑器 / 后台 / 其他 Agent' : 'Humans / Scripts / Editors / Services / External Agents'}</span>
+        </div>
+        <div className="sc-node-grid cols-3">
+          <div className="sc-node">
+            <strong>{zh ? '人（终端交互）' : 'Human CLI'}</strong>
+            <span>{zh ? '日常编码 + 关键审批' : 'Daily coding + approvals'}</span>
+          </div>
+          <div className="sc-node">
+            <strong>{zh ? '应用与编辑器' : 'Apps & Editors'}</strong>
+            <span>{zh ? 'CI 脚本 / Zed ACP / 图形壳 RPC / Rust 嵌入' : 'CI print / Zed ACP / GUI RPC / Rust embed'}</span>
+          </div>
+          <div className="sc-node">
+            <strong>{zh ? '其他 Agent' : 'External Agents'}</strong>
+            <span>{zh ? '经子工具或 MCP / A2A 调用 si' : 'Call si via print, RPC, MCP, or A2A'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="sc-arrow-down">↓</div>
+
+      <div className="sc-band is-slate">
+        <div className="sc-band-head">
+          <span className="sc-band-tag">{zh ? '入口层 · 4 种运行方式 + 1 个 Rust 库' : 'ENTRYPOINTS · 4 RUN MODES + 1 SDK'}</span>
+        </div>
+        <div className="sc-node-grid">
+          <div className="sc-node"><strong>si</strong><span>{zh ? '终端交互 Line-mode TUI' : 'Interactive CLI'}</span></div>
+          <div className="sc-node"><strong>si -p</strong><span>{zh ? 'Print 单次脚本输出' : 'One-shot print mode'}</span></div>
+          <div className="sc-node"><strong>--mode rpc</strong><span>{zh ? 'stdio JSON-RPC 长期驱动' : 'Long-lived stdio RPC'}</span></div>
+          <div className="sc-node"><strong>--mode acp</strong><span>{zh ? 'Zed 等编辑器接入' : 'Editor ACP mode'}</span></div>
+          <div className="sc-node"><strong>soiacode-sdk</strong><span>{zh ? 'Rust 进程内嵌入门面' : 'In-process Rust crate'}</span></div>
+        </div>
+      </div>
+
+      <div className="sc-arrow-down">↓</div>
+
+      <div className="sc-band is-amber">
+        <div className="sc-band-head">
+          <span className="sc-band-tag">{zh ? '内核核心（L0–L2）+ 内置能力（L3）' : 'MINIMAL KERNEL (L0–L2) + BUILT-IN CAPABILITIES (L3)'}</span>
+          <span className="sc-band-note">{zh ? '极小、可审查、零遥测' : 'Small, auditable, zero telemetry'}</span>
+        </div>
+        <div className="sc-node-grid cols-2">
+          <div className="sc-node"><strong>{zh ? 'agent 循环 · L2' : 'agent loop · L2'}</strong><span>{zh ? '上下文裁剪 · 压缩摘要 · Steer/FollowUp' : 'Context trim · Compaction · Steer/FollowUp'}</span></div>
+          <div className="sc-node"><strong>{zh ? '挂载点与审批 · 10 Hook' : 'Mounts & approval · 10 hooks'}</strong><span>{zh ? 'deny > ask > allow · 写保护路径拦截' : 'deny > ask > allow · write-protected paths'}</span></div>
+          <div className="sc-node"><strong>{zh ? 'JSONL 会话树 · L1' : 'JSONL session tree · L1'}</strong><span>{zh ? '/tree 分支 · /fork 深拷贝 · Blob 旁路' : '/tree branch · /fork copy · Blob offload'}</span></div>
+          <div className="sc-node"><strong>{zh ? '5 工具 + 扩展宿主 · L3' : '5 tools + ext host · L3'}</strong><span>{zh ? 'read/write/edit/bash/grep · MCP 客户端 · 可选沙箱' : 'read/write/edit/bash/grep · MCP client · opt sandbox'}</span></div>
+        </div>
+      </div>
+
+      <div className="sc-arrow-down">↓</div>
+
+      <div className="sc-band is-emerald">
+        <div className="sc-band-head">
+          <span className="sc-band-tag">{zh ? '外部 · 内核之外独立演化' : 'PERIPHERAL · OUTSIDE THE KERNEL'}</span>
+          <span className="sc-band-note">{zh ? 'JSON-RPC / stdio / HTTPS' : 'JSON-RPC / stdio / HTTPS'}</span>
+        </div>
+        <div className="sc-node-grid">
+          <div className="sc-node"><strong>{zh ? '模型厂商' : 'LLM Providers'}</strong><span>{zh ? 'Anthropic / OpenAI / Gemini / Bedrock' : 'Anthropic / OpenAI / Gemini / Bedrock'}</span></div>
+          <div className="sc-node"><strong>{zh ? '34 个官方扩展' : '34 Extensions'}</strong><span>{zh ? '独立子进程 · si install 按需装' : 'Subprocesses via si install'}</span></div>
+          <div className="sc-node"><strong>{zh ? '自运行外围服务' : 'Standalone Services'}</strong><span>{zh ? 'si serve / mcp-server / a2a / inline' : 'si serve / mcp-server / a2a / inline'}</span></div>
+          <div className="sc-node"><strong>soiacode-exec</strong><span>{zh ? 'SSH / 容器远端执行端（无凭据）' : 'Remote exec endpoint (no creds)'}</span></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SoiaCodeSystemDiagram({ zh }: { zh: boolean }) {
+  return (
+    <div className="sc-diagram" aria-label={zh ? '系统运行时单进程多会话数据流' : 'System runtime process dataflow'}>
+      <div className="sc-diagram-head">
+        <span className="sc-diagram-title">{zh ? 'SYSTEM RUNTIME · 单 si 进程与外部边界' : 'SYSTEM RUNTIME · SINGLE PROCESS & EXTERNAL IO'}</span>
+        <span className="sc-diagram-sub">{zh ? '多会话同进程隔离，所有落盘只追加 JSONL' : 'Multi-session in one process, append-only JSONL'}</span>
+      </div>
+
+      <div className="sc-band is-violet">
+        <div className="sc-band-head">
+          <span className="sc-band-tag">{zh ? 'si 进程内（可同时承载多个互不干扰的会话）' : 'INSIDE si PROCESS (MULTIPLE ISOLATED SESSIONS)'}</span>
+        </div>
+        <div className="sc-node" style={{ justifySelf: 'center', minWidth: '220px', textAlign: 'center' }}>
+          <strong>{zh ? '入口调度 · 创建或恢复会话' : 'Entrypoint · Create or resume session'}</strong>
+          <span>{zh ? 'stdio (RPC/ACP) · 命令行参数 (print) · 进程内 (Rust SDK)' : 'stdio (RPC/ACP) · args (print) · in-proc (Rust SDK)'}</span>
+        </div>
+        <div className="sc-bus-row">
+          <div className="sc-node">
+            <strong>{zh ? '挂载点与审批' : 'Mounts & Approval'}</strong>
+            <span>{zh ? '每次工具/请求前后裁决' : 'Gate every call & request'}</span>
+          </div>
+          <div className="sc-bus-arrow">← {zh ? '调用前后' : 'hooks'} →</div>
+          <div className="sc-node" style={{ borderColor: '#8b5cf6', background: '#faf8ff' }}>
+            <strong>{zh ? 'agent 主循环' : 'agent loop'}</strong>
+            <span>{zh ? '上下文拼接 · 回合控制 · 调度' : 'Context · Turn loop · Dispatch'}</span>
+          </div>
+          <div className="sc-bus-arrow">→ {zh ? '每一步' : 'every step'} →</div>
+          <div className="sc-node">
+            <strong>{zh ? '会话写入器' : 'Session Writer'}</strong>
+            <span>{zh ? '追加到 ~/.soiacode/sessions/' : 'Append to ~/.soiacode/sessions/'}</span>
+          </div>
+        </div>
+        <div className="sc-node-grid cols-3">
+          <div className="sc-node">
+            <strong>{zh ? '模型客户端 (L1)' : 'Provider Client (L1)'}</strong>
+            <span>HTTPS {zh ? '流式 → 模型厂商' : 'stream → LLM Vendor'}</span>
+          </div>
+          <div className="sc-node">
+            <strong>{zh ? '内置工具 (L3)' : 'Built-in Tools (L3)'}</strong>
+            <span>{zh ? '管道 → 命令子进程' : 'Pipe → Command subprocess'}</span>
+          </div>
+          <div className="sc-node">
+            <strong>{zh ? '扩展宿主 (L3)' : 'Extension Host (L3)'}</strong>
+            <span>JSON-RPC → {zh ? '扩展 / MCP 子进程' : 'Extensions / MCP'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="sc-band is-amber">
+        <div className="sc-band-head">
+          <span className="sc-band-tag">{zh ? '外部进程与持久化存储' : 'EXTERNAL PROCESSES & DISK'}</span>
+          <span className="sc-band-note">{zh ? '~/.soiacode/{sessions,audit,confirmed.json,crashes.jsonl}' : '~/.soiacode/{sessions,audit,confirmed.json,crashes.jsonl}'}</span>
+        </div>
+        <div className="sc-node-grid">
+          <div className="sc-node"><strong>{zh ? '模型厂商 API' : 'Model APIs'}</strong><span>{zh ? '仅经 soiacode-http 出站' : 'Outbound solely via soiacode-http'}</span></div>
+          <div className="sc-node"><strong>{zh ? 'OS 命令子进程' : 'OS Subprocesses'}</strong><span>{zh ? '仅经 soiacode-local 拉起' : 'Spawned solely via soiacode-local'}</span></div>
+          <div className="sc-node"><strong>{zh ? '扩展与 MCP' : 'Ext & MCP'}</strong><span>{zh ? '独立进程，不享内核内存' : 'Isolated OS processes'}</span></div>
+          <div className="sc-node"><strong>{zh ? '本地磁盘 JSONL' : 'Local Disk JSONL'}</strong><span>{zh ? '只追加记录 + Blob 文件' : 'Append-only records + blobs'}</span></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SoiaCodePeripheralDiagram({ zh }: { zh: boolean }) {
+  const rows: ReadonlyArray<{ cmd: string; proto: string; role: string }> = zh
+    ? [
+        { cmd: 'si serve', proto: 'Unix socket / TCP+TLS', role: '常驻后台托管会话；复用 JSON-RPC 分派，分级 Token（read/prompt/approve/admin）管理跨终端接入。' },
+        { cmd: 'si mcp-server', proto: 'stdio MCP', role: '把 si 包装为标准 MCP Server 供外部 Agent 调用（交任务 / 等待 / 取消 / 列会话），审批默认按规则或转交调用方。' },
+        { cmd: 'si a2a', proto: 'HTTP + TLS + Token', role: '以 Agent2Agent 协议对外暴露 Agent Card；只听可信调用方 Token，触发的高危操作未预设放行一律拒绝。' },
+        { cmd: 'si inline', proto: 'stdio LSP', role: '充当编辑器灰字行内补全语言服务器（si inline lsp）；不进长会话，默认屏蔽 .env 与密钥文件。' },
+        { cmd: 'soiacode-exec', proto: 'SSH / 容器 stdio', role: '放到远端主机或容器里的轻量执行端；只依赖 local 与 protocol，按指令读写文件并起进程，不存用户凭据。' },
+      ]
+    : [
+        { cmd: 'si serve', proto: 'Unix socket / TCP+TLS', role: 'Background daemon holding live sessions; exposes scoped tokens (read/prompt/approve/admin) across devices.' },
+        { cmd: 'si mcp-server', proto: 'stdio MCP', role: 'Exposes si as a standard MCP server (submit / wait / cancel / list) for peer agents over stdio.' },
+        { cmd: 'si a2a', proto: 'HTTP + TLS + Token', role: 'Exposes Agent2Agent discovery & task execution with per-caller tokens and strict approval rules.' },
+        { cmd: 'si inline', proto: 'stdio LSP', role: 'Acts as an IDE LSP for FIM/chat inline completion; skips long session history and ignores .env/secret files.' },
+        { cmd: 'soiacode-exec', proto: 'SSH / container stdio', role: 'Remote worker deployed inside SSH hosts or containers; only depends on local + protocol and holds zero credentials.' },
+      ];
+  return (
+    <div className="sc-diagram" aria-label={zh ? '外围独立运行程序交互架构' : 'Standalone peripheral processes'}>
+      <div className="sc-diagram-head">
+        <span className="sc-diagram-title">{zh ? 'PERIPHERALS · 外围自运行程序边界' : 'PERIPHERALS · STANDALONE BINARIES'}</span>
+        <span className="sc-diagram-sub">{zh ? '全为独立可执行/子命令，内核 si 本体不反向依赖它们' : 'Separate binaries/subcommands — the kernel never depends backward on them'}</span>
+      </div>
+      {rows.map((r) => (
+        <div className="sc-periph-row" key={r.cmd}>
+          <span className="sc-periph-cmd">{r.cmd}</span>
+          <span className="sc-periph-proto">{r.proto}</span>
+          <span className="sc-periph-role">{r.role}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SoiaCodeToolSequenceDiagram({ zh }: { zh: boolean }) {
+  const [stepIdx, setStepIdx] = useState(0);
+  const lanes = ['provider', 'dispatch', 'mounts', 'approval', 'writer', 'tools'] as const;
+  const steps: ReadonlyArray<{ no: string; from: string; to: string; route: string; desc: string }> = zh
+    ? [
+        { no: '01', from: 'provider', to: 'dispatch', route: 'provider → dispatch', desc: '模型响应带出工具调用，已统一转换并校验为 protocol 的 ToolCall 类型。' },
+        { no: '02', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: '触发 before_tool_call 挂载点（策略 / 扩展可放行、拒绝或原地改写参数）。' },
+        { no: '03', from: 'mounts', to: 'approval', route: 'mounts → approval', desc: '内置权限规则介入：拆分复合命令，按 deny > ask > allow 与写保护路径判定。' },
+        { no: '04', from: 'approval', to: 'approval', route: 'approval [ask / never]', desc: '若判定需要确认：交互端弹窗等用户批准；无人值守 / never 策略直接视为拒绝。' },
+        { no: '05', from: 'approval', to: 'writer', route: 'approval → writer', desc: '先把审批决定追加写入会话记录；若落盘失败则保守按拒绝处理，绝不无痕执行。' },
+        { no: '06', from: 'dispatch', to: 'tools', route: 'dispatch → tools', desc: '放行后进入执行：文件工具做工作区路径核查；命令进入可选 OS 沙箱或远端执行端。' },
+        { no: '07', from: 'tools', to: 'dispatch', route: 'tools → dispatch', desc: '返回工具执行原文输出（及沙箱/退出码诊断标记）。' },
+        { no: '08', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: '触发 after_tool_result：超长输出裁剪、Blob 旁路与 redact 脱敏处理。' },
+        { no: '09', from: 'dispatch', to: 'writer', route: 'dispatch → writer', desc: '将处理后的 ToolResult（带大输出引用 id）追加进只读会话树。' },
+        { no: '10', from: 'dispatch', to: 'provider', route: 'dispatch → provider', desc: '结果回填上下文前缀，发起下一轮模型推理请求。' },
+      ]
+    : [
+        { no: '01', from: 'provider', to: 'dispatch', route: 'provider → dispatch', desc: 'Model response emits a ToolCall normalized into soiacode-protocol types.' },
+        { no: '02', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: 'Invoke before_tool_call mount (policy/extensions can allow, deny, or rewrite args).' },
+        { no: '03', from: 'mounts', to: 'approval', route: 'mounts → approval', desc: 'Built-in rules split compound commands and evaluate deny > ask > allow & protected paths.' },
+        { no: '04', from: 'approval', to: 'approval', route: 'approval [ask / never]', desc: 'If confirmation is required: ask interactively, or auto-deny under never / unattended.' },
+        { no: '05', from: 'approval', to: 'writer', route: 'approval → writer', desc: 'Persist approval decision before running; write failure safely aborts as deny.' },
+        { no: '06', from: 'dispatch', to: 'tools', route: 'dispatch → tools', desc: 'Execute inside workspace guard / optional OS sandbox / remote-exec endpoint.' },
+        { no: '07', from: 'tools', to: 'dispatch', route: 'tools → dispatch', desc: 'Return raw execution output plus exit status and sandbox markers.' },
+        { no: '08', from: 'dispatch', to: 'mounts', route: 'dispatch → mounts', desc: 'Invoke after_tool_result: trim noisy output, offload blobs, and redact secrets.' },
+        { no: '09', from: 'dispatch', to: 'writer', route: 'dispatch → writer', desc: 'Append compact ToolResult (plus blob reference id) to append-only JSONL.' },
+        { no: '10', from: 'dispatch', to: 'provider', route: 'dispatch → provider', desc: 'Feed result back into next provider turn.' },
+      ];
+  const cur = steps[stepIdx] ?? steps[0];
+  return (
+    <div className="sc-diagram" aria-label={zh ? '单次工具调用审批全链路时序' : 'Tool call sequence'}>
+      <div className="sc-diagram-head">
+        <span className="sc-diagram-title">{zh ? 'TOOL SEQUENCE · 单次工具调用全链路（10 步可点选推演）' : 'TOOL SEQUENCE · 10-STEP INTERACTIVE WALKTHROUGH'}</span>
+        <div className="sc-seq-controls">
+          <div className="sc-seq-btns">
+            <button type="button" onClick={() => setStepIdx((s) => (s - 1 + steps.length) % steps.length)}>
+              {zh ? '上一步' : 'Prev'}
+            </button>
+            <button type="button" onClick={() => setStepIdx((s) => (s + 1) % steps.length)}>
+              {zh ? '下一步' : 'Next'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="sc-lane-strip">
+        {lanes.map((lane) => {
+          const isSrc = cur.from === lane;
+          const isDst = cur.to === lane && cur.to !== cur.from;
+          const cls = `sc-lane${isSrc ? ' is-active' : ''}${isDst ? ' is-target' : ''}`;
+          return <div className={cls} key={lane}>{lane}</div>;
+        })}
+      </div>
+
+      <ol className="sc-seq-list">
+        {steps.map((s, idx) => (
+          <li key={s.no}>
+            <button
+              type="button"
+              className={`sc-seq-item${idx === stepIdx ? ' is-selected' : ''}`}
+              onClick={() => setStepIdx(idx)}
+            >
+              <span className="sc-seq-no">{s.no}</span>
+              <span className="sc-seq-route">{s.route}</span>
+              <span className="sc-seq-desc">{s.desc}</span>
+            </button>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function SoiaCodeCrateDiagram({ zh }: { zh: boolean }) {
+  return (
+    <div className="sc-diagram" aria-label={zh ? 'SoiaCode Crate 五层工程架构' : 'SoiaCode Rust crate layers'}>
+      <div className="sc-diagram-head">
+        <span className="sc-diagram-title">{zh ? 'WORKSPACE CRATES · 严格 L4 → L0 单向依赖矩阵' : 'WORKSPACE CRATES · STRICT L4 → L0 HIERARCHY'}</span>
+        <span className="sc-diagram-sub">{zh ? '同层互不依赖，旁路与外围独立演进' : 'No sibling coupling, strict IO isolation'}</span>
+      </div>
+
+      <div className="sc-band is-cyan">
+        <div className="sc-band-head"><span className="sc-band-tag">{zh ? 'L4 · 入口层（只接线）' : 'L4 · ENTRYPOINTS'}</span></div>
+        <div className="sc-node-grid cols-2">
+          <div className="sc-node"><strong>soiacode</strong><span>{zh ? '命令 si：组装各 crate 与运行模式' : 'CLI binary & assembler'}</span></div>
+          <div className="sc-node"><strong>soiacode-rpc / -acp</strong><span>{zh ? 'stdio JSON-RPC 与编辑器 ACP 协议适配' : 'stdio JSON-RPC & ACP'}</span></div>
+          <div className="sc-node"><strong>soiacode-sdk</strong><span>{zh ? '稳定 Rust 库门面（CLI/RPC/ACP 均建在其上）' : 'Stable Rust embedding facade'}</span></div>
+        </div>
+      </div>
+
+      <div className="sc-band is-violet">
+        <div className="sc-band-head"><span className="sc-band-tag">{zh ? 'L3 · 能力层' : 'L3 · CAPABILITIES'}</span></div>
+        <div className="sc-node-grid">
+          <div className="sc-node"><strong>soiacode-tools</strong><span>{zh ? '5 内置工具 + 本机环境' : 'Built-in tools'}</span></div>
+          <div className="sc-node"><strong>soiacode-context</strong><span>{zh ? 'AGENTS.md / 规则来源' : 'Context sources'}</span></div>
+          <div className="sc-node"><strong>soiacode-config</strong><span>{zh ? '三级配置与 trust.json' : 'Config & trust'}</span></div>
+          <div className="sc-node"><strong>soiacode-extension</strong><span>{zh ? '扩展进程 / MCP / 远端环境宿主' : 'Extension subprocess host'}</span></div>
+        </div>
+      </div>
+
+      <div className="sc-band is-amber">
+        <div className="sc-band-head"><span className="sc-band-tag">{zh ? 'L2–L1 · 内核与基础层' : 'L2–L1 · CORE LOOP & FOUNDATIONS'}</span></div>
+        <div className="sc-node-grid">
+          <div className="sc-node">
+            <div className="sc-node-top"><strong>soiacode-agent</strong><span className="sc-badge core">L2 {zh ? '内核' : 'Core'}</span></div>
+            <span>{zh ? 'agent 循环与工具派发' : 'Agent loop & dispatch'}</span>
+          </div>
+          <div className="sc-node">
+            <div className="sc-node-top"><strong>soiacode-provider</strong><span className="sc-badge core">L1 {zh ? '内核' : 'Core'}</span></div>
+            <span>{zh ? '5 种 LLM 线协议（Gemini/Bedrock 可选 feature）' : '5 wire protocols'}</span>
+          </div>
+          <div className="sc-node">
+            <div className="sc-node-top"><strong>soiacode-session</strong><span className="sc-badge core">L1 {zh ? '内核' : 'Core'}</span></div>
+            <span>{zh ? 'JSONL 树存储与 Blob 旁路' : 'JSONL store & blobs'}</span>
+          </div>
+          <div className="sc-node">
+            <div className="sc-node-top"><strong>soiacode-mcp</strong><span className="sc-badge opt">L1</span></div>
+            <span>{zh ? '外部 MCP 客户端' : 'MCP client'}</span>
+          </div>
+          <div className="sc-node">
+            <div className="sc-node-top"><strong>soiacode-sandbox</strong><span className="sc-badge opt">L1 {zh ? '可选' : 'Opt'}</span></div>
+            <span>{zh ? 'feature 默认关闭' : 'Disabled by default'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="sc-band is-slate">
+        <div className="sc-band-head"><span className="sc-band-tag">{zh ? 'L0 · 底层（唯一 IO 边界）与旁路' : 'L0 · PRIMITIVES & BYPASS CRATES'}</span></div>
+        <div className="sc-node-grid cols-3">
+          <div className="sc-node">
+            <div className="sc-node-top"><strong>soiacode-http</strong><span className="sc-badge base">{zh ? '唯一联网' : 'HTTP'}</span></div>
+            <span>{zh ? '代理、自定义 CA、TLS、请求头脱敏' : 'Proxy, custom CA, header redact'}</span>
+          </div>
+          <div className="sc-node">
+            <div className="sc-node-top"><strong>soiacode-local</strong><span className="sc-badge base">{zh ? '唯一本地IO' : 'OS'}</span></div>
+            <span>{zh ? '原子写、路径解析、进程组起停' : 'Atomic write, paths, process groups'}</span>
+          </div>
+          <div className="sc-node">
+            <div className="sc-node-top"><strong>soiacode-protocol</strong><span className="sc-badge core">{zh ? '零 IO' : 'Zero-IO'}</span></div>
+            <span>{zh ? '全仓与扩展唯一类型真源' : 'Single type source of truth'}</span>
+          </div>
+        </div>
+        <div className="sc-node-grid cols-2">
+          <div className="sc-node"><strong>{zh ? '旁路（tui / testkit / eval）' : 'Bypass (tui / testkit / eval)'}</strong><span>{zh ? '仅限终端 UI、假厂商回放与离线评估，不反侵入内核' : 'Optional TUI & offline harness/eval'}</span></div>
+          <div className="sc-node"><strong>{zh ? '外围（extkit / ext-* / svc-* / exec）' : 'Peripherals (extkit / ext-* / svc-* / exec)'}</strong><span>{zh ? '只依赖 protocol，作为独立二进制与子进程演进' : 'Depend only on protocol, evolve out-of-process'}</span></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** SoiaCode (si) — architecture & specification detail page grounded in soiacode/docs. */
 export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
   const href = (path: string) => hrefFor(path, locale);
@@ -1401,13 +1753,6 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
         { id: 'architecture', label: '4. Crate architecture' },
         { id: 'roadmap', label: '5. Roadmap & status' },
       ];
-
-  const renderFigure = (src: string, alt: string, caption: string) => (
-    <div className="soiacode-figure-wrap">
-      <ZoomableFigure src={src} alt={alt} zh={zh} lazy />
-      <p className="soiacode-caption">{caption}</p>
-    </div>
-  );
 
   return (
     <SubpageLayout active="product" locale={locale}>
@@ -1429,11 +1774,7 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
           </p>
         </header>
 
-        <ZoomableFigure
-          src="/soia/products/soiacode-product-layers.png"
-          alt={zh ? 'SoiaCode 五层产品架构图' : 'SoiaCode five-layer product architecture'}
-          zh={zh}
-        />
+        <SoiaCodeProductDiagram zh={zh} />
 
         <div className="tutorial-detail-layout">
           <aside className="missing-toc">
@@ -1480,13 +1821,7 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
                 </li>
               </ul>
 
-              {renderFigure(
-                '/soia/products/soiacode-system-flow.png',
-                zh ? 'SoiaCode 系统运行时进程与数据流图' : 'SoiaCode system runtime process and data flow',
-                zh
-                  ? '图自 soiacode/docs：单 si 进程可并发承载多会话，所有网络经模型客户端、本机操作经内置工具管道、扩展/MCP 经 stdio JSON-RPC，磁盘只做追加写入。（点击可放大）'
-                  : 'Diagram from soiacode/docs: one si process hosts multiple sessions; provider HTTP, built-in tool pipes, extension/MCP JSON-RPC, and append-only disk writes stay cleanly separated. (Click to zoom)',
-              )}
+              <SoiaCodeSystemDiagram zh={zh} />
             </section>
 
             <section id="support">
@@ -1591,13 +1926,7 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
                 </li>
               </ul>
 
-              {renderFigure(
-                '/soia/products/soiacode-peripheral-flow.png',
-                zh ? 'SoiaCode 外围自运行程序交互图' : 'SoiaCode peripheral standalone processes diagram',
-                zh
-                  ? '图自 soiacode/docs：常驻服务 si serve、对外 si mcp-server / si a2a、行内补全 si inline 与远端执行端 soiacode-exec 均独立运行，不反向耦合进内核。（点击可放大）'
-                  : 'Diagram from soiacode/docs: standalone peripherals (si serve, si mcp-server, si a2a, si inline, soiacode-exec) never bloat or couple backward into the kernel. (Click to zoom)',
-              )}
+              <SoiaCodePeripheralDiagram zh={zh} />
             </section>
 
             <section id="boundaries">
@@ -1673,13 +2002,7 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
                 </li>
               </ul>
 
-              {renderFigure(
-                '/soia/products/soiacode-tool-seq.png',
-                zh ? 'SoiaCode 单次工具调用全链路时序图' : 'SoiaCode single tool call full sequence diagram',
-                zh
-                  ? '图自 soiacode/docs：模型吐出 ToolCall → before_tool_call 挂载点 → 权限与 ask/never 审批 → 写审计/会话记录 → 执行工具 → after_tool_result 裁剪脱敏 → 写入 ToolResult。（点击可放大）'
-                  : 'Diagram from soiacode/docs: ToolCall → before_tool_call → builtin permission & approval → session writer → tool exec → after_tool_result trim/redact → ToolResult. (Click to zoom)',
-              )}
+              <SoiaCodeToolSequenceDiagram zh={zh} />
 
               <div className="soiacode-note">
                 {zh
@@ -1696,13 +2019,7 @@ export function SoiaCodePage({ locale }: { locale: LandingLocaleCode }) {
                   : 'The Rust workspace enforces strict downward dependencies from L4 to L0. Only L0 soiacode-http performs network IO (centralizing proxies, custom CA, and header redaction), only L0 soiacode-local wraps OS process/file primitives, and zero-IO soiacode-protocol serves as the single source of truth across kernel, SDK, extensions, RPC, and ACP.'}
               </p>
 
-              {renderFigure(
-                '/soia/products/soiacode-engineering-layers.png',
-                zh ? 'SoiaCode 工程架构 Crate 五层与外围全景图' : 'SoiaCode crate layers, bypass, and peripheral overview',
-                zh
-                  ? '图自 soiacode/docs：L4（入口接线）→ L3（工具/上下文/配置/扩展宿主）→ L2（agent 循环内核）→ L1（provider/session/mcp/可选 sandbox）→ L0（http/local/protocol），另有旁路 tui/testkit/eval 与独立外围进程。（点击可放大）'
-                  : 'Diagram from soiacode/docs: L4 entrypoints → L3 capabilities → L2 agent loop → L1 core foundations → L0 primitives, alongside bypass test/TUI crates and out-of-process peripherals. (Click to zoom)',
-              )}
+              <SoiaCodeCrateDiagram zh={zh} />
             </section>
 
             <section id="roadmap">

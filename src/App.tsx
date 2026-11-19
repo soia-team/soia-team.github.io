@@ -470,6 +470,25 @@ export default function App() {
     return () => window.removeEventListener('popstate', sync);
   }, [isHome, locale, path, pageTitle]);
 
+  useEffect(() => {
+    const scrollToHash = () => {
+      const rawHash = window.location.hash.replace(/^#/, '');
+      if (!rawHash) return;
+      const targetId = decodeURIComponent(rawHash);
+      const attempt = () => {
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: 'auto', block: 'start' });
+      };
+      requestAnimationFrame(() => {
+        attempt();
+        window.setTimeout(attempt, 180);
+      });
+    };
+    scrollToHash();
+    window.addEventListener('hashchange', scrollToHash);
+    return () => window.removeEventListener('hashchange', scrollToHash);
+  }, [path, locale]);
+
   useClientEnhancements();
 
   useEffect(() => {

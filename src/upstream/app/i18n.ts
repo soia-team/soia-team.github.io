@@ -2563,7 +2563,7 @@ const HOME_FAQ_COPY: Record<LandingLocaleCode, HomeFaqTemplate[]> = {
     },
     {
       q: 'Can I hire you or buy a course?',
-      a: 'Courses are coming. Company consulting can start now — open a GitHub Discussion on soia-team/soia-open-skills. This site does not sell subscriptions.',
+      a: 'Courses are coming. Consulting starts at ¥200 / 30 min (max 1 hour at ¥400) and custom skill engineering is ¥1,000 / day — book via GitHub Discussions on soia-team/soia-open-skills.',
     },
     {
       q: 'Where is the source?',
@@ -2601,7 +2601,7 @@ const HOME_FAQ_COPY: Record<LandingLocaleCode, HomeFaqTemplate[]> = {
     },
     {
       q: '可以买课或做企业咨询吗？',
-      a: '课程即将推出。企业咨询现在就可以约——到 soia-team/soia-open-skills 开 GitHub Discussion。本站不卖订阅。',
+      a: '课程即将推出。企业咨询按次计费：¥200 / 30 分钟（超出 30 分钟 ¥400、每半小时加 ¥200，单次上限 1 小时）；定制化技能编写 ¥1,000 / 1 天按工具工时收费——到 soia-team/soia-open-skills 开 GitHub Discussion 即可预约。',
     },
     {
       q: '源码在哪？',

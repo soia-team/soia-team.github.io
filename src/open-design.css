@@ -1977,20 +1977,21 @@ section.tight { padding: 90px 0; }
   margin: 30px 0 36px;
 }
 .about-copy {
-  max-width: 980px;
+  width: 100%;
+  max-width: 1080px;
   text-align: center;
 }
 .about-kicker {
-  width: 203px;
+  width: auto;
   max-width: 100%;
-  margin: 0 0 26px;
+  margin: 0 0 18px;
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
   font-weight: 800;
   line-height: 1.15;
   letter-spacing: 0;
-  text-align: left;
+  text-align: center;
 }
 /* === Text Scroll Reveal — the ABOUT statement (Magic UI / Inspira port).
    A tall track with a sticky, vertically-centered paragraph; the inline
@@ -2009,14 +2010,14 @@ section.tight { padding: 90px 0; }
 /* `.about h2` (0,1,1) sets a large display size; match the old statement's
    specificity (0,2,1) so the reveal copy keeps the original 26px. */
 .about h2.about-reveal-text {
-  margin: 0;
-  max-width: 900px;
+  margin: 0 auto;
+  max-width: 960px;
   font-family: var(--sans);
   font-weight: 800;
-  font-size: 26px;
-  line-height: 1.35;
-  letter-spacing: 0;
-  text-align: left;
+  font-size: clamp(24px, 2.8vw, 34px);
+  line-height: 1.32;
+  letter-spacing: -0.015em;
+  text-align: center;
   color: var(--ink);
 }
 .reveal-word {
@@ -2099,11 +2100,10 @@ section.tight { padding: 90px 0; }
 .about-scrolly {
   position: relative;
   width: 100%;
-  height: calc(3 * 64vh);
+  height: auto;
 }
 .about-sticky {
-  position: sticky;
-  top: 110px;
+  position: static;
 }
 @media (max-width: 880px) {
   /* No pinning on small screens — tabs stay click-only. */
@@ -2173,35 +2173,62 @@ section.tight { padding: 90px 0; }
   color: #fff;
 }
 .about-panels {
-  margin-top: 16px;
-  /* Viewport for the vertical stacking reel: one panel tall (panel art is
-     1768×1144); the stacked panels are clipped to it. */
+  margin-top: 18px;
   position: relative;
   overflow: hidden;
-  aspect-ratio: 1768 / 1144;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  border: 1px solid rgba(21, 20, 15, 0.12);
+  background: #fff;
+  box-shadow: 0 28px 64px -34px rgba(15, 23, 42, 0.28);
 }
 .about-track {
-  /* Positioning layer for the absolutely-stacked panels. */
   position: absolute;
   inset: 0;
 }
 .about-panel {
-  /* Vertical stacking reel (matches the capability module below): each panel
-     parks below and slides UP to cover the previous as you advance; sliding
-     back down reveals it. JS drives the transform 1:1 with scroll (跟手); the
-     CSS transition + :checked rules below are the mobile / click fallback. */
   position: absolute;
   inset: 0;
-  transform: translateY(100%);
-  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-  will-change: transform;
+  opacity: 0;
+  transform: translateY(14px) scale(0.992);
+  transition: opacity 0.36s cubic-bezier(0.22, 1, 0.36, 1), transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
   min-width: 0;
   min-height: 0;
-  padding: 28px;
-  border: 1px solid rgba(21, 20, 15, 0.1);
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+.about-panel.is-active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+  z-index: 2;
+}
+.about-panel-img {
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+}
+.about-panel-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.about-caption-bar {
+  margin: 16px auto 0;
+  max-width: 72ch;
+  padding: 12px 18px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 20px 42px -38px rgba(15, 23, 42, 0.28);
+  border: 1px solid rgba(21, 20, 15, 0.1);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink-soft);
+  font-size: 14.5px;
+  line-height: 1.65;
+  text-align: center;
 }
 .about-panel:nth-child(1) { z-index: 1; }
 .about-panel:nth-child(2) { z-index: 2; }
@@ -6587,4 +6614,424 @@ footer .container {
   .plugin-detail__commands button {
     min-height: 44px;
   }
+}
+
+/* ====== Paseo-inspired Hero Interactive Stage & Run-Anywhere Showcase ====== */
+.hero-agents-strip {
+  margin: 22px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 7px 9px;
+  max-width: 820px;
+}
+.hero-agents-label {
+  font: 600 12px var(--mono);
+  color: var(--ink-soft);
+  margin-right: 4px;
+}
+.hero-agent-chip {
+  font: 500 12px var(--mono);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(21, 20, 15, 0.12);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+.hero-agent-chip:hover {
+  transform: translateY(-1px);
+  border-color: var(--ink);
+  background: #fff;
+}
+.hero-agent-chip.is-more {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.hero-stage {
+  width: min(1080px, 92vw);
+  margin: 34px auto 0;
+}
+.hero-stage-tabs {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px;
+  margin-bottom: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(21, 20, 15, 0.12);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+}
+.hero-stage-tabs button {
+  border: none;
+  background: transparent;
+  padding: 8px 15px;
+  border-radius: 999px;
+  font: 600 13.5px var(--sans);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.hero-stage-tabs button:hover {
+  color: var(--ink);
+}
+.hero-stage-tabs button.is-active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.hero-window {
+  border-radius: 18px;
+  border: 1px solid rgba(21, 20, 15, 0.14);
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 34px 84px -38px rgba(15, 23, 42, 0.34);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+}
+.hero-window:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 40px 92px -36px rgba(15, 23, 42, 0.38);
+}
+.hero-window-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  background: #f6f7f3;
+  border-bottom: 1px solid rgba(21, 20, 15, 0.08);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.hero-window-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero-window-dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.hero-window-dots i:nth-child(1) { background: #ff5f56; }
+.hero-window-dots i:nth-child(2) { background: #ffbd2e; }
+.hero-window-dots i:nth-child(3) { background: #27c93f; }
+.hero-window-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font: 500 11.5px var(--mono);
+  color: #047857;
+}
+.hero-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+.hero-window-frame {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #f8f9f5;
+  overflow: hidden;
+}
+.hero-stage-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  opacity: 0;
+  transform: scale(1.015);
+  transition: opacity 0.34s ease, transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hero-stage-img.is-active {
+  opacity: 1;
+  transform: scale(1);
+}
+.hero-window-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 11px 16px;
+  background: #fff;
+  border-top: 1px solid rgba(21, 20, 15, 0.08);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  text-align: left;
+}
+.hero-window-foot a {
+  font: 600 12.5px var(--mono);
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.hero-window-foot a:hover { text-decoration: underline; }
+
+/* About reactive tabs clean override (zero overlay card on top of image) */
+.about-tab-react {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--ink-soft);
+  font: 700 14.5px var(--sans);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.about-tab-react:hover { color: var(--ink); }
+.about-tab-react.is-active { background: var(--ink); color: var(--paper); }
+
+/* Homepage Run-Anywhere + Philosophy Band */
+.home-anywhere {
+  padding: 96px 0;
+  border-top: 1px solid rgba(21, 20, 15, 0.08);
+}
+.home-anywhere-head {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 42px;
+}
+.home-anywhere-head h2 {
+  font-size: clamp(32px, 3.6vw, 48px);
+  margin: 0 0 12px;
+}
+.home-anywhere-head p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+.home-anywhere-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 42px;
+}
+.home-anywhere-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(21, 20, 15, 0.11);
+  background: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.home-anywhere-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--ink);
+  box-shadow: 0 22px 44px -32px rgba(15, 23, 42, 0.3);
+}
+.home-anywhere-kicker {
+  font: 600 11.5px var(--mono);
+  color: #0891b2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.home-anywhere-card strong {
+  font-size: 18px;
+  color: var(--ink);
+}
+.home-anywhere-card p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.home-anywhere-more {
+  margin-top: auto;
+  padding-top: 6px;
+  font: 600 12.5px var(--mono);
+  color: var(--ink);
+}
+
+.home-philosophy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.home-philosophy-item {
+  padding: 18px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(21, 20, 15, 0.1);
+  background: #f8f9f5;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+.home-philosophy-item:hover {
+  border-color: rgba(21, 20, 15, 0.28);
+  background: #fff;
+}
+.home-philosophy-item strong {
+  display: block;
+  font-size: 15px;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.home-philosophy-item p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+@media (max-width: 960px) {
+  .home-anywhere-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-philosophy-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 580px) {
+  .hero-stage-tabs { border-radius: 16px; display: flex; flex-wrap: wrap; }
+  .hero-stage-tabs button { flex: 1 1 44%; font-size: 12.5px; padding: 7px 10px; }
+  .home-anywhere { padding: 64px 0; }
+  .home-anywhere-grid, .home-philosophy-grid { grid-template-columns: 1fr; }
+  .about-tablist { flex-direction: column; border-radius: 16px; }
+  .about-tab-react { width: 100%; }
+}
+
+/* ====== Consulting & Custom Skill Pricing inside #contact ====== */
+.consulting-band {
+  max-width: 1080px;
+  margin: 0 auto 40px;
+}
+#contact, section[id] { scroll-margin-top: 96px; }
+.consulting-head {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 28px;
+}
+.consulting-kicker {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid #a7f3d0;
+  background: #ecfdf5;
+  color: #047857;
+  font: 600 11.5px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.consulting-head h2 {
+  font-size: clamp(30px, 3.6vw, 44px);
+  margin: 0 0 10px;
+}
+.consulting-head p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+.consulting-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.consulting-card {
+  padding: 26px 28px;
+  border-radius: 16px;
+  border: 1px solid rgba(21, 20, 15, 0.12);
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 20px 44px -34px rgba(15, 23, 42, 0.24);
+}
+.consulting-card.is-featured {
+  background: #0e1526;
+  border-color: #24324d;
+  color: #f8fafc;
+}
+.consulting-tag {
+  font: 600 11.5px var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #0891b2;
+}
+.consulting-card.is-featured .consulting-tag {
+  color: #4ade80;
+}
+.consulting-card h3 {
+  margin: 0;
+  font-size: 21px;
+  color: var(--ink);
+}
+.consulting-card.is-featured h3 {
+  color: #fff;
+}
+.consulting-price-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(21, 20, 15, 0.1);
+}
+.consulting-card.is-featured .consulting-price-row {
+  border-bottom-color: rgba(255, 255, 255, 0.14);
+}
+.consulting-price {
+  font: 800 32px/1 var(--sans);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.consulting-card.is-featured .consulting-price {
+  color: #fff;
+}
+.consulting-unit {
+  font: 500 13px var(--mono);
+  color: var(--ink-mute);
+}
+.consulting-card.is-featured .consulting-unit {
+  color: #94a3b8;
+}
+.consulting-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.consulting-card.is-featured .consulting-list {
+  color: #cbd5e1;
+}
+.consulting-list li::before {
+  content: '· ';
+  font-weight: 800;
+  color: #047857;
+}
+.consulting-card.is-featured .consulting-list li::before {
+  color: #4ade80;
+}
+.consulting-cta {
+  margin-top: auto;
+  padding-top: 8px;
+}
+.consulting-card.is-featured .btn-primary {
+  background: #fff;
+  color: #0e1526;
+}
+@media (max-width: 760px) {
+  .consulting-grid { grid-template-columns: 1fr; }
+  .consulting-card { padding: 22px 20px; }
 }

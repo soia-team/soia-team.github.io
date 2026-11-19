@@ -9,6 +9,7 @@
  * when behavior is needed.
  */
 
+import { useEffect, useState } from 'react';
 import { GradualBlur } from './_components/gradual-blur';
 import { Header, type HeaderProps } from './_components/header';
 import {
@@ -320,6 +321,67 @@ export default function Page({
     href: localePath(entry.code, '/'),
   }));
   const href = (path: string) => localizedHref(path, locale);
+  const [heroTab, setHeroTab] = useState(0);
+  const [heroPaused, setHeroPaused] = useState(false);
+  const [aboutTab, setAboutTab] = useState(0);
+
+  const heroStages = [
+    {
+      label: tt('AI 作业台 · 多 Agent', 'AI Workbench'),
+      src: '/soia/products/soiadeck-workbench.png',
+      title: 'SoiaDeck · AI Workbench',
+      note: tt(
+        '同屏并发调度 Claude Code、Codex、ACP 与 PTY 会话，本机 daemon 持久化持有回合，关窗不断流。',
+        'Orchestrate Claude Code, Codex, ACP, and PTY conversations inside a persistent local daemon.',
+      ),
+    },
+    {
+      label: tt('手机端 · 远程审批', 'Mobile & Diffs'),
+      src: '/soia/products/soiadeck-phone.png',
+      title: 'SoiaDeck · Mobile Remote',
+      note: tt(
+        '离开桌面也能在手机上看实时进度、检视代码 Diff、逐条批准或拒绝命令，随时叫停跑偏回合。',
+        'Follow agent progress, inspect diffs, approve risky commands, or stop a turn from your phone.',
+      ),
+    },
+    {
+      label: tt('NAT 加密中继', 'Encrypted Relay'),
+      src: '/soia/products/soiadeck-relay.png',
+      title: 'SoiaDeck · NAT Relay',
+      note: tt(
+        '不在同一局域网也能跨网配对连接；中继只转发密文不窥探会话正文，断线或维护 90 秒内自动续连。',
+        'End-to-end encrypted cross-network relay forwarding ciphertext only with 90s auto-reconnect.',
+      ),
+    },
+    {
+      label: tt('本地 LLM · 模型路由', 'Local LLM Router'),
+      src: '/soia/products/soiadeck-router.png',
+      title: 'SoiaDeck · Local LLM (MLX)',
+      note: tt(
+        '本机发现、下载并托管 MLX 等开源模型，统一对外提供 OpenAI 兼容入口，隐私任务完全离线可跑。',
+        'Discover and host Apple Silicon MLX models with one local OpenAI-compatible router endpoint.',
+      ),
+    },
+    {
+      label: tt('权限网关与待处理', 'Approvals & Guard'),
+      src: '/soia/products/soiadeck-home.png',
+      title: 'SoiaDeck · Approvals Queue',
+      note: tt(
+        '危险命令、工作区外写入、外部联网统一收口到可追溯的审批卡；支持逐次放行或本会话允许。',
+        'Every out-of-workspace write, shell command, or network access queues cleanly for explicit approval.',
+      ),
+    },
+  ] as const;
+
+  useEffect(() => {
+    if (heroPaused) return;
+    const timer = window.setInterval(() => {
+      setHeroTab((prev) => (prev + 1) % heroStages.length);
+    }, 4800);
+    return () => window.clearInterval(timer);
+  }, [heroPaused, heroStages.length]);
+
+  const activeHeroStage = heroStages[heroTab] ?? heroStages[0];
 
   /**
    * Capability cards. The zh homepage renders the five-step flow verbatim
@@ -469,20 +531,70 @@ export default function Page({
               <p className='hero-sub' data-reveal>
                 <BreakText text={t.heroSub.replace('{systems}', systems)} />
               </p>
-              {/* Product shot sits just under the hero copy. fetchPriority=low
-                  lets the full-bleed hero-bg (the LCP element, fetchpriority
-                  high) win the connection first; this still loads, just yields. */}
-              <div className='hero-shot' data-reveal>
-                <img
-                  src='/soia/products/soiadeck-workbench.png'
-                  sizes='(max-width: 768px) 100vw, 60vw'
-                  width={2508}
-                  height={1450}
-                  alt='SoiaDeck AI Workbench'
-                  decoding='async'
-                  fetchPriority='low'
-                  className='hero-shot-img'
-                />
+
+              <div className='hero-agents-strip' data-reveal>
+                <span className='hero-agents-label'>{tt('已支持', 'Supports')}</span>
+                {['Claude Code', 'Codex', 'pi', 'dsh', 'Cursor', 'OpenCode', 'Kimi Code', 'Qwen Code', 'Gemini CLI', 'Copilot'].map((name) => (
+                  <a className='hero-agent-chip' href={href('/soiadeck/#agents')} key={name}>
+                    {name}
+                  </a>
+                ))}
+                <a className='hero-agent-chip is-more' href={href('/soiadeck/#agents')}>
+                  {tt('全部 19 个接入清单 →', '+19 agents →')}
+                </a>
+              </div>
+
+              <div
+                className='hero-stage'
+                data-reveal
+                onMouseEnter={() => setHeroPaused(true)}
+                onMouseLeave={() => setHeroPaused(false)}
+              >
+                <div className='hero-stage-tabs' role='tablist' aria-label={tt('SoiaDeck 多场景切换', 'SoiaDeck scene switcher')}>
+                  {heroStages.map((stage, idx) => (
+                    <button
+                      type='button'
+                      role='tab'
+                      aria-selected={heroTab === idx}
+                      className={heroTab === idx ? 'is-active' : undefined}
+                      key={stage.label}
+                      onClick={() => {
+                        setHeroPaused(true);
+                        setHeroTab(idx);
+                      }}
+                    >
+                      {stage.label}
+                    </button>
+                  ))}
+                </div>
+                <div className='hero-window'>
+                  <div className='hero-window-bar'>
+                    <span className='hero-window-dots' aria-hidden='true'><i /><i /><i /></span>
+                    <span>{activeHeroStage.title}</span>
+                    <span className='hero-window-status'>
+                      <span className='hero-pulse-dot' aria-hidden='true' />
+                      {tt('daemon local · zero lock-in', 'daemon local · zero lock-in')}
+                    </span>
+                  </div>
+                  <div className='hero-window-frame'>
+                    {heroStages.map((stage, idx) => (
+                      <img
+                        key={stage.src}
+                        src={stage.src}
+                        alt={stage.title}
+                        width={2880}
+                        height={1800}
+                        decoding='async'
+                        fetchPriority={idx === 0 ? 'high' : 'low'}
+                        className={`hero-stage-img${heroTab === idx ? ' is-active' : ''}`}
+                      />
+                    ))}
+                  </div>
+                  <div className='hero-window-foot'>
+                    <span>{activeHeroStage.note}</span>
+                    <a href={href('/soiadeck/')}>{tt('查看 SoiaDeck 详情 →', 'Explore SoiaDeck →')}</a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -520,84 +632,43 @@ export default function Page({
                     </h2>
                   </div>
                 </div>
-                <div className='about-scrolly' data-about-scrolly>
+                <div className='about-scrolly'>
                 <div className='about-sticky'>
                 <div className='about-tabs' data-reveal>
-                  <input
-                    type='radio'
-                    name='about-tab'
-                    id='about-tab-1'
-                    className='about-tab-radio'
-                    defaultChecked
-                  />
-                  <input
-                    type='radio'
-                    name='about-tab'
-                    id='about-tab-2'
-                    className='about-tab-radio'
-                  />
-                  <input
-                    type='radio'
-                    name='about-tab'
-                    id='about-tab-3'
-                    className='about-tab-radio'
-                  />
                   <div className='about-tablist' role='tablist'>
-                    <label className='about-tab' htmlFor='about-tab-1'>
-                      {t.aboutTab1}
-                    </label>
-                    <label className='about-tab' htmlFor='about-tab-2'>
-                      {t.aboutTab2}
-                    </label>
-                    <label className='about-tab' htmlFor='about-tab-3'>
-                      {t.aboutTab3}
-                    </label>
+                    {[t.aboutTab1, t.aboutTab2, t.aboutTab3].map((tabLabel, idx) => (
+                      <button
+                        type='button'
+                        role='tab'
+                        aria-selected={aboutTab === idx}
+                        className={`about-tab-react${aboutTab === idx ? ' is-active' : ''}`}
+                        key={tabLabel}
+                        onClick={() => setAboutTab(idx)}
+                      >
+                        {tabLabel}
+                      </button>
+                    ))}
                   </div>
                   <div className='about-panels'>
                     <div className='about-track'>
-                    <div className='about-panel'>
-                      <div className='about-panel-img about-panel-img-bare about-panel-img-captioned'>
-                        <LazyImg
-                          src='/soia/products/soiadeck-wb-home.png'
-                          alt={t.aboutCap1.replace(/\n/g, ' ')}
-                        />
-                        <p className='about-panel-caption'>
-                          <BreakText text={t.aboutCap1} />
-                        </p>
-                      </div>
-                    </div>
-                    <div className='about-panel'>
-                      <div className='about-panel-img about-panel-img-bare about-panel-img-captioned'>
-                        <LazyImg
-                          src='/soia/products/soiadeck-agent.png'
-                          alt={t.aboutCap2.replace(/\n/g, ' ')}
-                        />
-                        {/* Caption laid over the image's baked-in white card. */}
-                        <p className='about-panel-caption'>
-                          <BreakText text={t.aboutCap2} />
-                        </p>
-                      </div>
-                    </div>
-                    <div className='about-panel'>
-                      <div className='about-panel-img about-panel-img-bare about-panel-img-captioned'>
-                        <LazyImg
-                          src='/soia/products/soiadeck-plugins.png'
-                          alt={t.aboutCap3.replace(/\n/g, ' ')}
-                        />
-                        <p className='about-panel-caption'>
-                          {t.aboutCap3}
-                        </p>
-                      </div>
-                    </div>
+                      {(
+                        [
+                          { src: '/soia/products/soiadeck-wb-home.png', alt: t.aboutCap1.replace(/\n/g, ' ') },
+                          { src: '/soia/products/soiadeck-phone.png', alt: t.aboutCap2.replace(/\n/g, ' ') },
+                          { src: '/soia/products/soiadeck-plugins.png', alt: t.aboutCap3.replace(/\n/g, ' ') },
+                        ] as const
+                      ).map((panel, idx) => (
+                        <div className={`about-panel${aboutTab === idx ? ' is-active' : ''}`} key={panel.src}>
+                          <div className='about-panel-img'>
+                            <img src={panel.src} alt={panel.alt} width={2880} height={1800} decoding='async' />
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  {/* Per-tab hub link. OUTSIDE .about-panels (overflow:hidden +
-                      image-height-locked, so a link inside a panel is clipped).
-                      As a sibling of the tab radios, the active tab reveals its
-                      matching CTA via `:checked ~` in globals.css. */}
-                  {/* One static CTA row for the whole About block: design-system
-                      link + download. Agents live in the Method section now, so
-                      they're intentionally not repeated here. */}
+                  <div className='about-caption-bar'>
+                    <BreakText text={[t.aboutCap1, t.aboutCap2, t.aboutCap3][aboutTab] ?? t.aboutCap1} />
+                  </div>
                   <div className='about-ctas cta-pair'>
                     <a className='btn btn-ghost' href={href('/skills/')}>
                       {cta.systems}
@@ -880,6 +951,97 @@ export default function Page({
           </div>
         </section>
 
+        {/* ====== RUN ANYWHERE & PHILOSOPHY ====== */}
+        <section className='home-anywhere' id='anywhere'>
+          <div className='container'>
+            <div className='home-anywhere-head' data-reveal>
+              <h2 className='display'>
+                {tt('随处运行，统一掌控', 'Run anywhere, stay in control')}
+              </h2>
+              <p>
+                {tt(
+                  '从桌面的本地 daemon 到手机端远程看 Diff 与审批，再到跨网加密中继与 47 个可组合开源技能——代码、秘钥与会话始终留在你的机器上。',
+                  'Desktop daemon, mobile approvals, encrypted NAT relay, and 47 composable skills — while code, credentials, and sessions remain on your machines.',
+                )}
+              </p>
+            </div>
+
+            <div className='home-anywhere-grid' data-reveal>
+              {[
+                {
+                  kicker: 'Desktop App',
+                  title: tt('桌面作业台', 'Desktop Workbench'),
+                  desc: tt('本机 daemon 持有全部会话，关窗继续跑、重开从缓冲重放；统一管项目、Worktree 与审批。', 'Local daemon keeps turns alive across restarts with unified workspaces, worktrees, and approvals.'),
+                  href: href('/soiadeck/#workbench'),
+                  more: tt('看桌面架构 →', 'Desktop architecture →'),
+                },
+                {
+                  kicker: 'Mobile Remote',
+                  title: tt('手机端随时处理', 'Approve from Mobile'),
+                  desc: tt('离开工位也能随时查看会话进度与代码改动 Diff，在手机上放行或拒掉危险操作。', 'Check turns, inspect code diffs, approve shell steps, or stop a session right from your phone.'),
+                  href: href('/soiadeck/#remote'),
+                  more: tt('看手机端界面 →', 'Mobile surface →'),
+                },
+                {
+                  kicker: 'Encrypted Relay',
+                  title: tt('NAT 加密中继', 'Encrypted NAT Relay'),
+                  desc: tt('不在同一局域网也能配对连回开发机；中继只转发密文不窥探正文，断线 90 秒自动续连。', 'Zero-inspection ciphertext forwarding across networks with 90s reconnect and Passkey device management.'),
+                  href: href('/soiadeck/#relay'),
+                  more: tt('看中继机制 →', 'Relay spec →'),
+                },
+                {
+                  kicker: 'Engine & Skills',
+                  title: tt('SoiaCode + 47 技能', 'SoiaCode + 47 Skills'),
+                  desc: tt('自研 Rust 轻量内核 SoiaCode (si) 配合 4 大领域 47 个公开技能，可按需单个装入宿主。', 'Minimal Rust agent kernel SoiaCode (si) alongside 47 open skills across PKM, Dev, Office & Meta.'),
+                  href: href('/soiacode/'),
+                  more: tt('看 SoiaCode 架构 →', 'SoiaCode specs →'),
+                },
+              ].map((card) => (
+                <a className='home-anywhere-card' href={card.href} key={card.kicker}>
+                  <span className='home-anywhere-kicker'>{card.kicker}</span>
+                  <strong>{card.title}</strong>
+                  <p>{card.desc}</p>
+                  <span className='home-anywhere-more'>{card.more}</span>
+                </a>
+              ))}
+            </div>
+
+            <div className='home-philosophy-grid' data-reveal>
+              {[
+                {
+                  title: tt('Private · 本地优先', 'Private · Local-first'),
+                  desc: tt('会话正文、API 秘钥与代码仓库全部留在自己设备，默认零遥测，核心能力断网可用。', 'Repos, sessions, and API credentials stay local with zero default telemetry.'),
+                },
+                {
+                  title: tt('Daemon-backed · 永不断流', 'Daemon-backed · Persistent'),
+                  desc: tt('前端视图随时关闭或切端重连，正在执行的长任务不会因为页面刷新而丢失。', 'Close the UI or switch devices anytime — running agent turns never drop.'),
+                },
+                {
+                  title: tt('Unified · 19 Agent 一致体验', 'Unified · 19 Agents'),
+                  desc: tt('统一整合 stream-json、app-server、ACP、pi-rpc 与 PTY，按清单一目了然查看支持程度。', 'One workbench across stream-json, app-server, ACP, pi-rpc, and PTY adapters.'),
+                },
+                {
+                  title: tt('Permission-first · 审批留痕', 'Permission-first · Auditable'),
+                  desc: tt('高危命令、工作区外修改与联网必须先经权限闸门，每一次决策进入会话树可追溯。', 'Commands and out-of-workspace writes pause cleanly for explicit human approval.'),
+                },
+                {
+                  title: tt('Composable · 复用既有订阅', 'Composable · Zero Lock-in'),
+                  desc: tt('直接用你本机已有的 Claude Code / Codex / Cursor 等 CLI 订阅与本地模型，绝不锁死供应商。', 'Bring your existing CLI subscriptions, local skills, and Apple Silicon MLX models.'),
+                },
+                {
+                  title: tt('Honest · 如实标注边界', 'Honest · Grounded Scope'),
+                  desc: tt('已交付 macOS arm64、暂未发布 SoiaCode 二进制、Agent 分三级状态均透明如实标明。', 'Exact platform availability, verified CLI baselines, and honest milestone boundaries.'),
+                },
+              ].map((item) => (
+                <div className='home-philosophy-item' key={item.title}>
+                  <strong>{item.title}</strong>
+                  <p>{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ====== TESTIMONIAL / COLLABORATORS ====== */}
         <section className='testimonial' data-od-id='testimonial'>
           <div className='container'>
@@ -981,6 +1143,66 @@ export default function Page({
             JSON-LD, so the visible answers match the structured data. */}
         <section className='cta' id='contact' data-od-id='cta'>
           <div className='container'>
+            <div className='consulting-band' data-reveal>
+              <div className='consulting-head'>
+                <span className='consulting-kicker'>
+                  {tt('CONSULTING & CUSTOM SKILLS · 明码标价', 'CONSULTING & CUSTOM SKILLS')}
+                </span>
+                <h2 className='display'>
+                  {tt('企业咨询与定制技能服务', 'Consulting & Custom Skill Engineering')}
+                </h2>
+                <p>
+                  {tt(
+                    '不卖 SaaS 订阅；公开软件按仓库开源或分阶段交付，企业专项支持与技能定制按次/工时明码计费，通过 GitHub Discussions 预约排期。',
+                    'No SaaS subscription lock-in. Book focused 1-on-1 architecture consulting or bespoke skill engineering with transparent time-based rates.',
+                  )}
+                </p>
+              </div>
+              <div className='consulting-grid'>
+                <div className='consulting-card'>
+                  <span className='consulting-tag'>{tt('01 · 一对一技术咨询', '01 · 1-ON-1 CONSULTING')}</span>
+                  <h3>{tt('架构与工作流专项咨询', 'Architecture & Workflow Session')}</h3>
+                  <div className='consulting-price-row'>
+                    <span className='consulting-price'>¥200</span>
+                    <span className='consulting-unit'>
+                      {tt('/ 30 分钟 / 次（超出 30 分钟 ¥400 · 每半小时 +¥200 · 单次上限 1 小时）', '/ 30 min (over 30 min ¥400 · +¥200/30m · max 1h)')}
+                    </span>
+                  </div>
+                  <ul className='consulting-list'>
+                    <li>{tt('30 分钟标准单次 ¥200；超过 30 分钟按每半小时 +¥200 封顶 1 小时（¥400）', '¥200 per 30-min session; +¥200 per extra 30 min, capped at 1 hour (¥400 max)')}</li>
+                    <li>{tt('适用：企业落地选型、多 Agent（Claude Code / Codex / SoiaDeck）集成诊断', 'Scope: multi-agent workflow diagnosis, SoiaDeck integration & Obsidian PKM setup')}</li>
+                    <li>{tt('会前对齐问题清单，会后输出可执行调整建议，不兜售长期捆绑合同', 'Actionable findings delivered with zero bundled SaaS commitments')}</li>
+                  </ul>
+                  <div className='consulting-cta'>
+                    <a className='btn btn-ghost' href={REPO_DISCUSSIONS} {...ext}>
+                      {tt('去 Discussions 预约咨询 ↗', 'Book via Discussions ↗')}
+                    </a>
+                  </div>
+                </div>
+
+                <div className='consulting-card is-featured'>
+                  <span className='consulting-tag'>{tt('02 · 按工具工时定制开发', '02 · CUSTOM SKILL ENGINEERING')}</span>
+                  <h3>{tt('定制化技能（Skill）编写', 'Bespoke Skill Development')}</h3>
+                  <div className='consulting-price-row'>
+                    <span className='consulting-price'>¥1,000</span>
+                    <span className='consulting-unit'>
+                      {tt('/ 人天（按实际工具研发工时计费）', '/ day (billed by engineering effort)')}
+                    </span>
+                  </div>
+                  <ul className='consulting-list'>
+                    <li>{tt('¥1,000 / 1 天基准，按团队实际需要的工具工时与复杂度预先评估确认', '¥1,000/day baseline billed strictly on agreed engineering hours')}</li>
+                    <li>{tt('交付完整 SKILL.md、执行脚本、权限防呆护栏（Guardrails）与验收测试', 'Delivers full SKILL.md, scripts, hard guardrails, and verification checks')}</li>
+                    <li>{tt('遵循 .agents/skills 最小安装规范，可直接装入团队 Codex / Claude Code / WorkBuddy', 'Ships cleanly for Codex, Claude Code, and WorkBuddy at project scope')}</li>
+                  </ul>
+                  <div className='consulting-cta'>
+                    <a className='btn btn-primary' href={REPO_DISCUSSIONS} {...ext}>
+                      {tt('提交定制需求 ↗', 'Request Custom Skill ↗')}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className='cta-dance' data-precise-bg>
               {/* Open Design Home window floating over the mural — sits above the
                   painting (::before) but below the CTA copy. Bottom is clipped by

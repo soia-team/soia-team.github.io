@@ -3831,7 +3831,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
             "tone": "muted"
           },
           {
-            "text": "$ python3 scripts/gen_catalog_xlsx.py --out ~/Downloads/soia-pkm-alipan-curator/",
+            "text": "$ python3 scripts/gen_catalog_xlsx.py",
             "tone": "muted"
           },
           {
@@ -3839,7 +3839,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
             "tone": "green"
           },
           {
-            "text": "✓ Excel 总索引 + 家庭导航: release_meta 一致 · 0 漏号 · 0 死链",
+            "text": "✓ Excel 已写本机下载目录 (<HOME>/Downloads/soia-pkm-alipan-curator/) · 0 漏号",
             "tone": "cyan"
           }
         ],
@@ -3854,7 +3854,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
             "tone": "muted"
           },
           {
-            "text": "$ python3 scripts/gen_catalog_xlsx.py --out ~/Downloads/soia-pkm-alipan-curator/",
+            "text": "$ python3 scripts/gen_catalog_xlsx.py",
             "tone": "muted"
           },
           {
@@ -3862,7 +3862,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
             "tone": "green"
           },
           {
-            "text": "✓ Excel index & family nav: unified release metadata · 0 numbering gaps",
+            "text": "✓ Excel saved to <HOME>/Downloads/soia-pkm-alipan-curator/ · 0 gaps",
             "tone": "cyan"
           }
         ],
@@ -3928,7 +3928,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
     "trust": {
       "zh": [
         "内置 `test_curator_public_safety.py` 与运行包/结构/发布审计全套单测。",
-        "Excel 与导航产物只写用户指定目录或 `~/Downloads/soia-pkm-alipan-curator/`，不污染 vault 控制面。"
+        "Excel 与导航产物只写用户指定 `--out` 或系统 Downloads 目录（macOS/Linux `~/Downloads`、Windows `%USERPROFILE%\\Downloads` 下的 `soia-pkm-alipan-curator/`，由脚本按 `Path.home()` 自动解析，不污染 vault 控制面）。"
       ],
       "en": [
         "Covered by `test_curator_public_safety.py` and full run-bundle audit unit tests.",
@@ -4667,8 +4667,8 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
       "en": "Saving a useful Douyin video into Obsidian is tricky: short links resist deduplication, huge MP4 binaries bloat your Git vault, and links expire over time."
     },
     "solution": {
-      "zh": "采用「轻量笔记进 Vault + 视频本体落本地 Downloads」分离结构：用匿名一次性无头浏览器拦截视频接口，按 `video_id` 精确去重；MP4 流式下载到 `~/Downloads/soia-pkm-clip-douyin/<video_id>/` 并校验 `ftyp` 文件头，Markdown 笔记只记录文案、互动数据、AI 一句摘要与 `media_local_path` 索引（也支持 `--metadata-only` 纯文案归档）。",
-      "en": "Keep your vault lightweight while preserving video locally: intercept the stream in an anonymous one-shot Playwright session, deduplicate strictly by `video_id`, verify downloaded MP4 `ftyp` headers in `~/Downloads/soia-pkm-clip-douyin/<video_id>/`, and write clean Markdown notes with `media_local_path` (or `--metadata-only` for text only)."
+      "zh": "采用「轻量笔记进 Vault + 视频本体落本地 Downloads」分离结构：用匿名一次性无头浏览器拦截视频接口，按 `video_id` 精确去重；MP4 流式下载到系统 Downloads 下的 `soia-pkm-clip-douyin/<video_id>/`（脚本通过 `Path.home() / \"Downloads\"` 兼容 macOS/Linux/Windows）并校验 `ftyp` 文件头，Markdown 笔记只记录文案、互动数据、AI 一句摘要与 `media_local_path` 索引（也支持 `--metadata-only` 纯文案归档）。",
+      "en": "Keep your vault lightweight while preserving video locally: intercept the stream in an anonymous one-shot Playwright session, deduplicate strictly by `video_id`, verify downloaded MP4 `ftyp` headers in `<HOME>/Downloads/soia-pkm-clip-douyin/<video_id>/` (via `Path.home()`), and write clean Markdown notes with `media_local_path` (or `--metadata-only` for text only)."
     },
     "mechanism": {
       "zh": {
@@ -4740,7 +4740,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
             "tone": "green"
           },
           {
-            "text": "✓ 视频: ~/Downloads/soia-pkm-clip-douyin/73948102.../video.mp4 (未进 Git)",
+            "text": "✓ 视频: <HOME>/Downloads/soia-pkm-clip-douyin/73948102.../video.mp4 (未进 Git)",
             "tone": "green"
           }
         ],
@@ -4763,7 +4763,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
             "tone": "green"
           },
           {
-            "text": "✓ Video: ~/Downloads/soia-pkm-clip-douyin/73948102.../video.mp4 (off-repo)",
+            "text": "✓ Video: <HOME>/Downloads/soia-pkm-clip-douyin/73948102.../video.mp4 (off-repo)",
             "tone": "green"
           }
         ],
@@ -5194,7 +5194,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
       "en": "Saved Rednote posts often get deleted or buried later, manual copy-pasting loses hashtags and metrics, putting videos inside Git bloats the repo, and careless scripts risk leaking `XHS_COOKIE` to untrusted domains."
     },
     "solution": {
-      "zh": "零依赖纯 Python 标准库安全归档单篇小红书：在发任何网络请求前先校验域名白名单（只放行 `xiaohongshu.com` / `xhslink.com`），绝不向第三方或图片 CDN 发送 Cookie；提取完整正文、`#tag[话题]#` 与互动数写进 Obsidian，视频/图片下载到 `~/Downloads/soia-pkm-clip-rednote/<note_id>/`（也支持 `--metadata-only` 纯文案归档）。",
+      "zh": "零依赖纯 Python 标准库安全归档单篇小红书：在发任何网络请求前先校验域名白名单（只放行 `xiaohongshu.com` / `xhslink.com`），绝不向第三方或图片 CDN 发送 Cookie；提取完整正文、`#tag[话题]#` 与互动数写进 Obsidian，视频/图片下载到系统 Downloads 下的 `soia-pkm-clip-rednote/<note_id>/`（按 `Path.home()` 跨平台解析，也支持 `--metadata-only` 纯文案归档）。",
       "en": "Pure Python 3 stdlib archiver with strict pre-request domain allowlisting (`xiaohongshu.com` / `xhslink.com` only, never forwarding `XHS_COOKIE` to arbitrary hosts or CDNs): parse `noteDetailMap`, preserve hashtags and metrics, store media in Downloads (or `--metadata-only`), and keep `## 我的看法` empty for your own thoughts."
     },
     "mechanism": {
@@ -5267,7 +5267,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
             "tone": "green"
           },
           {
-            "text": "✓ 媒体: ~/Downloads/soia-pkm-clip-rednote/66b2.../ (0 cookie 写入日志)",
+            "text": "✓ 媒体: <HOME>/Downloads/soia-pkm-clip-rednote/66b2.../ (0 cookie 写入日志)",
             "tone": "green"
           }
         ],
@@ -5290,7 +5290,7 @@ export const SKILL_DOCS: readonly SkillDoc[] = [
             "tone": "green"
           },
           {
-            "text": "✓ Media: ~/Downloads/soia-pkm-clip-rednote/66b2.../ (0 cookies logged)",
+            "text": "✓ Media: <HOME>/Downloads/soia-pkm-clip-rednote/66b2.../ (0 cookies logged)",
             "tone": "green"
           }
         ],
