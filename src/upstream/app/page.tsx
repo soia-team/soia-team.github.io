@@ -1315,6 +1315,7 @@ export default function Page({
               <div className='sub-footer-col'>
                 <h5><a href={href('/skills/')}>{commonCopy.header.nav.plugins}</a></h5>
                 <ul>
+                  <li><a href="https://github.com/soia-team/soia-open-skills" target='_blank' rel='noopener'>Meta (soia-open-skills)</a></li>
                   <li><a href="https://github.com/soia-team/soia-open-pkm-vault-skills" target='_blank' rel='noopener'>{commonCopy.header.nav.templates}</a></li>
                   <li><a href="https://github.com/soia-team/soia-open-dev-skills" target='_blank' rel='noopener'>{commonCopy.header.nav.skills}</a></li>
                   <li><a href="https://github.com/soia-team/soia-open-cwork-office-skills" target='_blank' rel='noopener'>{commonCopy.header.nav.systems}</a></li>

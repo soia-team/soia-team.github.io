@@ -1,27 +1,30 @@
 # SOIA
 
-SOIA is a local-first agent platform built by soia-team.
+SOIA (soia-team) is a four-layer, local-first agent engineering family:
 
-- **SoiaDeck**: Desktop AI platform (local daemon, AI Workbench for Claude Code, Codex and 19 coding agents, local LLM and AI network). Currently private, coming open source.
-- **Open Skills**: 47 public skills across 4 domains (PKM Vault 27, Dev 9, Office 7, Meta 4) for Claude Code, Codex and WorkBuddy. MIT licensed.
-- **SoiaCode**: Lightweight Rust coding agent (`si`), currently in design (milestone M1), not open source yet.
-- **SOIA Runtime**: Open-source Agent OS under github.com/soia-team/soia.
+- **SoiaDeck**: Cross-device desktop AI workbench (local daemon, mobile Diff & permission approvals, encrypted NAT relay, local MLX router, and 19 coding agent adapters). Currently private, coming open source (`macOS arm64`).
+- **Open Skills**: 47 public MIT skills anchored by the core marketplace repo `soia-open-skills` (`soia-meta` 4, `soia-pkm-vault` 27, `soia-dev` 9, `soia-cwork-office` 7). Supports Claude Code / Codex plugin mode, WorkBuddy desktop role-expert mode, and project-scoped `npx` installs.
+- **SoiaCode (`si`)**: Lightweight single-binary Rust coding agent kernel & CLI (5 built-in tools, 10 governance mounts, 34 extensions). Currently in design stage (`0.0.1 M1`), MIT.
+- **SOIA Runtime (Agent OS)**: Foundational Agent OS architecture (`System, Orchestration, Intelligence, Assurance`) under `github.com/soia-team/soia`.
 
-## Official Entry Points
+## Official Entry Points (en / zh / ja)
 
-- Home: https://soia-team.github.io/
+- Home: https://soia-team.github.io/ · https://soia-team.github.io/zh/ · https://soia-team.github.io/ja/
 - SoiaDeck: https://soia-team.github.io/soiadeck/
-- Open Skills Hub: https://soia-team.github.io/skills/
-- PKM Vault Skills: https://soia-team.github.io/skills/pkm/
-- Dev Skills: https://soia-team.github.io/skills/dev/
-- Office Skills: https://soia-team.github.io/skills/office/
-- Meta Skills: https://soia-team.github.io/skills/meta/
-- About: https://soia-team.github.io/about/
+- SoiaCode: https://soia-team.github.io/soiacode/
+- SOIA Runtime: https://soia-team.github.io/soia/
+- Open Skills Hub (with search & plugin/expert guide): https://soia-team.github.io/skills/ · https://soia-team.github.io/zh/skills/ · https://soia-team.github.io/ja/skills/
+  - Meta (Core): https://soia-team.github.io/skills/meta/
+  - PKM Vault: https://soia-team.github.io/skills/pkm/
+  - Dev: https://soia-team.github.io/skills/dev/
+  - Office: https://soia-team.github.io/skills/office/
+- Services & Pricing: https://soia-team.github.io/pricing/ · https://soia-team.github.io/zh/pricing/ · https://soia-team.github.io/ja/pricing/
+- About SOIA Family: https://soia-team.github.io/about/ · https://soia-team.github.io/zh/about/ · https://soia-team.github.io/ja/about/
 - FAQ: https://soia-team.github.io/faq/
 
 ## Public Repositories
 
 - Organization: https://github.com/soia-team
-- Open Skills Meta Repo: https://github.com/soia-team/soia-open-skills
+- Open Skills Meta & Marketplace Portal: https://github.com/soia-team/soia-open-skills
 - SOIA Runtime: https://github.com/soia-team/soia
 - Discussions: https://github.com/soia-team/soia-open-skills/discussions

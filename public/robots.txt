@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+Sitemap: https://soia-team.github.io/sitemap.xml
 # Machine-readable summary: https://soia-team.github.io/llms.txt

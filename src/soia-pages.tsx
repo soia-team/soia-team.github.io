@@ -1419,16 +1419,21 @@ export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; s
   const t = <T,>(zh: T, en: T, ja: T) => t3(locale, zh, en, ja);
   const domain = domainOf(slug);
   const [activeCat, setActiveCat] = useState<string>('all');
+  const [onlyHot, setOnlyHot] = useState(false);
   const [query, setQuery] = useState('');
 
   useEffect(() => {
     setActiveCat('all');
+    setOnlyHot(false);
     setQuery('');
   }, [slug]);
 
   if (!domain) return null;
   const allDomainSkills = skillsOf(slug);
-  const skills = allDomainSkills.filter((s) => matchesSkillQuery(s, query, locale));
+  const domainHotCount = allDomainSkills.filter((s) => HOT_SKILLS.has(s.name)).length;
+  const skills = allDomainSkills.filter(
+    (s) => (!onlyHot || HOT_SKILLS.has(s.name)) && matchesSkillQuery(s, query, locale),
+  );
   const subcats = SKILL_SUBCATEGORIES[slug];
   const byName = new Map(skills.map((s) => [s.name, s]));
   const assigned = new Set<string>();
@@ -1490,6 +1495,16 @@ export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; s
         </div>
 
         <div className="missing-filter skill-cat-filter" role="tablist" aria-label={t('按子类筛选', 'Filter by category', 'カテゴリで絞り込み')}>
+          {domainHotCount > 0 ? (
+            <button
+              type="button"
+              className={`is-hot-pill${onlyHot ? ' is-active' : ''}`}
+              onClick={() => setOnlyHot((v) => !v)}
+            >
+              {t(`🔥 常用推荐`, `🔥 Popular`, `🔥 定番`)}
+              <span className="cat-count">{domainHotCount}</span>
+            </button>
+          ) : null}
           <button
             type="button"
             className={activeCat === 'all' ? 'is-active' : undefined}
@@ -1511,37 +1526,54 @@ export function SkillDomainPage({ locale, slug }: { locale: LandingLocaleCode; s
           ))}
         </div>
 
-        {visibleGroups.map((group) => (
-          <section className="skill-group" id={group.id} key={group.id}>
-            <div className="skill-group-head">
-              <h2>
-                {pick(locale, group.label)}
-                <span className="skill-group-count">{group.items.length}</span>
-              </h2>
-              <p className="skill-group-desc">{pick(locale, group.desc)}</p>
-            </div>
-            <div className="craft-list">
-              {group.items.map((skill) => {
-                runningIndex += 1;
-                const isHot = HOT_SKILLS.has(skill.name);
-                return (
-                  <a className={`craft-row${isHot ? ' is-hot' : ''}`} href={href(`/skills/${slug}/${skill.name}/`)} key={skill.name}>
-                    <span className="craft-index">{String(runningIndex).padStart(2, '0')}</span>
-                    <span>
-                      <strong>
-                        {pick(locale, skill.title)}
-                        {isHot ? <HotBadge locale={locale} /> : null}
-                        <span className="skill-row-tech">{skill.name}{skill.version ? ` · v${skill.version}` : ''}</span>
-                      </strong>
-                      <small>{skill.tagline}</small>
-                    </span>
-                    <span className="craft-arrow">→</span>
-                  </a>
-                );
-              })}
-            </div>
-          </section>
-        ))}
+        {visibleGroups.length > 0 ? (
+          visibleGroups.map((group) => (
+            <section className="skill-group" id={group.id} key={group.id}>
+              <div className="skill-group-head">
+                <h2>
+                  {pick(locale, group.label)}
+                  <span className="skill-group-count">{group.items.length}</span>
+                </h2>
+                <p className="skill-group-desc">{pick(locale, group.desc)}</p>
+              </div>
+              <div className="craft-list">
+                {group.items.map((skill) => {
+                  runningIndex += 1;
+                  const isHot = HOT_SKILLS.has(skill.name);
+                  return (
+                    <a className={`craft-row${isHot ? ' is-hot' : ''}`} href={href(`/skills/${slug}/${skill.name}/`)} key={skill.name}>
+                      <span className="craft-index">{String(runningIndex).padStart(2, '0')}</span>
+                      <span>
+                        <strong>
+                          {pick(locale, skill.title)}
+                          {isHot ? <HotBadge locale={locale} /> : null}
+                          <span className="skill-row-tech">{skill.name}{skill.version ? ` · v${skill.version}` : ''}</span>
+                        </strong>
+                        <small>{skill.tagline}</small>
+                      </span>
+                      <span className="craft-arrow">→</span>
+                    </a>
+                  );
+                })}
+              </div>
+            </section>
+          ))
+        ) : (
+          <div className="sk-empty" style={{ marginTop: 18 }}>
+            <strong>{t('当前域内没有匹配的技能', 'No matching skills in this domain', 'この領域に一致するスキルはありません')}</strong>
+            <button
+              type="button"
+              className="sk-clear-btn"
+              onClick={() => {
+                setQuery('');
+                setOnlyHot(false);
+                setActiveCat('all');
+              }}
+            >
+              {t('重置当前域筛选', 'Reset filters', 'フィルタをリセット')}
+            </button>
+          </div>
+        )}
 
         <div className="missing-cta">
           <a className="btn btn-primary" href={domain.repo} target="_blank" rel="noreferrer noopener">GitHub</a>
