@@ -6653,8 +6653,11 @@ footer .container {
 }
 
 .hero-stage {
+  position: relative;
+  z-index: 1;
   width: min(1080px, 92vw);
   margin: 34px auto 0;
+  text-align: center;
 }
 .hero-stage-tabs {
   display: inline-flex;
@@ -6687,6 +6690,7 @@ footer .container {
 }
 
 .hero-window {
+  text-align: left;
   border-radius: 18px;
   border: 1px solid rgba(21, 20, 15, 0.14);
   background: #fff;

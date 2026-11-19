@@ -549,13 +549,15 @@ export default function Page({
                   {tt('全部 19 个接入清单 →', '+19 agents →', '全 19 Agent 一覧 →')}
                 </a>
               </div>
+            </div>
+          </div>
 
-              <div
-                className='hero-stage'
-                data-reveal
-                onMouseEnter={() => setHeroPaused(true)}
-                onMouseLeave={() => setHeroPaused(false)}
-              >
+          <div
+            className='hero-stage'
+            data-reveal
+            onMouseEnter={() => setHeroPaused(true)}
+            onMouseLeave={() => setHeroPaused(false)}
+          >
                 <div className='hero-stage-tabs' role='tablist' aria-label={tt('SoiaDeck 多场景切换', 'SoiaDeck scene switcher', 'SoiaDeck シーン切替')}>
                   {heroStages.map((stage, idx) => (
                     <button
@@ -602,8 +604,6 @@ export default function Page({
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
         </section>
 
         {/* ====== ABOUT ====== */}
@@ -1150,67 +1150,6 @@ export default function Page({
             JSON-LD, so the visible answers match the structured data. */}
         <section className='cta' id='contact' data-od-id='cta'>
           <div className='container'>
-            <div className='consulting-band' data-reveal>
-              <div className='consulting-head'>
-                <span className='consulting-kicker'>
-                  {tt('CONSULTING & CUSTOM SKILLS · 明码标价', 'CONSULTING & CUSTOM SKILLS', '技術相談・カスタム開発 · 明朗料金')}
-                </span>
-                <h2 className='display'>
-                  {tt('企业咨询与定制技能服务', 'Consulting & Custom Skill Engineering', '技術コンサル・カスタムスキル作成')}
-                </h2>
-                <p>
-                  {tt(
-                    '不卖 SaaS 订阅；公开软件按仓库开源或分阶段交付，企业专项支持与技能定制按次/工时明码计费，通过 GitHub Discussions 预约排期。',
-                    'No SaaS subscription lock-in. Book focused 1-on-1 architecture consulting or bespoke skill engineering with transparent time-based rates.',
-                    '月額 SaaS サブスクリプションは提供せず、必要な分だけ都度・工数ベースで明朗会計にて承ります（GitHub Discussions より予約）。',
-                  )}
-                </p>
-              </div>
-              <div className='consulting-grid'>
-                <div className='consulting-card'>
-                  <span className='consulting-tag'>{tt('01 · 一对一技术咨询', '01 · 1-ON-1 CONSULTING', '01 · 1 対 1 技術コンサル')}</span>
-                  <h3>{tt('架构与工作流专项咨询', 'Architecture & Workflow Session', 'アーキテクチャ・運用相談')}</h3>
-                  <div className='consulting-price-row'>
-                    <span className='consulting-price'>¥200</span>
-                    <span className='consulting-unit'>
-                      {tt('/ 30 分钟 / 次（超出 30 分钟 ¥400 · 每半小时 +¥200 · 单次上限 1 小时）', '/ 30 min (over 30 min ¥400 · +¥200/30m · max 1h)', '/ 30 分（超過分は 30 分毎 +¥200 · 上限 1 時間 ¥400）')}
-                    </span>
-                  </div>
-                  <ul className='consulting-list'>
-                    <li>{tt('30 分钟标准单次 ¥200；超过 30 分钟按每半小时 +¥200 封顶 1 小时（¥400）', '¥200 per 30-min session; +¥200 per extra 30 min, capped at 1 hour (¥400 max)', '基本 30 分 ¥200、30 分超過は半時間ごとに +¥200（1 回最大 1 時間・上限 ¥400）')}</li>
-                    <li>{tt('适用：企业落地选型、多 Agent（Claude Code / Codex / SoiaDeck）集成诊断', 'Scope: multi-agent workflow diagnosis, SoiaDeck integration & Obsidian PKM setup', '対象：導入設計・Obsidian PKM 構築・複数 Agent 統合診断')}</li>
-                    <li>{tt('会前对齐问题清单，会后输出可执行调整建议，不兜售长期捆绑合同', 'Actionable findings delivered with zero bundled SaaS commitments', '事前アジェンダ共有・事後アクション提示、長期契約の抱き合わせなし')}</li>
-                  </ul>
-                  <div className='consulting-cta'>
-                    <a className='btn btn-ghost' href={REPO_DISCUSSIONS} {...ext}>
-                      {tt('去 Discussions 预约咨询 ↗', 'Book via Discussions ↗', 'Discussions で予約する ↗')}
-                    </a>
-                  </div>
-                </div>
-
-                <div className='consulting-card is-featured'>
-                  <span className='consulting-tag'>{tt('02 · 按工具工时定制开发', '02 · CUSTOM SKILL ENGINEERING', '02 · カスタムスキル開発')}</span>
-                  <h3>{tt('定制化技能（Skill）编写', 'Bespoke Skill Development', 'カスタムスキル新規作成')}</h3>
-                  <div className='consulting-price-row'>
-                    <span className='consulting-price'>¥1,000</span>
-                    <span className='consulting-unit'>
-                      {tt('/ 人天（按实际工具研发工时计费）', '/ day (billed by engineering effort)', '/ 人日（開発工数ベース）')}
-                    </span>
-                  </div>
-                  <ul className='consulting-list'>
-                    <li>{tt('¥1,000 / 1 天基准，按团队实际需要的工具工时与复杂度预先评估确认', '¥1,000/day baseline billed strictly on agreed engineering hours', '¥1,000 / 日を基準に要件と難易度に応じた工数を事前に合意')}</li>
-                    <li>{tt('交付完整 SKILL.md、执行脚本、权限防呆护栏（Guardrails）与验收测试', 'Delivers full SKILL.md, scripts, hard guardrails, and verification checks', 'SKILL.md・実行スクリプト・安全ガードレール・検証テストを一式納品')}</li>
-                    <li>{tt('遵循 .agents/skills 最小安装规范，可直接装入团队 Codex / Claude Code / WorkBuddy', 'Ships cleanly for Codex, Claude Code, and WorkBuddy at project scope', 'Codex / Claude Code / WorkBuddy へそのまま導入可能な形式で納品')}</li>
-                  </ul>
-                  <div className='consulting-cta'>
-                    <a className='btn btn-primary' href={REPO_DISCUSSIONS} {...ext}>
-                      {tt('提交定制需求 ↗', 'Request Custom Skill ↗', '作成を依頼する ↗')}
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <div className='cta-dance' data-precise-bg>
               {/* Open Design Home window floating over the mural — sits above the
                   painting (::before) but below the CTA copy. Bottom is clipped by
@@ -1386,7 +1325,6 @@ export default function Page({
                 <h5>{menu.pricing}</h5>
                 <ul>
                   <li><a href={href('/pricing/')}>{menu.pricing}</a></li>
-                  <li><a href={href('/#contact')}>{tt('首页咨询入口', 'Home pricing summary', 'ホーム料金案内')}</a></li>
                   <li><a href={REPO_DISCUSSIONS} target='_blank' rel='noopener'>{menu.communityItems.discussions}</a></li>
                 </ul>
               </div>
