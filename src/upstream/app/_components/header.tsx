@@ -27,7 +27,7 @@ const USE_CASE_HREFS = [
   '/skills/dev/',
   '/skills/office/',
   REPO_DISCUSSIONS,
-  '/soiadeck/#models',
+  '/soiadeck/local-llm/',
   '/soiadeck/',
 ] as const;
 

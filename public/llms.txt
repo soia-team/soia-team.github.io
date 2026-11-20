@@ -11,6 +11,13 @@ SOIA (soia-team) is a four-layer, local-first agent engineering family:
 
 - Home: https://soia-team.github.io/ · https://soia-team.github.io/zh/ · https://soia-team.github.io/ja/
 - SoiaDeck: https://soia-team.github.io/soiadeck/
+  - Workbench: https://soia-team.github.io/soiadeck/workbench/
+  - Account web: https://soia-team.github.io/soiadeck/account/
+  - Mobile: https://soia-team.github.io/soiadeck/mobile/
+  - Desktop foundation: https://soia-team.github.io/soiadeck/desktop/
+  - Desktop settings: https://soia-team.github.io/soiadeck/settings/
+  - Local LLM: https://soia-team.github.io/soiadeck/local-llm/
+  - AI network: https://soia-team.github.io/soiadeck/ai-network/
 - SoiaCode: https://soia-team.github.io/soiacode/
 - SOIA Runtime: https://soia-team.github.io/soia/
 - Open Skills Hub (with search & plugin/expert guide): https://soia-team.github.io/skills/ · https://soia-team.github.io/zh/skills/ · https://soia-team.github.io/ja/skills/

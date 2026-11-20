@@ -14,6 +14,7 @@ import {
 } from './upstream/app/i18n';
 import { FaqPage, LegalPage, AboutPage, PricingPage } from './info-pages';
 import { COUNTS, GITHUB, hrefFor, REPO, SubpageLayout } from './shell';
+import { SoiaDeckSubPage, DECK_SUBPAGE_SLUGS, deckSubpageTitle } from './soiadeck-subpages';
 import { SoiaDeckPage, SoiaCodePage, SoiaRuntimePage, SkillsHubPage, SkillDomainPage, SkillDetailPage, SKILL_DOMAINS } from './soia-pages';
 
 declare global {
@@ -456,6 +457,7 @@ export default function App() {
   const pageTitle =
     isHome ? (zh ? 'SOIA — SoiaDeck 桌面 AI 平台' : ja ? 'SOIA — ローカル優先の Agent プラットフォームと SoiaDeck' : 'SOIA — SoiaDeck desktop AI platform')
     : path === '/soiadeck' ? (zh ? 'SoiaDeck — 桌面 AI 平台，即将开源' : ja ? 'SoiaDeck — デスクトップ AI プラットフォーム（オープンソース準備中）' : 'SoiaDeck — desktop AI platform, coming open source')
+    : path.startsWith('/soiadeck/') ? (deckSubpageTitle(path.slice('/soiadeck/'.length).replace(/\/+$/, ''), locale) ?? 'SoiaDeck')
     : path === '/soiacode' ? (zh ? 'SoiaCode (si) — 轻量 Rust Coding Agent' : ja ? 'SoiaCode (si) — 軽量 Rust Coding Agent 仕様' : 'SoiaCode (si) — lightweight Rust coding agent')
     : path === '/soia' ? (zh ? 'SOIA Runtime — 开源 Agent Operating System' : ja ? 'SOIA Runtime — オープンソース Agent OS' : 'SOIA Runtime — open-source Agent OS')
     : path === '/skills' ? (zh ? '开源技能 — 47 个技能，4 个领域' : ja ? 'オープンソーススキル — 4 領域 47 スキル' : 'Open skills — 47 skills, 4 domains')
@@ -503,6 +505,10 @@ export default function App() {
 
   if (isHome) return <HomeRoute locale={locale} />;
   if (path === '/soiadeck') return <SoiaDeckPage locale={locale} />;
+  if (path.startsWith('/soiadeck/')) {
+    const sub = path.slice('/soiadeck/'.length).replace(/\/+$/, '');
+    if (DECK_SUBPAGE_SLUGS.includes(sub)) return <SoiaDeckSubPage locale={locale} slug={sub} />;
+  }
   if (path === '/soiacode') return <SoiaCodePage locale={locale} />;
   if (path === '/soia') return <SoiaRuntimePage locale={locale} />;
   if (path === '/skills') return <SkillsHubPage locale={locale} />;

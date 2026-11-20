@@ -3,6 +3,7 @@ import { SubpageLayout, hrefFor } from './shell';
 import type { LandingLocaleCode } from './upstream/app/i18n';
 import { SKILL_DOCS, type LocaleText, type SkillDoc } from './skill-data';
 import './missing-pages.css';
+import { DECK_SUBPAGES, DeckSubnav, PackGallery } from './soiadeck-subpages';
 
 type Lang = 'zh' | 'en' | 'ja';
 const langOf = (locale: LandingLocaleCode): Lang => (locale === 'zh' ? 'zh' : locale === 'ja' ? 'ja' : 'en');
@@ -11,7 +12,7 @@ const t3 = <T,>(locale: LandingLocaleCode, zh: T, en: T, ja: T): T => {
   return l === 'zh' ? zh : l === 'ja' ? ja : en;
 };
 
-function ZoomableFigure({
+export function ZoomableFigure({
   src,
   alt,
   className = 'tutorial-detail-hero',
@@ -2016,14 +2017,71 @@ export function SkillDetailPage({ locale, slug, skill }: { locale: LandingLocale
   );
 }
 
+/** 19 个 Coding Agent 接入清单：三个大数字当筛选，下面一格一个 Agent，点开看协议、版本、认证。 */
+export function AgentMatrix({ locale }: { locale: LandingLocaleCode }) {
+  const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
+  const [filter, setFilter] = useState<'all' | AgentSupportLevel>('all');
+  const [openId, setOpenId] = useState<string | null>(null);
+  const levels: ReadonlyArray<{ id: AgentSupportLevel; label: string; hint: string }> = [
+    { id: 'supported', label: t('正式支持', 'Supported', '正式対応'), hint: t('原生协议，日常可用', 'Native protocols, ready for daily use', 'ネイティブプロトコル、日常利用可') },
+    { id: 'experimental', label: t('试验接入', 'Experimental', '試験接続'), hint: t('统一走 ACP，能用但还在验证', 'Over ACP; works, still being verified', 'ACP 経由。動作するが検証中') },
+    { id: 'planned', label: t('计划接入', 'Planned', '対応予定'), hint: t('已登记，尚未接入', 'Registered, not connected yet', '登録済み・未接続') },
+  ];
+  const count = (lv: AgentSupportLevel) => CODING_AGENTS_19.filter((a) => a.level === lv).length;
+  const shown = CODING_AGENTS_19.filter((a) => filter === 'all' || a.level === filter);
+  return (
+    <div className="ag">
+      <div className="ag-summary" role="tablist" aria-label={t('按接入状态筛选', 'Filter by status', 'ステータスで絞り込む')}>
+        {levels.map((lv) => (
+          <button type="button" role="tab" aria-selected={filter === lv.id} key={lv.id} className={`ag-stat is-${lv.id}${filter === lv.id ? ' is-on' : ''}`} onClick={() => setFilter(filter === lv.id ? 'all' : lv.id)}>
+            <b>{count(lv.id)}</b>
+            <strong>{lv.label}</strong>
+            <span>{lv.hint}</span>
+          </button>
+        ))}
+      </div>
+      <div className="ag-bar">
+        <span>{filter === 'all' ? t(`全部 ${CODING_AGENTS_19.length} 个`, `All ${CODING_AGENTS_19.length}`, `全 ${CODING_AGENTS_19.length} 種`) : `${levels.find((x) => x.id === filter)?.label} · ${shown.length}`}</span>
+        {filter !== 'all' && <button type="button" onClick={() => setFilter('all')}>{t('看全部', 'Show all', 'すべて表示')}</button>}
+        <em>{t('点一个看协议、版本和认证方式', 'Select one for protocol, version and auth', '選ぶとプロトコル・バージョン・認証を表示')}</em>
+      </div>
+      <ul className="ag-grid">
+        {shown.map((agent) => {
+          const open = openId === agent.id;
+          const lv = levels.find((x) => x.id === agent.level);
+          return (
+            <li key={agent.id} className={`ag-card is-${agent.level}${open ? ' is-open' : ''}`}>
+              <button type="button" className="ag-head" aria-expanded={open} onClick={() => setOpenId(open ? null : agent.id)}>
+                <span className="ag-mono" aria-hidden="true">{agent.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 1).toUpperCase()}</span>
+                <span className="ag-name">
+                  <strong>{agent.name}</strong>
+                  <code>{agent.cmd}</code>
+                </span>
+                <span className="ag-level"><i />{lv?.label}</span>
+              </button>
+              {open && (
+                <dl className="ag-detail">
+                  <div><dt>{t('协议', 'Protocol', 'プロトコル')}</dt><dd>{pick(locale, agent.protocol)}</dd></div>
+                  <div><dt>{t('版本', 'Version', 'バージョン')}</dt><dd>{pick(locale, agent.version)}</dd></div>
+                  <div><dt>{t('认证', 'Auth', '認証')}</dt><dd>{pick(locale, agent.auth)}</dd></div>
+                  <p>{pick(locale, agent.detail)}</p>
+                </dl>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 /** SoiaDeck — desktop + mobile agent orchestration platform detail page. */
 export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
   const href = (path: string) => hrefFor(path, locale);
   const lang = langOf(locale);
   const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
   const [heroTab, setHeroTab] = useState(0);
-  const [agentFilter, setAgentFilter] = useState<'all' | 'supported' | 'experimental' | 'planned'>('all');
-  const [themeIdx, setThemeIdx] = useState(0);
+  const [flowIdx, setFlowIdx] = useState(0);
 
   const heroTabs: ReadonlyArray<{ label: string; src: string; alt: string; note: string }> =
     lang === 'zh'
@@ -2136,82 +2194,67 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
           ];
 
   const P = '/soia/products/';
-  type Feature = { id: string; kicker: string; title: string; body: string; points: string[]; img: string; alt: string; preview?: boolean; extraIds?: string[] };
-  const features: ReadonlyArray<Feature> = [
-    {
-      id: 'workbench',
-      kicker: t('作业台', 'Workbench', '作業台'),
-      title: t('所有 Agent 对话，在一张桌面上并行', 'Every agent conversation, side by side on one desktop', 'すべての Agent セッションを一つのデスクトップで並列に'),
-      body: t(
-        '在桌面应用里开 Claude Code、Codex 等对话。每种 Agent 走自己的原生协议，没有原生协议的走 ACP 或终端 PTY，操作方式是同一套。',
-        'Open Claude Code, Codex and other agents in the desktop app. Each one speaks its native protocol — or ACP, or a PTY — while you keep a single way of working.',
-        'Claude Code や Codex などをデスクトップアプリで起動。各 Agent はネイティブプロトコル（なければ ACP / PTY）で動き、操作は一つに統一されます。',
-      ),
-      points: [
-        t('对话由本机后端持有：关掉窗口 Agent 继续跑，重开从缓冲重放', 'The local daemon owns the session: close the window and the agent keeps running, reopen and it replays from the buffer', 'セッションはローカル daemon が保持。ウィンドウを閉じても実行が続き、再表示時にバッファから再生'),
-        t('项目、工作树、分支就在输入框上方，不用另开终端', 'Project, worktree and branch sit right above the composer — no extra terminal', 'プロジェクト・Worktree・ブランチは入力欄のすぐ上。別ターミナル不要'),
-        t('运行中可以继续排队发消息，本轮结束后按顺序投递', 'Queue follow-up messages while a turn is running; they are delivered in order afterwards', '実行中でも次のメッセージをキューに追加でき、ターン終了後に順番に送信'),
-      ],
-      img: P + 'soiadeck-wb-session.webp',
-      alt: t('SoiaDeck 作业台：会话、排队消息与输入框', 'SoiaDeck workbench: session, queued messages and composer', 'SoiaDeck 作業台：セッション、キュー、入力欄'),
-    },
-    {
-      id: 'factory',
-      kicker: t('工坊与项目', 'Workshops & projects', 'ワークショップとプロジェクト'),
-      title: t('一条侧栏，看清每个项目卡在哪', 'One sidebar that shows where every project is waiting', 'サイドバー一本で、各プロジェクトの待ち状態がわかる'),
-      body: t(
-        '左侧工坊切换工作区，下面是插件、作业台、本地 LLM、AI 网络四个入口。项目按仓库分组，每行直接显示待审批和待处理数量。',
-        'Switch workshops on the left rail; plugins, workbench, local LLM and AI network sit below. Projects are grouped by repository, with pending approvals and tasks counted on each row.',
-        '左レールでワークショップを切り替え、その下にプラグイン・作業台・ローカル LLM・AI ネットワーク。プロジェクトはリポジトリ別にまとまり、承認待ちと未処理数を行ごとに表示します。',
-      ),
-      points: [
-        t('会话行显示这条对话用过哪些 Agent，当前的在最前', 'Each session row shows which agents it has used, current one first', '各セッション行に、使った Agent のアイコンを表示（現在のものが先頭）'),
-        t('常驻的 DeckBot 可以分组，拖动整理', 'Long-running DeckBots can be grouped and reordered by drag', '常駐する DeckBot はグループ化でき、ドラッグで並べ替え'),
-        t('运行中的会话标题有一道从左到右的扫光，不用点进去也知道在跑', 'A running session title carries a left-to-right shimmer, so you can tell without opening it', '実行中のセッションはタイトルに光が流れ、開かなくても状態がわかる'),
-      ],
-      img: P + 'soiadeck-wb-bots.webp',
-      alt: t('SoiaDeck 二级栏：DeckBot 分组与项目会话列表', 'SoiaDeck sidebar: DeckBot groups and project sessions', 'SoiaDeck サイドバー：DeckBot グループとプロジェクトのセッション'),
-      preview: true,
-    },
-    {
-      id: 'approvals',
-      kicker: t('权限审批', 'Approvals', '権限承認'),
-      title: t('动手之前先问你，每次决定都留痕', 'It asks before it acts, and every decision is recorded', '実行前に必ず確認し、すべての判断を記録'),
-      body: t(
-        '要执行命令、写工作区外的文件、联网之前，Agent 会停下来等你。首页把所有项目里等你处理的事集中在一处。',
-        'Before running a command, writing outside the workspace or going online, the agent stops and waits. The home view gathers everything that is waiting on you across projects.',
-        'コマンド実行・ワークスペース外への書き込み・外部通信の前に、Agent は止まってあなたを待ちます。ホームには全プロジェクトの対応待ちがまとまります。',
-      ),
-      points: [
-        t('逐次允许、本对话内允许，或拒绝', 'Allow once, allow for this conversation, or deny', '今回のみ許可／この会話で許可／拒否'),
-        t('多条待审批逐张处理，不会一键放行一批', 'Handle a batch card by card — there is no approve-all shortcut', '複数の承認は一件ずつ処理。一括許可はありません'),
-        t('每一次决定都进会话记录，可以回放', 'Every decision lands in the session record and can be replayed', 'すべての判断はセッション記録に残り、再生できます'),
-      ],
-      img: P + 'soiadeck-home.png',
-      alt: t('SoiaDeck 首页：主机状态与待处理审批', 'SoiaDeck home: host status and pending approvals', 'SoiaDeck ホーム：ホスト状態と承認待ち'),
-    },
+  const highlights = [
+    { title: t('一套操作，驱动 19 个 Agent', 'One way of working across 19 agents', '19 種の Agent を一つの操作で'), body: t('Claude Code、Codex 等各走各的原生协议，没有的走 ACP 或终端，界面和操作是同一套。', 'Claude Code, Codex and the rest keep their native protocols — or ACP, or a PTY — behind one interface.', 'Claude Code や Codex などはそれぞれのプロトコル（なければ ACP / PTY）で動き、画面と操作は共通です。'), to: '/soiadeck/workbench/#agents' },
+    { title: t('关掉窗口，Agent 不停', 'Close the window, the agent keeps going', 'ウィンドウを閉じても Agent は止まらない'), body: t('对话由本机 daemon 持有，不是某个窗口或标签页；重开从缓冲重放。', 'Sessions belong to the local daemon, not to a window or tab; reopening replays from the buffer.', 'セッションはウィンドウやタブではなくローカル daemon が保持。再表示時にバッファから再生します。'), to: '/soiadeck/workbench/#session' },
+    { title: t('动手之前先问你', 'It asks before it acts', '実行前に必ず確認'), body: t('执行命令、写工作区外的文件、联网都要你点头，每次决定进会话记录。', 'Commands, writes outside the workspace and network access need your say, and every decision is recorded.', 'コマンド実行・ワークスペース外への書き込み・外部通信は承認が必要で、判断はすべて記録されます。'), to: '/soiadeck/workbench/#approvals' },
+    { title: t('人离开，事情不停', 'You step away, the work does not', '席を離れても作業は続く'), body: t('手机上看进度、批准、看改动、叫停；对话和代码仍在电脑上。', 'Follow, approve, read changes and stop from your phone; sessions and code stay on the computer.', 'スマホで進捗確認・承認・変更閲覧・停止。セッションとコードはパソコンに残ります。'), to: '/soiadeck/mobile/' },
+    { title: t('本地优先，中继只转发密文', 'Local-first; the relay sees ciphertext only', 'ローカル優先、リレーは暗号文のみ'), body: t('代码、密钥和对话留在自己机器上；不在同一网络时才经中继，中继看不到内容。', 'Code, keys and sessions stay on your machine; the relay is used only off-LAN and cannot read the content.', 'コード・鍵・セッションは自分のマシンに。LAN 外でのみリレーを使い、リレーは内容を見られません。'), to: '/soiadeck/desktop/#remote' },
+    { title: t('自带你已有的订阅和模型', 'Bring the subscriptions and models you have', '手持ちの契約とモデルをそのまま'), body: t('复用本机已登录的各家 CLI 订阅，挂上本地技能，也可以叠加本机 MLX 模型。', 'Reuse the CLI subscriptions already signed in on your machine, mount local skills and add local MLX models.', 'ログイン済みの CLI 契約を使い、ローカルスキルや MLX モデルも組み合わせられます。'), to: '/soiadeck/local-llm/' },
   ];
 
-  const remoteCards = [
-    { id: 'remote', title: t('手机端', 'On your phone', 'スマートフォン'), body: t('电脑开启远程访问或通过中继配对后，手机上可以看对话进度、看代码改动与 Diff、审批权限，或者直接停掉这一轮。', 'Pair over LAN or relay to follow running sessions, read diffs, approve permissions or stop a turn from your phone.', 'LAN またはリレーでペアリングし、進行中のセッション確認、Diff 閲覧、承認、ターン停止をスマホから。'), img: P + 'soiadeck-phone.png', alt: t('SoiaDeck 手机端', 'SoiaDeck on mobile', 'SoiaDeck モバイル') },
-    { id: 'account', title: t('账号与名下主机', 'Account & bound hosts', 'アカウントと紐付けホスト'), body: t('账号网页支持邮箱验证码与 Passkey 登录，集中管理名下主机指纹、登录设备与中继流量；设备丢了可以标记丢失，收回授权。', 'Sign in with an email code or a Passkey to manage host fingerprints, signed-in devices and relay usage — and mark a lost device to revoke it.', 'メール認証または Passkey でログインし、ホスト指紋・端末・リレー通信量を一元管理。紛失端末は即時失効できます。'), img: P + 'soiadeck-account.png', alt: t('SoiaDeck 远程账号与名下主机', 'SoiaDeck account web', 'SoiaDeck アカウント管理') },
-    { id: 'relay', title: t('中继服务', 'Relay', 'リレー'), body: t('不在同一局域网时，手机与电脑通过轻量中继建立加密通道。中继只转发密文、不看对话内容；维护期间 90 秒内自动续上。', 'Away from your LAN, desktop and phone meet through a light relay that forwards ciphertext only and reconnects within 90 seconds during maintenance.', '同一 LAN 外では軽量リレー経由で暗号化接続。リレーは暗号文を転送するだけで、メンテナンス時も 90 秒以内に自動再接続します。'), img: P + 'soiadeck-relay.png', alt: t('SoiaDeck 中继服务', 'SoiaDeck relay service', 'SoiaDeck リレー') },
+  type FlowStep = { w: 'desk' | 'relay' | 'phone'; t: string; d: string };
+  const flows: ReadonlyArray<{ name: string; note: string; steps: FlowStep[] }> = [
+    {
+      name: t('配对新手机', 'Pair a new phone', '新しいスマホをペアリング'),
+      note: t('核对码由两边各自算出，不经网络传输；一致才能继续，限时完成。', 'Each side computes the check code on its own — it never travels over the network — and you can continue only if they match, within a time limit.', '確認コードは双方がそれぞれ計算し、ネットワークを通りません。一致した場合のみ、制限時間内に続行できます。'),
+      steps: [
+        { w: 'desk', t: t('生成配对码', 'Create a pairing code', 'ペアリングコード生成'), d: t('「添加设备」出一次性链接和二维码', '“Add device” gives a one-time link and QR code', '「端末を追加」でワンタイムリンクと QR を発行') },
+        { w: 'phone', t: t('扫码打开', 'Scan to open', 'スキャンして開く'), d: t('相机扫码，打开手机网页', 'Scan with the camera to open the mobile page', 'カメラで読み取りモバイルページを開く') },
+        { w: 'relay', t: t('牵线', 'Introduce', '仲介'), d: t('手机生成钥匙，经中继与主机握手', 'The phone makes a key and handshakes with the host through the relay', 'スマホが鍵を生成し、リレー経由でホストとハンドシェイク') },
+        { w: 'phone', t: t('显示核对码', 'Show the check code', '確認コードを表示'), d: t('6 位数字', 'Six digits', '6 桁の数字') },
+        { w: 'desk', t: t('在主机上核对', 'Check on the host', 'ホストで確認'), d: t('两边一致才继续', 'Continue only if both match', '一致した場合のみ続行') },
+        { w: 'desk', t: t('选权限并发放', 'Choose permissions and grant', '権限を選んで付与'), d: t('这台手机能做什么、有效多久', 'What this phone may do and for how long', 'このスマホに許可する操作と期間') },
+        { w: 'phone', t: t('配对完成', 'Paired', 'ペアリング完了'), d: t('拿到授权，可以连了', 'Authorised and ready to connect', '認可を受け取り接続可能に') },
+      ],
+    },
+    {
+      name: t('在外面连回来', 'Connect from outside', '外出先から接続'),
+      note: t('同一局域网直连；不在一起时走中继，主机列表会写明「经中继」。', 'On the same LAN it connects directly; elsewhere it goes through the relay, and the host list says “via relay”.', '同一 LAN では直接接続、外ではリレー経由。ホスト一覧に「リレー経由」と表示されます。'),
+      steps: [
+        { w: 'desk', t: t('打开中继', 'Turn on the relay', 'リレーを有効化'), d: t('在远程访问页填地址', 'Enter its address under Remote access', 'リモートアクセスでアドレスを設定') },
+        { w: 'relay', t: t('核对主机身份', 'Verify the host', 'ホストを検証'), d: t('验签后登记这台主机', 'Check the signature, then register the host', '署名を検証してホストを登録') },
+        { w: 'desk', t: t('已登记', 'Registered', '登録済み'), d: t('中继卡显示登记时间和心跳', 'The relay card shows registration time and heartbeat', 'リレーカードに登録時刻とハートビート') },
+        { w: 'phone', t: t('在外面打开', 'Open it away from home', '外で開く'), d: t('主机列表照常显示', 'The host list shows as usual', 'ホスト一覧はいつもどおり表示') },
+        { w: 'relay', t: t('转发密文', 'Forward ciphertext', '暗号文を転送'), d: t('只转发，看不到内容', 'Forwards only; cannot read the content', '転送のみ。内容は見えません') },
+        { w: 'phone', t: t('连上主机', 'Connected', '接続'), d: t('经加密通道查看对话', 'See sessions through the encrypted channel', '暗号化チャネルでセッションを表示') },
+      ],
+    },
+    {
+      name: t('在手机上批准', 'Approve from the phone', 'スマホで承認'),
+      note: t('批准的结果经加密通道回到主机，记录里写明「在手机上批准」。', 'The decision returns to the host through the encrypted channel, and the record says it was approved on the phone.', '承認結果は暗号化チャネルでホストに戻り、記録には「スマホで承認」と残ります。'),
+      steps: [
+        { w: 'desk', t: t('Agent 要权限', 'The agent needs permission', 'Agent が権限を要求'), d: t('作业台出现审批卡', 'An approval card appears in the workbench', '作業台に承認カードが表示') },
+        { w: 'phone', t: t('收到提醒', 'You are notified', '通知を受信'), d: t('通知里「等你处理」', '“Waiting for you” in notifications', '通知に「対応待ち」') },
+        { w: 'phone', t: t('打开待批准', 'Open the pending sheet', '承認待ちを開く'), d: t('看清要做什么、在哪个对话哪台主机', 'See what, in which conversation, on which host', '何を・どの会話で・どのホストで行うかを確認') },
+        { w: 'phone', t: t('批准或拒绝', 'Approve or deny', '承認または拒否'), d: t('对话里留一行记录', 'One line is left in the thread', '会話に一行の記録') },
+        { w: 'desk', t: t('主机继续', 'The host carries on', 'ホストが続行'), d: t('Agent 接着干', 'The agent continues', 'Agent が作業を再開') },
+      ],
+    },
+    {
+      name: t('看改动、止损', 'Review and stop', '変更確認と停止'),
+      note: t('手机上只读：文件全文和 git 细节只在电脑上。停止本轮不删除对话，也不清空排队的消息。', 'The phone is read-only: full files and git details stay on the computer. Stopping a turn does not delete the conversation or clear the queue.', 'スマホは閲覧のみ。ファイル全文や git の詳細はパソコンにあります。ターン停止では会話もキューも消えません。'),
+      steps: [
+        { w: 'desk', t: t('Agent 改了文件', 'The agent changed files', 'Agent がファイルを変更'), d: t('这一轮有改动', 'This turn has changes', 'このターンに変更あり') },
+        { w: 'phone', t: t('查看改动', 'View changes', '変更を見る'), d: t('列出改了的文件', 'Lists the changed files', '変更ファイルの一覧') },
+        { w: 'phone', t: t('看单个文件 Diff', 'Read one file’s diff', 'ファイルごとの Diff'), d: t('只显示改动片段', 'Shows the changed hunks only', '変更箇所のみ表示') },
+        { w: 'phone', t: t('停止本轮', 'Stop the turn', 'ターン停止'), d: t('觉得跑偏了就停', 'Stop it if it has gone off track', '逸れたら止める') },
+        { w: 'desk', t: t('主机停下', 'The host stops', 'ホストが停止'), d: t('作业台显示「已停止」', 'The workbench shows “Stopped”', '作業台に「停止済み」') },
+      ],
+    },
   ];
+  const curFlow = flows[flowIdx] ?? flows[0];
 
-  const machineCards = [
-    { id: 'models', title: t('本地 LLM', 'Local LLM', 'ローカル LLM'), body: t('发现、启停、下载本机模型，并提供一个 OpenAI 兼容入口。推理引擎目前以 MLX 系为主，所以在 Apple Silicon 上最完整。作业台本身不依赖本地模型。', 'Discover, start, stop and download local models behind one OpenAI-compatible endpoint. Engines are mostly MLX today, so Apple Silicon is the most complete. The workbench does not depend on local models.', 'ローカルモデルの検出・起動・停止・ダウンロードと OpenAI 互換エンドポイント。現在は MLX 系が中心で Apple Silicon が最も充実。作業台自体はローカルモデルに依存しません。'), img: P + 'soiadeck-router.png', alt: t('SoiaDeck 本地 LLM 模型转发', 'SoiaDeck local LLM router', 'SoiaDeck ローカル LLM ルーター') },
-    { id: 'network', title: t('AI 网络', 'AI network', 'AI ネットワーク'), body: t('本机访问各家 AI 服务走哪张网卡、连不连得通，一眼看清。核心管理能力断网可用。', 'See which interface the machine uses to reach each AI service and whether it gets through. Core management keeps working offline.', '各 AI サービスへの経路インタフェースと到達性をひと目で確認。主要な管理機能はオフラインでも動作します。'), img: P + 'soiadeck-net.png', alt: t('SoiaDeck AI 网络', 'SoiaDeck AI network', 'SoiaDeck AI ネットワーク') },
-    { id: 'plugins', title: t('插件中心', 'Plugin center', 'プラグインセンター'), body: t('主机上装了哪些插件、各自什么状态、哪些需要你处理，集中在一页。', 'One page for which plugins are installed on the host, how each is doing and which need your attention.', 'ホストに入っているプラグイン、その状態、対応が必要なものを一ページに。'), img: P + 'soiadeck-plugins.png', alt: t('SoiaDeck 插件中心', 'SoiaDeck plugin center', 'SoiaDeck プラグインセンター') },
-  ];
-
-  const themes = [
-    { key: 'pixel', name: t('像素 · 星夜', 'Pixel · Starry Night', 'ピクセル · 星夜'), note: t('像素星空、月亮、松林，一间亮着灯的小木屋', 'Pixel stars, a moon, pines and a cabin with the light on', 'ピクセルの星空と月、松林、灯りのともる小屋') },
-    { key: 'pixel-day', name: t('像素 · 晴日', 'Pixel · Sunny Day', 'ピクセル · 晴日'), note: t('像素蓝天、飘着的云、绿丘和一架转着的风车', 'Pixel sky, drifting clouds, green hills and a turning windmill', 'ピクセルの青空、流れる雲、丘と回る風車') },
-    { key: 'neon', name: t('霓虹 · 雨夜', 'Neon · Rainy Night', 'ネオン · 雨夜'), note: t('品红与青两色霓虹，远处天际线，斜落的雨丝', 'Magenta and cyan neon, a far skyline and slanting rain', 'マゼンタとシアンのネオン、遠い街並み、斜めの雨') },
-    { key: 'astro', name: t('星图', 'Star Chart', '星図'), note: t('深蓝夜空，一架极慢转动的黄铜星盘，连线的星座', 'Deep blue sky, a slowly turning brass astrolabe and drawn constellations', '深い夜空、ゆっくり回る真鍮の星盤、星座の線') },
-    { key: 'aurora', name: t('极光', 'Aurora', 'オーロラ'), note: t('雪山、湖、星，天上几道慢慢摆动的极光', 'Snow peaks, a lake, stars and slow curtains of aurora', '雪山と湖、星空、ゆっくり揺れるオーロラ') },
-  ];
-  const curTheme = themes[themeIdx] ?? themes[0];
 
   const stats = [
     { n: '19', l: t('个 Coding Agent 登记在册', 'coding agents tracked', '種の Coding Agent を登録') },
@@ -2221,10 +2264,10 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
   ];
 
   const navItems = [
-    ['workbench', t('作业台', 'Workbench', '作業台')],
-    ['approvals', t('审批', 'Approvals', '承認')],
-    ['remote', t('远程与手机', 'Remote & mobile', 'リモート')],
-    ['models', t('本机能力', 'On this machine', 'ローカル機能')],
+    ['map', t('整体构成', 'How it is built', '構成')],
+    ['highlights', t('亮点', 'Highlights', '特長')],
+    ['flow', t('手机流程', 'Phone flows', 'スマホの流れ')],
+    ['deeper', t('各部分', 'The parts', '各機能')],
     ['themes', t('主题', 'Themes', 'テーマ')],
     ['agents', t('19 个 Agent', '19 agents', '19 Agent')],
     ['philosophy', t('设计底线', 'Principles', '設計原則')],
@@ -2245,6 +2288,7 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
         <nav className="breadcrumb" aria-label="breadcrumb">
           <a href={href('/')}>SOIA</a><span>/</span><span>SoiaDeck</span>
         </nav>
+        <DeckSubnav locale={locale} active="" />
 
         <header className="dk-hero">
           <span className="label">{t('SOIA 家族 · 当前主角 · 即将开源', 'SOIA family · current lead · coming open source', 'SOIA ファミリー · 主力製品 · 近日公開予定')}</span>
@@ -2260,7 +2304,7 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
             )}
           </p>
           <div className="dk-cta">
-            <a className="btn btn-primary" href="#workbench">{t('看它能做什么', 'See what it does', '機能を見る')}</a>
+            <a className="btn btn-primary" href="#map">{t('看它怎么构成', 'See how it is built', '構成を見る')}</a>
             <a className="btn btn-ghost" href="#agents">{t('19 个 Agent 接入清单', '19-agent matrix', '19 Agent 対応表')}</a>
             <a className="btn btn-ghost" href="#open">{t('开源进度', 'Open-source status', '公開状況')}</a>
           </div>
@@ -2289,159 +2333,138 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
           ))}
         </nav>
 
-        <section className="dk-arch" id="works-with" aria-label={t('SoiaDeck 怎么搭起来', 'How SoiaDeck fits together', 'SoiaDeck の構成')}>
+        <section className="dk-block" id="map">
           <div className="dk-section-head">
-            <span className="dk-kicker">{t('怎么搭起来', 'How it fits together', '全体の構成')}</span>
-            <h2>{t('一个本机 daemon，四个入口，自带你已有的工具', 'One local daemon, four surfaces, and the tools you already have', 'ローカル daemon 一つ、四つの入口、そして手持ちのツール')}</h2>
-            <p>
-              {t(
-                '不用重新买额度，也不用换工作流：直接复用本机已登录的 Claude Code、Codex、Gemini CLI、Antigravity、GitHub Copilot 等订阅，挂上本地 .agents/skills（包括 47 个开源 SOIA 技能），也可以叠加本机 MLX 模型。',
-                'No quota reselling and no new workflow: reuse the Claude Code, Codex, Gemini CLI, Antigravity and Copilot subscriptions already signed in on your machine, mount local .agents/skills (including the 47 open SOIA skills) and add local MLX models if you like.',
-                '新たな課金やワークフロー変更は不要。ログイン済みの Claude Code / Codex / Gemini CLI / Antigravity / GitHub Copilot をそのまま使い、ローカルの .agents/skills（47 の公開 SOIA スキルを含む）や MLX モデルも組み合わせられます。',
-              )}
-            </p>
+            <span className="dk-kicker">{t('整体构成', 'How it is built', '全体の構成')}</span>
+            <h2>{t('一台你自己的电脑，两个桌面空间，一个随身的窗口', 'One computer of your own, two desktop spaces and a window you carry', '自分のパソコン一台、二つのデスクトップ空間、持ち歩ける窓')}</h2>
+            <p>{t('桌面应用里有两个空间：SoiaDeck 管这台主机，SoiaWorks 是干活的工坊，装着三个插件。它们背后是同一个本机 daemon；手机和账号网页从外面连进来。', 'The desktop app has two spaces: SoiaDeck looks after the host, and SoiaWorks is the workshop with three plugins. Both sit on one local daemon; the phone and the account web reach in from outside.', 'デスクトップアプリには二つの空間があります。SoiaDeck はホストを管理し、SoiaWorks は三つのプラグインを備えた作業場です。どちらも同じローカル daemon の上にあり、スマホとアカウント Web が外から接続します。')}</p>
           </div>
-          <div className="dk-arch-diagram">
-            <div className="dk-arch-col">
-              <span className="dk-arch-cap">{t('你用的入口', 'Where you are', '入口')}</span>
-              {[t('桌面应用', 'Desktop app', 'デスクトップアプリ'), t('手机', 'Phone', 'スマートフォン'), t('网页', 'Web', 'Web'), 'CLI'].map((x) => <span className="dk-arch-chip" key={x}>{x}</span>)}
+          <div className="dk-map">
+            <div className="dk-map-host">
+              <span className="dk-map-cap">{t('你的电脑', 'Your computer', 'あなたのパソコン')}</span>
+              <div className="dk-map-spaces">
+                <a className="dk-map-space" href={href('/soiadeck/desktop/')}>
+                  <strong>SoiaDeck <em>{t('桌面', 'Desktop', 'デスクトップ')}</em></strong>
+                  <span>{t('管这台主机', 'Looks after the host', 'ホストを管理')}</span>
+                  <ul>{[t('首页与本机状态', 'Home & machine status', 'ホームとマシン状態'), t('远程访问与设备授权', 'Remote access & devices', 'リモートアクセスと端末認可'), t('访问记录与安全事件', 'Access & security records', 'アクセス・セキュリティ記録'), t('日志、通知、设置', 'Logs, notifications, settings', 'ログ・通知・設定')].map((x) => <li key={x}>{x}</li>)}</ul>
+                </a>
+                <div className="dk-map-space is-works">
+                  <strong>SoiaWorks <em>{t('工坊', 'Workshop', 'ワークショップ')}</em></strong>
+                  <span>{t('干活的地方，三个插件', 'Where the work happens — three plugins', '作業の場所。三つのプラグイン')}</span>
+                  <div className="dk-map-plugins">
+                    <a href={href('/soiadeck/workbench/')}><b>{t('作业台', 'Workbench', '作業台')}</b><i>{t('驱动 19 个 Coding Agent', 'drives 19 coding agents', '19 種の Coding Agent を駆動')}</i></a>
+                    <a href={href('/soiadeck/local-llm/')}><b>{t('本地 LLM', 'Local LLM', 'ローカル LLM')}</b><i>{t('本机模型与兼容入口', 'local models and endpoint', 'ローカルモデルと互換エンドポイント')}</i></a>
+                    <a href={href('/soiadeck/ai-network/')}><b>{t('AI 网络', 'AI network', 'AI ネットワーク')}</b><i>{t('连通性与流量', 'reachability and traffic', '到達性と通信量')}</i></a>
+                  </div>
+                </div>
+              </div>
+              <div className="dk-map-daemon">
+                <strong>SoiaDeck daemon</strong>
+                <span>{t('持有对话 · 权限审批与记录 · 项目与工作树 · 对外只开你允许的门', 'owns sessions · approvals and records · projects and worktrees · opens only the doors you allow', 'セッション保持 · 承認と記録 · プロジェクトと Worktree · 許可した入口だけを開く')}</span>
+              </div>
             </div>
-            <div className="dk-arch-core">
-              <strong>SoiaDeck daemon</strong>
-              <span>{t('跑在你自己的机器上', 'runs on your own machine', 'あなたのマシン上で動作')}</span>
-              <ul>
-                <li>{t('持有对话，可重放', 'owns sessions, replayable', 'セッションを保持・再生')}</li>
-                <li>{t('权限审批与记录', 'approvals and records', '承認と記録')}</li>
-                <li>{t('项目与工作树', 'projects and worktrees', 'プロジェクトと Worktree')}</li>
-              </ul>
+            <div className="dk-map-link">
+              <span>{t('局域网直连', 'LAN direct', 'LAN 直接')}</span>
+              <i />
+              <span>{t('或经加密中继（只转发密文）', 'or encrypted relay (ciphertext only)', 'または暗号化リレー（暗号文のみ）')}</span>
             </div>
-            <div className="dk-arch-col">
-              <span className="dk-arch-cap">{t('它替你驱动的', 'What it drives', '駆動する対象')}</span>
-              {[t('19 个 Coding Agent', '19 coding agents', '19 種の Coding Agent'), 'stream-json · app-server · ACP · pi-rpc · PTY', t('本地 .agents/skills', 'Local .agents/skills', 'ローカル .agents/skills'), t('本机 MLX 模型', 'Local MLX models', 'ローカル MLX モデル')].map((x) => <span className="dk-arch-chip" key={x}>{x}</span>)}
+            <div className="dk-map-outside">
+              <a className="dk-map-out" href={href('/soiadeck/mobile/')}>
+                <strong>{t('手机端', 'Mobile', 'モバイル')}</strong>
+                <span>{t('网页，加到主屏', 'A web page on your home screen', 'ホーム画面に置ける Web ページ')}</span>
+                <ul>{[t('看进度、回消息', 'Follow and reply', '進捗確認と返信'), t('批准或拒绝', 'Approve or deny', '承認・拒否'), t('看改动、止损', 'Read diffs, stop a turn', 'Diff 閲覧と停止')].map((x) => <li key={x}>{x}</li>)}</ul>
+              </a>
+              <div className="dk-map-out">
+                <strong>{t('账号网页', 'Account web', 'アカウント Web')}</strong>
+                <span>{t('可选', 'Optional', '任意')}</span>
+                <ul>{[t('Passkey 或邮箱验证码登录', 'Passkey or email code sign-in', 'Passkey またはメール認証'), t('名下主机与登录设备', 'Bound hosts and devices', '紐付けホストと端末'), t('手机丢了，标记丢失收回授权', 'Mark a lost phone to revoke it', '紛失端末を失効')].map((x) => <li key={x}>{x}</li>)}</ul>
+              </div>
             </div>
           </div>
-          <p className="dk-arch-foot">{t('不在同一局域网时，手机经加密中继连回这台机器；中继只转发密文。', 'Away from your LAN, the phone reaches this machine through an encrypted relay that forwards ciphertext only.', '同一 LAN 外では、スマホは暗号化リレー経由でこのマシンに接続します。リレーは暗号文のみを転送します。')}</p>
         </section>
 
-        {features.map((f, i) => (
-          <section className={`dk-feature${i % 2 ? ' is-flip' : ''}`} id={f.id} key={f.id}>
-            <div className="dk-feature-text">
-              <span className="dk-kicker">{f.kicker}{f.preview ? previewTag : null}</span>
-              <h2>{f.title}</h2>
-              <p>{f.body}</p>
-              <ul>{f.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
-            </div>
-            <ZoomableFigure src={f.img} alt={f.alt} locale={locale} lazy className="dk-shot" />
-          </section>
-        ))}
-
-        <section className="dk-block">
+        <section className="dk-block" id="highlights">
           <div className="dk-section-head">
-            <span className="dk-kicker">{t('远程与手机', 'Remote & mobile', 'リモートとモバイル')}</span>
-            <h2>{t('离开座位，事情照样往前走', 'Step away from the desk and the work keeps moving', '席を離れても、作業は止まらない')}</h2>
+            <span className="dk-kicker">{t('亮点', 'Highlights', '特長')}</span>
+            <h2>{t('它和「再开一个终端」有什么不一样', 'What makes it different from “just open another terminal”', '「ターミナルをもう一つ開く」との違い')}</h2>
           </div>
-          <div className="dk-cards">
-            {remoteCards.map((c) => (
-              <article className="dk-card" id={c.id} key={c.id}>
-                <ZoomableFigure src={c.img} alt={c.alt} locale={locale} lazy className="dk-shot" />
-                <h3>{c.title}</h3>
-                <p>{c.body}</p>
-              </article>
+          <div className="dk-highlights">
+            {highlights.map((h, i) => (
+              <a className="dk-highlight" href={href(h.to)} key={h.title}>
+                <span>{String(i + 1).padStart(2, '0')}</span>
+                <strong>{h.title}</strong>
+                <p>{h.body}</p>
+              </a>
             ))}
           </div>
         </section>
 
-        <section className="dk-block">
+        <section className="dk-block" id="flow">
           <div className="dk-section-head">
-            <span className="dk-kicker">{t('本机能力', 'On this machine', 'ローカル機能')}</span>
-            <h2>{t('模型、网络和插件，也归这张桌面管', 'Models, network and plugins live on the same desk', 'モデル・ネットワーク・プラグインも同じデスクで')}</h2>
+            <span className="dk-kicker">{t('手机怎么连进来、怎么操作', 'How the phone gets in and acts', 'スマホの接続と操作の流れ')}</span>
+            <h2>{t('从扫码到批准，每一步发生在哪', 'From scanning a code to approving: where each step happens', 'スキャンから承認まで、各ステップがどこで起きるか')}</h2>
+            <p>{t('三条泳道分别是电脑、中继和手机。对话和代码始终在电脑上，中继只转发密文。', 'Three lanes: computer, relay and phone. Sessions and code stay on the computer; the relay forwards ciphertext only.', '三つのレーンはパソコン・リレー・スマホ。セッションとコードは常にパソコンにあり、リレーは暗号文のみを転送します。')}</p>
           </div>
-          <div className="dk-cards">
-            {machineCards.map((c) => (
-              <article className="dk-card" id={c.id} key={c.id}>
-                <ZoomableFigure src={c.img} alt={c.alt} locale={locale} lazy className="dk-shot" />
-                <h3>{c.title}</h3>
-                <p>{c.body}</p>
-              </article>
+          <div className="deck-tab-bar" role="tablist">
+            {flows.map((f, idx) => (
+              <button type="button" role="tab" aria-selected={flowIdx === idx} className={flowIdx === idx ? 'is-active' : undefined} key={f.name} onClick={() => setFlowIdx(idx)}>{f.name}</button>
+            ))}
+          </div>
+          <div className="dk-flow" style={{ ['--dk-steps' as string]: curFlow.steps.length }}>
+            {(['desk', 'relay', 'phone'] as const).map((lane) => (
+              <div className={`dk-flow-lane is-${lane}`} key={lane}>
+                <span className="dk-flow-lane-name">{lane === 'desk' ? t('电脑', 'Computer', 'パソコン') : lane === 'relay' ? t('中继', 'Relay', 'リレー') : t('手机', 'Phone', 'スマホ')}</span>
+                {curFlow.steps.map((st, i) => (
+                  <div className="dk-flow-cell" key={i}>
+                    {st.w === lane ? (
+                      <div className="dk-flow-step">
+                        <b>{i + 1}</b>
+                        <strong>{st.t}</strong>
+                        <span>{st.d}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+          <p className="dk-arch-foot">{curFlow.note}</p>
+        </section>
+
+        <section className="dk-block" id="deeper">
+          <div className="dk-section-head">
+            <span className="dk-kicker">{t('深入了解', 'Go deeper', 'さらに詳しく')}</span>
+            <h2>{t('每一块都有自己的一页', 'Each part has a page of its own', '各機能の詳細ページ')}</h2>
+          </div>
+          <div className="dk-deeper">
+            {DECK_SUBPAGES.map((sp) => (
+              <a className="dk-deeper-card" href={href(`/soiadeck/${sp.slug}/`)} key={sp.slug}>
+                <span>{sp.kicker[lang]}</span>
+                <strong>{sp.name[lang]} →</strong>
+                <em>{sp.tagline[lang]}</em>
+              </a>
             ))}
           </div>
         </section>
 
         <section className="dk-block dk-themes" id="themes">
           <div className="dk-section-head">
-            <span className="dk-kicker">{t('主题套装', 'Theme packs', 'テーマパック')}{previewTag}</span>
+            <span className="dk-kicker">{t('主题套装', 'Theme packs', 'テーマパック')}</span>
             <h2>{t('天天对着的界面，可以换一幅景', 'A screen you look at all day can change its scenery', '毎日見る画面だから、景色を変えられる')}</h2>
-            <p>{t('一套主题 = 一组颜色加一幅会动的景，景全部用代码画。下面五套是设计预览，还没进产品；系统开了「减少动效」时不动。', 'A pack is a palette plus one animated scene, drawn entirely in code. These five are design previews and are not in the product yet; they stay still when the system asks for reduced motion.', 'テーマパックは配色と、コードで描いた動く景色のセット。下の五つはデザインプレビューで、まだ製品には入っていません。「視差効果を減らす」設定では静止します。')}</p>
+            <p>{t('21 套主题套装，一键换掉强调色、按钮、圆角、底色和背景。前五套带一幅用代码画的、会动的景，是设计预览，还没进产品。', '21 theme packs swap accent, buttons, corners, surface and background in one click. The first five carry an animated, code-drawn scene and are design previews, not in the product yet.', '21 のテーマパックがアクセント色・ボタン・角丸・地色・背景をワンクリックで切り替え。最初の五つはコードで描いた動く景色付きのデザインプレビューで、まだ製品には入っていません。')}</p>
           </div>
-          <div className="deck-tab-bar" role="tablist">
-            {themes.map((th, idx) => (
-              <button type="button" role="tab" aria-selected={themeIdx === idx} className={themeIdx === idx ? 'is-active' : undefined} key={th.key} onClick={() => setThemeIdx(idx)}>{th.name}</button>
-            ))}
-          </div>
-          <ZoomableFigure src={`${P}soiadeck-theme-${curTheme.key}.webp`} alt={`SoiaDeck · ${curTheme.name}`} locale={locale} lazy className="dk-shot" />
-          <p className="deck-showcase-caption">{curTheme.note}</p>
+          <PackGallery locale={locale} />
+          <div className="missing-cta"><a className="btn btn-ghost" href={href('/soiadeck/settings/#themes')}>{t('在桌面设置里看套装怎么换', 'See how packs work in desktop settings', 'デスクトップ設定でパックを見る')}</a></div>
         </section>
 
         <section className="dk-block" id="agents">
           <div className="dk-section-head">
             <span className="dk-kicker">{t('接入清单', 'Agent matrix', '対応表')}</span>
             <h2>{t('19 个 Coding Agent，各到哪一步都写明白', '19 coding agents, each with its real status', '19 種の Coding Agent、それぞれの本当の対応状況')}</h2>
-            <p>{t('以 SoiaDeck 的静态清单（agent-manifest-index.json）为准：正式支持 4 个（stream-json / app-server / ACP / pi-rpc），试验接入 9 个（统一走 ACP stdio），计划接入 6 个。', 'Tracked in SoiaDeck’s agent-manifest-index.json: 4 supported (stream-json, app-server, ACP, pi-rpc), 9 experimental (all over ACP stdio) and 6 planned.', 'SoiaDeck の静的マニフェスト（agent-manifest-index.json）に基づき、正式対応 4（stream-json / app-server / ACP / pi-rpc）、試験接続 9（ACP stdio）、予定 6。')}</p>
+            <p>{t('正式支持 4 个，试验接入 9 个，计划接入 6 个。逐个的协议、版本和认证方式在作业台页。', '4 supported, 9 experimental and 6 planned. Protocol, version and auth for each one are on the workbench page.', '正式対応 4、試験接続 9、予定 6。各 Agent のプロトコル・バージョン・認証は作業台ページにあります。')}</p>
           </div>
-          <ZoomableFigure src={P + 'soiadeck-19-agents.png'} alt={t('SoiaDeck 已接入 19 个 Coding Agent 矩阵', 'SoiaDeck 19 coding agents', 'SoiaDeck 19 Coding Agents')} locale={locale} lazy className="dk-shot" />
-          <div className="dk-agents missing-article">
-                    <div className="agent-filter-bar" role="tablist" aria-label={t('按接入状态筛选 Agent', 'Filter agents by status', 'ステータス別に絞り込む')}>
-                      {(
-                        [
-                          { id: 'all', label: t('全部', 'All', 'すべて'), count: CODING_AGENTS_19.length },
-                          { id: 'supported', label: t('正式支持', 'Supported', '正式対応'), count: CODING_AGENTS_19.filter((a) => a.level === 'supported').length },
-                          { id: 'experimental', label: t('试验接入', 'Experimental', '試験接続'), count: CODING_AGENTS_19.filter((a) => a.level === 'experimental').length },
-                          { id: 'planned', label: t('计划接入', 'Planned', '対応予定'), count: CODING_AGENTS_19.filter((a) => a.level === 'planned').length },
-                        ] as const
-                      ).map((tab) => (
-                        <button
-                          type="button"
-                          key={tab.id}
-                          className={agentFilter === tab.id ? 'is-active' : undefined}
-                          onClick={() => setAgentFilter(tab.id)}
-                        >
-                          {tab.label}
-                          <span className="count">{tab.count}</span>
-                        </button>
-                      ))}
-                    </div>
-                    <ol className="agent-detail-list">
-                      {CODING_AGENTS_19
-                        .map((agent, origIdx) => ({ agent, origIdx }))
-                        .filter(({ agent }) => agentFilter === 'all' || agent.level === agentFilter)
-                        .map(({ agent, origIdx }) => {
-                          const levelText =
-                            agent.level === 'supported'
-                              ? t('正式支持', 'Supported', '正式対応')
-                              : agent.level === 'experimental'
-                                ? t('试验接入', 'Experimental', '試験接続')
-                                : t('计划接入', 'Planned', '対応予定');
-                          return (
-                            <li className="agent-detail-row" key={agent.id}>
-                              <div className="agent-detail-top">
-                                <div className="agent-detail-id">
-                                  <span className="agent-detail-idx">{String(origIdx + 1).padStart(2, '0')}</span>
-                                  <strong>{agent.name}</strong>
-                                  <code>{agent.id}</code>
-                                  {agent.cmd !== agent.id && <code>cmd: {agent.cmd}</code>}
-                                </div>
-                                <span className={`agent-level-badge is-${agent.level}`}>{levelText}</span>
-                              </div>
-                              <div className="agent-detail-meta">
-                                <span><strong>{t('协议', 'Protocol', 'プロトコル')}:</strong> {pick(locale, agent.protocol)}</span>
-                                <span><strong>{t('版本', 'Version', 'バージョン')}:</strong> {pick(locale, agent.version)}</span>
-                                <span><strong>{t('认证', 'Auth', '認証')}:</strong> {pick(locale, agent.auth)}</span>
-                              </div>
-                              <p className="agent-detail-desc">{pick(locale, agent.detail)}</p>
-                            </li>
-                          );
-                        })}
-                    </ol>
+          <div className="missing-cta" style={{ marginTop: 0 }}>
+            <a className="btn btn-primary" href={href('/soiadeck/workbench/#agents')}>{t('看 19 个 Agent 的明细', 'See all 19 agents', '19 Agent の詳細を見る')}</a>
           </div>
         </section>
 

@@ -173,7 +173,7 @@ const FOOTER_USE_CASE_HREFS = [
   '/skills/dev/',
   '/skills/office/',
   REPO_DISCUSSIONS,
-  '/soiadeck/#models',
+  '/soiadeck/local-llm/',
   '/soiadeck/',
 ] as const;
 
@@ -551,11 +551,11 @@ export default function Page({
               <div className='hero-agents-strip' data-reveal>
                 <span className='hero-agents-label'>{tt('已支持', 'Supports', '対応')}</span>
                 {['Claude Code', 'Codex', 'pi', 'dsh', 'Cursor', 'OpenCode', 'Kimi Code', 'Qwen Code', 'Gemini CLI', 'Copilot'].map((name) => (
-                  <a className='hero-agent-chip' href={href('/soiadeck/#agents')} key={name}>
+                  <a className='hero-agent-chip' href={href('/soiadeck/workbench/#agents')} key={name}>
                     {name}
                   </a>
                 ))}
-                <a className='hero-agent-chip is-more' href={href('/soiadeck/#agents')}>
+                <a className='hero-agent-chip is-more' href={href('/soiadeck/workbench/#agents')}>
                   {tt('全部 19 个接入清单 →', '+19 agents →', '全 19 Agent 一覧 →')}
                 </a>
               </div>
@@ -989,21 +989,21 @@ export default function Page({
                   kicker: 'Desktop App',
                   title: tt('桌面作业台', 'Desktop Workbench', 'デスクトップ作業台'),
                   desc: tt('本机 daemon 持有全部会话，关窗继续跑、重开从缓冲重放；统一管项目、Worktree 与审批。', 'Local daemon keeps turns alive across restarts with unified workspaces, worktrees, and approvals.', 'ローカル daemon が全会話を保持。ウィンドウを閉じても処理は進み、プロジェクトと Worktree を一元管理。'),
-                  href: href('/soiadeck/#workbench'),
+                  href: href('/soiadeck/workbench/'),
                   more: tt('看桌面架构 →', 'Desktop architecture →', 'アーキテクチャを見る →'),
                 },
                 {
                   kicker: 'Mobile Remote',
                   title: tt('手机端随时处理', 'Approve from Mobile', 'モバイルで即時承認'),
                   desc: tt('离开工位也能随时查看会话进度与代码改动 Diff，在手机上放行或拒掉危险操作。', 'Check turns, inspect code diffs, approve shell steps, or stop a session right from your phone.', '席を離れても進捗とコード Diff を確認し、危険なコマンドをスマホから許可・停止できます。'),
-                  href: href('/soiadeck/#remote'),
+                  href: href('/soiadeck/mobile/'),
                   more: tt('看手机端界面 →', 'Mobile surface →', 'モバイル画面を見る →'),
                 },
                 {
                   kicker: 'Encrypted Relay',
                   title: tt('NAT 加密中继', 'Encrypted NAT Relay', 'NAT 暗号化リレー'),
                   desc: tt('不在同一局域网也能配对连回开发机；中继只转发密文不窥探正文，断线 90 秒自动续连。', 'Zero-inspection ciphertext forwarding across networks with 90s reconnect and Passkey device management.', 'LAN 外から開発機へペアリング接続。暗号文のみを中継し、90 秒自動再接続と Passkey 管理に対応。'),
-                  href: href('/soiadeck/#relay'),
+                  href: href('/soiadeck/desktop/#remote'),
                   more: tt('看中继机制 →', 'Relay spec →', 'リレー仕様を見る →'),
                 },
                 {
