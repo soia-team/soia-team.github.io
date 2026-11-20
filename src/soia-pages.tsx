@@ -2023,6 +2023,7 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
   const t = <T,>(zhV: T, enV: T, jaV: T) => t3(locale, zhV, enV, jaV);
   const [heroTab, setHeroTab] = useState(0);
   const [agentFilter, setAgentFilter] = useState<'all' | 'supported' | 'experimental' | 'planned'>('all');
+  const [themeIdx, setThemeIdx] = useState(0);
 
   const heroTabs: ReadonlyArray<{ label: string; src: string; alt: string; note: string }> =
     lang === 'zh'
@@ -2134,80 +2135,146 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
             { title: 'Honest · Grounded Scope', desc: 'Currently ships macOS arm64 builds and reports exact agent readiness rather than fake promises.' },
           ];
 
-  const sections: ReadonlyArray<{ id: string; title: string; body: string; image?: string; alt?: string }> =
-    lang === 'zh'
-      ? [
-          { id: 'works-with', title: '自带你的工具与订阅', body: '无需重新购买额度或放弃熟悉的工作流：直接复用你本机已登录的 Claude Code、Codex、Gemini CLI、Antigravity、GitHub Copilot 等 CLI 订阅，挂载本地 .agents/skills（包括 47 个开源 SOIA 技能），也可叠加本机 MLX 模型。' },
-          { id: 'workbench', title: 'AI 作业台', body: '在桌面应用里开 Claude Code、Codex 等对话。每种 Agent 走自己的原生协议；没有原生协议的走 ACP，也有终端 PTY。对话由后端持有：关掉页面 Agent 继续跑，重开从缓冲重放。项目、工作树和权限审批都在这里管。', image: '/soia/products/soiadeck-wb-home.png', alt: 'SoiaDeck AI 作业台首页' },
-          { id: 'factory', title: '工坊与项目', body: '左侧工坊切换工作区，下面是插件、作业台、本地 LLM、AI 网络四个入口。项目列表按仓库分组，每个条目显示待审批与待处理数量，新建项目直接在列表里完成。', image: '/soia/products/soiadeck-plugins.png', alt: 'SoiaDeck 插件中心' },
-          { id: 'approvals', title: '权限审批', body: '要执行命令、写工作区外文件、联网前先问你。可以逐次允许、本对话内允许或拒绝；多条待审批可逐张处理。每一次决定都进会话记录，可回放。', image: '/soia/products/soiadeck-home.png', alt: 'SoiaDeck 首页待处理与权限审批' },
-          { id: 'models', title: '本地 LLM', body: '发现、启停、下载本机模型，并提供一个 OpenAI 兼容入口。现在推理引擎以 MLX 系为主，所以本地模型在 Apple Silicon 上最完整。作业台本身不依赖本地模型。', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck 本地 LLM 模型转发' },
-          { id: 'network', title: 'AI 网络', body: '本机访问各 AI 服务走哪张网卡、连不连得通。核心管理能力断网可用。', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI 网络监控' },
-          { id: 'remote', title: '远程访问与手机端', body: '电脑开启远程访问或通过中继配对后，手机端可随时查看对话进度、看代码改动与 Diff，并在手机上远程审批权限或止损停轮。', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck 手机端远程访问与设计总览' },
-          { id: 'account', title: '远程账号与名下主机', body: '账号网页支持邮箱验证码与 Passkey 登录，集中管理名下绑定的主机指纹、登录设备与中继流量；设备丢失时可一键标记丢失并自动通知中继收回授权。', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck 远程账号与名下主机' },
-          { id: 'relay', title: '中继服务', body: '不在同一局域网时，手机与电脑通过轻量中继建立加密通道，中继只做转发不看对话内容；维护期间支持 90 秒内自动续上，连接不断。', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck 中继服务状态与通道监控' },
-          { id: 'agents', title: '19 个 coding agent 接入清单与演进', body: '以 SoiaDeck 静态 manifest 真源（agent-manifest-index.json）为准，共登记 19 个 Agent：正式支持 4 个（stream-json / app-server / ACP / pi-rpc）、试验接入 9 个（统一走 ACP stdio）、计划接入 6 个。后续按底层统一方案收口到单一目录真源，补齐启停排序、更新计划、技能统计、活动账本以及 WorkBuddy 只读导入 + CodeBuddy ACP 分流。', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 已接入 19 个 Coding Agent 矩阵' },
-          { id: 'philosophy', title: '设计哲学与边界', body: '站在代码、API 密钥与远程主机之间的工具必须保持中立、可审查、不强绑云厂商。以下六条是 SoiaDeck 每一项能力的设计底线：' },
-          { id: 'open', title: '即将开源', body: '现在是私有仓，持续开发中。目前只发 macOS arm64 安装包；Linux / Windows 有构建入口，但没验收、不发包。官网不假装已有公开下载。' },
-        ]
-      : lang === 'ja'
-        ? [
-            { id: 'works-with', title: '手持ちのツール・契約をそのまま利用', body: '新たな課金枠の買い直しやワークフロー変更は不要。ログイン済みの Claude Code / Codex / Gemini CLI / Antigravity / GitHub Copilot 契約やローカル .agents/skills、Apple Silicon MLX モデルをそのまま利用できます。' },
-            { id: 'workbench', title: 'AI 作業台（ワークベンチ）', body: 'Claude Code や Codex をデスクトップから並列起動。各 Agent はネイティブプロトコル（未対応は ACP や PTY）で動作し、会話状態はバックエンド daemon が保持するため画面を閉じても止まりません。', image: '/soia/products/soiadeck-wb-home.png', alt: 'SoiaDeck AI 作業台ホーム' },
-            { id: 'factory', title: 'ワークショップとプロジェクト管理', body: '左レールでワークスペースを切り替え、プラグイン・作業台・ローカル LLM・AI ネットワークへ即アクセス。リポジトリ別に承認待ちとタスク数を一覧表示します。', image: '/soia/products/soiadeck-plugins.png', alt: 'SoiaDeck プラグインセンター' },
-            { id: 'approvals', title: '権限承認ゲート', body: 'コマンド実行・領域外書き込み・外部通信の前に確認を要求。今回のみ許可／会話内許可／拒否を選択でき、判断履歴はすべてセッションに記録・再生できます。', image: '/soia/products/soiadeck-home.png', alt: 'SoiaDeck 権限承認画面' },
-            { id: 'models', title: 'ローカル LLM 管理', body: 'ローカルモデルの検出・起動・停止・ダウンロードと OpenAI 互換エンドポイントを提供。MLX エンジン中心のため Apple Silicon で最も充実しています。', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck ローカル LLM ルーター' },
-            { id: 'network', title: 'AI ネットワーク監視', body: '各 AI サービスへの経路インタフェースと到達性を監視。コア管理機能はオフラインでも動作します。', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI ネットワーク' },
-            { id: 'remote', title: 'リモートアクセス & モバイル操作', body: 'LAN またはリレー経由でスマホとペアリングし、進行中セッションの閲覧、Diff 確認、承認許可、ターン緊急停止を行えます。', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck モバイル画面' },
-            { id: 'account', title: 'リモートアカウント & 紐付けホスト', body: 'メール認証や Passkey でログインし、ホストフィンガープリントや認証済み端末・リレー通信量を一元管理。端末紛失時は即座に失効できます。', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck アカウント・端末管理' },
-            { id: 'relay', title: '暗号化リレーサービス', body: '同一 LAN 外でも軽量リレー経由でデスクトップとモバイルを暗号化接続。リレーは中身を覗かず暗号文のみ転送し、メンテナンス時も 90 秒自動再接続に対応します。', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck リレー監視' },
-            { id: 'agents', title: '19 種の Coding Agent 接続一覧と計画', body: '静的マニフェスト（agent-manifest-index.json）に基づき計 19 種を管理：正式対応 4（stream-json / app-server / ACP / pi-rpc）、試験接続 9（ACP stdio）、予定 6。', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 19 Coding Agents マトリクス' },
-            { id: 'philosophy', title: '設計哲学と境界', body: 'コードと認証鍵・ホストの間に立つツールは中立で監査可能でなければなりません。以下の 6 原則を厳守します：' },
-            { id: 'open', title: '公開予定オープンソース', body: '現在はプライベートリポジトリで開発中。配布ビルドは macOS arm64 のみ提供し、未検証ターゲットの公開配布は偽装しません。' },
-          ]
-        : [
-            { id: 'works-with', title: 'Bring your tools & subscriptions', body: 'No forced lock-in or quota reselling: reuse your existing Claude Code, Codex, Gemini CLI, Antigravity, and Copilot subscriptions alongside local .agents/skills (including 47 open SOIA skills) and local MLX models.' },
-            { id: 'workbench', title: 'AI Workbench', body: 'Open Claude Code, Codex and other agent conversations in the desktop app. Each agent uses its native protocol; others use ACP or a PTY. The backend owns the conversation: close the page and the agent keeps working.', image: '/soia/products/soiadeck-wb-home.png', alt: 'SoiaDeck AI Workbench home' },
-            { id: 'factory', title: 'Workshops and projects', body: 'Switch workspaces from the left rail; plugins, workbench, local LLM and AI network sit under it. Projects are grouped by repository with pending approvals and tasks counted per row.', image: '/soia/products/soiadeck-plugins.png', alt: 'SoiaDeck Plugin Center' },
-            { id: 'approvals', title: 'Approvals', body: 'Commands, writes outside the workspace and network access ask first. Allow once, allow for this conversation, or deny; batch cards can be handled one by one. Every decision lands in the session record.', image: '/soia/products/soiadeck-home.png', alt: 'SoiaDeck desktop home and approvals' },
-            { id: 'models', title: 'Local LLM', body: 'Discover, start/stop and download local models, plus one OpenAI-compatible endpoint. Engines today are mostly MLX, so local models are most complete on Apple Silicon.', image: '/soia/products/soiadeck-router.png', alt: 'SoiaDeck Local LLM router' },
-            { id: 'network', title: 'AI Network', body: 'Which network interface the machine uses to reach AI services, and whether they are reachable. Core management still works offline.', image: '/soia/products/soiadeck-net.png', alt: 'SoiaDeck AI Network' },
-            { id: 'remote', title: 'Remote & Mobile', body: 'Pair your phone over local LAN or relay to follow running sessions, inspect diffs, approve tool permissions, or stop a turn on the go.', image: '/soia/products/soiadeck-phone.png', alt: 'SoiaDeck mobile surface' },
-            { id: 'account', title: 'Remote account & bound hosts', body: 'Sign in with email verification or Passkey on the Account Web to manage bound host fingerprints, active devices, and relay usage — or mark a lost device to revoke access immediately.', image: '/soia/products/soiadeck-account.png', alt: 'SoiaDeck account web and bound hosts' },
-            { id: 'relay', title: 'Relay service', body: 'When away from your local network, desktop and mobile connect through an encrypted relay that forwards traffic without inspecting contents, with automatic 90s reconnect during maintenance.', image: '/soia/products/soiadeck-relay.png', alt: 'SoiaDeck relay service' },
-            { id: 'agents', title: '19 coding agents: current matrix & plan', body: 'Tracked in SoiaDeck’s agent-manifest-index.json: 4 supported (stream-json, app-server, ACP, pi-rpc), 9 experimental (ACP stdio), and 6 planned—with upcoming backend unification adding enable/order prefs, update plans, extension counts, activity ledger, and WorkBuddy read-only import + CodeBuddy ACP.', image: '/soia/products/soiadeck-19-agents.png', alt: 'SoiaDeck 19 coding agents' },
-            { id: 'philosophy', title: 'Engineering philosophy', body: 'A tool sitting between you, your codebase, your keys, and your machines must stay transparent and neutral:' },
-            { id: 'open', title: 'Coming open source', body: 'Private today, under active development. Only macOS arm64 installers ship; Linux and Windows have build entry points but are not released.' },
-          ];
+  const P = '/soia/products/';
+  type Feature = { id: string; kicker: string; title: string; body: string; points: string[]; img: string; alt: string; preview?: boolean; extraIds?: string[] };
+  const features: ReadonlyArray<Feature> = [
+    {
+      id: 'workbench',
+      kicker: t('作业台', 'Workbench', '作業台'),
+      title: t('所有 Agent 对话，在一张桌面上并行', 'Every agent conversation, side by side on one desktop', 'すべての Agent セッションを一つのデスクトップで並列に'),
+      body: t(
+        '在桌面应用里开 Claude Code、Codex 等对话。每种 Agent 走自己的原生协议，没有原生协议的走 ACP 或终端 PTY，操作方式是同一套。',
+        'Open Claude Code, Codex and other agents in the desktop app. Each one speaks its native protocol — or ACP, or a PTY — while you keep a single way of working.',
+        'Claude Code や Codex などをデスクトップアプリで起動。各 Agent はネイティブプロトコル（なければ ACP / PTY）で動き、操作は一つに統一されます。',
+      ),
+      points: [
+        t('对话由本机后端持有：关掉窗口 Agent 继续跑，重开从缓冲重放', 'The local daemon owns the session: close the window and the agent keeps running, reopen and it replays from the buffer', 'セッションはローカル daemon が保持。ウィンドウを閉じても実行が続き、再表示時にバッファから再生'),
+        t('项目、工作树、分支就在输入框上方，不用另开终端', 'Project, worktree and branch sit right above the composer — no extra terminal', 'プロジェクト・Worktree・ブランチは入力欄のすぐ上。別ターミナル不要'),
+        t('运行中可以继续排队发消息，本轮结束后按顺序投递', 'Queue follow-up messages while a turn is running; they are delivered in order afterwards', '実行中でも次のメッセージをキューに追加でき、ターン終了後に順番に送信'),
+      ],
+      img: P + 'soiadeck-wb-session.webp',
+      alt: t('SoiaDeck 作业台：会话、排队消息与输入框', 'SoiaDeck workbench: session, queued messages and composer', 'SoiaDeck 作業台：セッション、キュー、入力欄'),
+    },
+    {
+      id: 'factory',
+      kicker: t('工坊与项目', 'Workshops & projects', 'ワークショップとプロジェクト'),
+      title: t('一条侧栏，看清每个项目卡在哪', 'One sidebar that shows where every project is waiting', 'サイドバー一本で、各プロジェクトの待ち状態がわかる'),
+      body: t(
+        '左侧工坊切换工作区，下面是插件、作业台、本地 LLM、AI 网络四个入口。项目按仓库分组，每行直接显示待审批和待处理数量。',
+        'Switch workshops on the left rail; plugins, workbench, local LLM and AI network sit below. Projects are grouped by repository, with pending approvals and tasks counted on each row.',
+        '左レールでワークショップを切り替え、その下にプラグイン・作業台・ローカル LLM・AI ネットワーク。プロジェクトはリポジトリ別にまとまり、承認待ちと未処理数を行ごとに表示します。',
+      ),
+      points: [
+        t('会话行显示这条对话用过哪些 Agent，当前的在最前', 'Each session row shows which agents it has used, current one first', '各セッション行に、使った Agent のアイコンを表示（現在のものが先頭）'),
+        t('常驻的 DeckBot 可以分组，拖动整理', 'Long-running DeckBots can be grouped and reordered by drag', '常駐する DeckBot はグループ化でき、ドラッグで並べ替え'),
+        t('运行中的会话标题有一道从左到右的扫光，不用点进去也知道在跑', 'A running session title carries a left-to-right shimmer, so you can tell without opening it', '実行中のセッションはタイトルに光が流れ、開かなくても状態がわかる'),
+      ],
+      img: P + 'soiadeck-wb-bots.webp',
+      alt: t('SoiaDeck 二级栏：DeckBot 分组与项目会话列表', 'SoiaDeck sidebar: DeckBot groups and project sessions', 'SoiaDeck サイドバー：DeckBot グループとプロジェクトのセッション'),
+      preview: true,
+    },
+    {
+      id: 'approvals',
+      kicker: t('权限审批', 'Approvals', '権限承認'),
+      title: t('动手之前先问你，每次决定都留痕', 'It asks before it acts, and every decision is recorded', '実行前に必ず確認し、すべての判断を記録'),
+      body: t(
+        '要执行命令、写工作区外的文件、联网之前，Agent 会停下来等你。首页把所有项目里等你处理的事集中在一处。',
+        'Before running a command, writing outside the workspace or going online, the agent stops and waits. The home view gathers everything that is waiting on you across projects.',
+        'コマンド実行・ワークスペース外への書き込み・外部通信の前に、Agent は止まってあなたを待ちます。ホームには全プロジェクトの対応待ちがまとまります。',
+      ),
+      points: [
+        t('逐次允许、本对话内允许，或拒绝', 'Allow once, allow for this conversation, or deny', '今回のみ許可／この会話で許可／拒否'),
+        t('多条待审批逐张处理，不会一键放行一批', 'Handle a batch card by card — there is no approve-all shortcut', '複数の承認は一件ずつ処理。一括許可はありません'),
+        t('每一次决定都进会话记录，可以回放', 'Every decision lands in the session record and can be replayed', 'すべての判断はセッション記録に残り、再生できます'),
+      ],
+      img: P + 'soiadeck-home.png',
+      alt: t('SoiaDeck 首页：主机状态与待处理审批', 'SoiaDeck home: host status and pending approvals', 'SoiaDeck ホーム：ホスト状態と承認待ち'),
+    },
+  ];
+
+  const remoteCards = [
+    { id: 'remote', title: t('手机端', 'On your phone', 'スマートフォン'), body: t('电脑开启远程访问或通过中继配对后，手机上可以看对话进度、看代码改动与 Diff、审批权限，或者直接停掉这一轮。', 'Pair over LAN or relay to follow running sessions, read diffs, approve permissions or stop a turn from your phone.', 'LAN またはリレーでペアリングし、進行中のセッション確認、Diff 閲覧、承認、ターン停止をスマホから。'), img: P + 'soiadeck-phone.png', alt: t('SoiaDeck 手机端', 'SoiaDeck on mobile', 'SoiaDeck モバイル') },
+    { id: 'account', title: t('账号与名下主机', 'Account & bound hosts', 'アカウントと紐付けホスト'), body: t('账号网页支持邮箱验证码与 Passkey 登录，集中管理名下主机指纹、登录设备与中继流量；设备丢了可以标记丢失，收回授权。', 'Sign in with an email code or a Passkey to manage host fingerprints, signed-in devices and relay usage — and mark a lost device to revoke it.', 'メール認証または Passkey でログインし、ホスト指紋・端末・リレー通信量を一元管理。紛失端末は即時失効できます。'), img: P + 'soiadeck-account.png', alt: t('SoiaDeck 远程账号与名下主机', 'SoiaDeck account web', 'SoiaDeck アカウント管理') },
+    { id: 'relay', title: t('中继服务', 'Relay', 'リレー'), body: t('不在同一局域网时，手机与电脑通过轻量中继建立加密通道。中继只转发密文、不看对话内容；维护期间 90 秒内自动续上。', 'Away from your LAN, desktop and phone meet through a light relay that forwards ciphertext only and reconnects within 90 seconds during maintenance.', '同一 LAN 外では軽量リレー経由で暗号化接続。リレーは暗号文を転送するだけで、メンテナンス時も 90 秒以内に自動再接続します。'), img: P + 'soiadeck-relay.png', alt: t('SoiaDeck 中继服务', 'SoiaDeck relay service', 'SoiaDeck リレー') },
+  ];
+
+  const machineCards = [
+    { id: 'models', title: t('本地 LLM', 'Local LLM', 'ローカル LLM'), body: t('发现、启停、下载本机模型，并提供一个 OpenAI 兼容入口。推理引擎目前以 MLX 系为主，所以在 Apple Silicon 上最完整。作业台本身不依赖本地模型。', 'Discover, start, stop and download local models behind one OpenAI-compatible endpoint. Engines are mostly MLX today, so Apple Silicon is the most complete. The workbench does not depend on local models.', 'ローカルモデルの検出・起動・停止・ダウンロードと OpenAI 互換エンドポイント。現在は MLX 系が中心で Apple Silicon が最も充実。作業台自体はローカルモデルに依存しません。'), img: P + 'soiadeck-router.png', alt: t('SoiaDeck 本地 LLM 模型转发', 'SoiaDeck local LLM router', 'SoiaDeck ローカル LLM ルーター') },
+    { id: 'network', title: t('AI 网络', 'AI network', 'AI ネットワーク'), body: t('本机访问各家 AI 服务走哪张网卡、连不连得通，一眼看清。核心管理能力断网可用。', 'See which interface the machine uses to reach each AI service and whether it gets through. Core management keeps working offline.', '各 AI サービスへの経路インタフェースと到達性をひと目で確認。主要な管理機能はオフラインでも動作します。'), img: P + 'soiadeck-net.png', alt: t('SoiaDeck AI 网络', 'SoiaDeck AI network', 'SoiaDeck AI ネットワーク') },
+    { id: 'plugins', title: t('插件中心', 'Plugin center', 'プラグインセンター'), body: t('主机上装了哪些插件、各自什么状态、哪些需要你处理，集中在一页。', 'One page for which plugins are installed on the host, how each is doing and which need your attention.', 'ホストに入っているプラグイン、その状態、対応が必要なものを一ページに。'), img: P + 'soiadeck-plugins.png', alt: t('SoiaDeck 插件中心', 'SoiaDeck plugin center', 'SoiaDeck プラグインセンター') },
+  ];
+
+  const themes = [
+    { key: 'pixel', name: t('像素 · 星夜', 'Pixel · Starry Night', 'ピクセル · 星夜'), note: t('像素星空、月亮、松林，一间亮着灯的小木屋', 'Pixel stars, a moon, pines and a cabin with the light on', 'ピクセルの星空と月、松林、灯りのともる小屋') },
+    { key: 'pixel-day', name: t('像素 · 晴日', 'Pixel · Sunny Day', 'ピクセル · 晴日'), note: t('像素蓝天、飘着的云、绿丘和一架转着的风车', 'Pixel sky, drifting clouds, green hills and a turning windmill', 'ピクセルの青空、流れる雲、丘と回る風車') },
+    { key: 'neon', name: t('霓虹 · 雨夜', 'Neon · Rainy Night', 'ネオン · 雨夜'), note: t('品红与青两色霓虹，远处天际线，斜落的雨丝', 'Magenta and cyan neon, a far skyline and slanting rain', 'マゼンタとシアンのネオン、遠い街並み、斜めの雨') },
+    { key: 'astro', name: t('星图', 'Star Chart', '星図'), note: t('深蓝夜空，一架极慢转动的黄铜星盘，连线的星座', 'Deep blue sky, a slowly turning brass astrolabe and drawn constellations', '深い夜空、ゆっくり回る真鍮の星盤、星座の線') },
+    { key: 'aurora', name: t('极光', 'Aurora', 'オーロラ'), note: t('雪山、湖、星，天上几道慢慢摆动的极光', 'Snow peaks, a lake, stars and slow curtains of aurora', '雪山と湖、星空、ゆっくり揺れるオーロラ') },
+  ];
+  const curTheme = themes[themeIdx] ?? themes[0];
+
+  const stats = [
+    { n: '19', l: t('个 Coding Agent 登记在册', 'coding agents tracked', '種の Coding Agent を登録') },
+    { n: '4', l: t('个入口：桌面 / 手机 / 网页 / CLI', 'surfaces: desktop, phone, web, CLI', 'つの入口：デスクトップ / スマホ / Web / CLI') },
+    { n: '5', l: t('种协议抹平成一套操作', 'protocols behind one way of working', '種のプロトコルを一つの操作に') },
+    { n: '0', l: t('默认遥测，代码与密钥留在本机', 'telemetry by default; code and keys stay local', 'デフォルトのテレメトリ。コードと鍵はローカルに') },
+  ];
+
+  const navItems = [
+    ['workbench', t('作业台', 'Workbench', '作業台')],
+    ['approvals', t('审批', 'Approvals', '承認')],
+    ['remote', t('远程与手机', 'Remote & mobile', 'リモート')],
+    ['models', t('本机能力', 'On this machine', 'ローカル機能')],
+    ['themes', t('主题', 'Themes', 'テーマ')],
+    ['agents', t('19 个 Agent', '19 agents', '19 Agent')],
+    ['philosophy', t('设计底线', 'Principles', '設計原則')],
+    ['open', t('开源进度', 'Open-source status', '公開状況')],
+  ] as const;
+
+  const statusCols = [
+    { h: t('今天', 'Today', '現在'), items: [t('私有仓，持续开发中', 'Private repository, under active development', 'プライベートリポジトリで開発中'), t('只发 macOS arm64 安装包', 'Only macOS arm64 installers are built for release', '配布ビルドは macOS arm64 のみ'), t('19 个 Agent：正式支持 4、试验接入 9、计划接入 6', '19 agents: 4 supported, 9 experimental, 6 planned', '19 Agent：正式対応 4・試験接続 9・予定 6')] },
+    { h: t('接下来', 'Next', '今後'), items: [t('开源', 'Open-sourcing the repository', 'リポジトリの公開'), t('Agent 目录收口到单一真源，补齐启停排序、更新计划与活动账本', 'One source of truth for the agent catalog, with enable/order preferences, update plans and an activity ledger', 'Agent カタログの一元化（有効化・並び順、更新計画、アクティビティ台帳）'), t('本页标了「设计预览」的界面陆续进产品', 'Screens marked “Design preview” on this page land in the product over time', '「デザインプレビュー」と記した画面を順次製品へ')] },
+    { h: t('不假装', 'Not claimed', '謳わないこと'), items: [t('Linux / Windows 有构建入口，但没验收、不发包', 'Linux and Windows have build entry points but are not verified or shipped', 'Linux / Windows はビルド入口のみで未検証・未配布'), t('官网不提供公开下载，直到真的可以下载', 'No public download here until there really is one', '実際に配布できるまで公開ダウンロードは置きません'), t('未验收的能力不标成已支持', 'Nothing unverified is labelled as supported', '未検証の機能を「対応済み」と表記しません')] },
+  ];
+
+  const previewTag = <span className="dk-preview-tag">{t('设计预览', 'Design preview', 'デザインプレビュー')}</span>;
   const currentTab = heroTabs[heroTab] ?? heroTabs[0];
   return (
     <SubpageLayout active="product" locale={locale}>
-      <article className="missing-page tutorial-detail">
+      <article className="missing-page dk-page">
         <nav className="breadcrumb" aria-label="breadcrumb">
           <a href={href('/')}>SOIA</a><span>/</span><span>SoiaDeck</span>
         </nav>
-        <header className="catalog-head">
+
+        <header className="dk-hero">
           <span className="label">{t('SOIA 家族 · 当前主角 · 即将开源', 'SOIA family · current lead · coming open source', 'SOIA ファミリー · 主力製品 · 近日公開予定')}</span>
           <h1 className="display">SoiaDeck</h1>
+          <p className="dk-tagline">
+            {t('你的 Coding Agent，都在这一张桌面上。', 'All your coding agents, on one desk.', 'あなたの Coding Agent を、一つのデスクに。')}
+          </p>
           <p className="lead">
             {t(
-              '跨端 AI 作业台：本机 daemon + 桌面 / 手机 / 网页 / CLI。在同一工作台并行驱动 19 种 Coding Agent，随时随地处理权限、代码 Diff 与工作树。',
-              'Cross-device AI Workbench: one local daemon plus desktop, mobile, browser, and CLI. Run 19 coding agents across workspaces, diffs, and approvals from your desk or phone.',
-              'マルチデバイス AI 作業台：ローカル daemon ＋ デスクトップ / モバイル / Web / CLI。19 種の Coding Agent と権限承認・Diff・Worktree をシームレスに統合。',
+              '跨端 AI 作业台：一个本机 daemon，加桌面、手机、网页和 CLI 四个入口。并行驱动 19 种 Coding Agent，权限审批、代码 Diff 和工作树在同一处处理——人在电脑前或拿着手机都行。',
+              'A cross-device AI workbench: one local daemon with desktop, phone, web and CLI surfaces. Drive 19 coding agents in parallel and handle approvals, diffs and worktrees in one place — at your desk or from your phone.',
+              'マルチデバイス AI 作業台：ローカル daemon 一つに、デスクトップ・スマホ・Web・CLI の四つの入口。19 種の Coding Agent を並列に動かし、承認・Diff・Worktree を一か所で扱えます。',
             )}
           </p>
+          <div className="dk-cta">
+            <a className="btn btn-primary" href="#workbench">{t('看它能做什么', 'See what it does', '機能を見る')}</a>
+            <a className="btn btn-ghost" href="#agents">{t('19 个 Agent 接入清单', '19-agent matrix', '19 Agent 対応表')}</a>
+            <a className="btn btn-ghost" href="#open">{t('开源进度', 'Open-source status', '公開状況')}</a>
+          </div>
+          <dl className="dk-stats">
+            {stats.map((s) => (
+              <div key={s.l}><dt>{s.n}</dt><dd>{s.l}</dd></div>
+            ))}
+          </dl>
         </header>
+
         <section className="deck-showcase" aria-label={t('SoiaDeck 场景切换演示', 'SoiaDeck interactive scene preview', 'SoiaDeck シーン切替プレビュー')}>
           <div className="deck-tab-bar" role="tablist">
             {heroTabs.map((tab, idx) => (
-              <button
-                type="button"
-                role="tab"
-                aria-selected={heroTab === idx}
-                className={heroTab === idx ? 'is-active' : undefined}
-                key={tab.label}
-                onClick={() => setHeroTab(idx)}
-              >
+              <button type="button" role="tab" aria-selected={heroTab === idx} className={heroTab === idx ? 'is-active' : undefined} key={tab.label} onClick={() => setHeroTab(idx)}>
                 {tab.label}
               </button>
             ))}
@@ -2215,20 +2282,114 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
           <ZoomableFigure src={currentTab.src} alt={currentTab.alt} locale={locale} />
           <p className="deck-showcase-caption">{currentTab.note}</p>
         </section>
-        <div className="tutorial-detail-layout">
-          <aside className="missing-toc">
-            <span>{t('本页内容', 'On this page', '目次')}</span>
-            {sections.map((section) => (
-              <a href={`#${section.id}`} key={section.id}>{section.title}</a>
+
+        <nav className="dk-nav" aria-label={t('本页内容', 'On this page', '目次')}>
+          {navItems.map(([id, label]) => (
+            <a href={`#${id}`} key={id}>{label}</a>
+          ))}
+        </nav>
+
+        <section className="dk-arch" id="works-with" aria-label={t('SoiaDeck 怎么搭起来', 'How SoiaDeck fits together', 'SoiaDeck の構成')}>
+          <div className="dk-section-head">
+            <span className="dk-kicker">{t('怎么搭起来', 'How it fits together', '全体の構成')}</span>
+            <h2>{t('一个本机 daemon，四个入口，自带你已有的工具', 'One local daemon, four surfaces, and the tools you already have', 'ローカル daemon 一つ、四つの入口、そして手持ちのツール')}</h2>
+            <p>
+              {t(
+                '不用重新买额度，也不用换工作流：直接复用本机已登录的 Claude Code、Codex、Gemini CLI、Antigravity、GitHub Copilot 等订阅，挂上本地 .agents/skills（包括 47 个开源 SOIA 技能），也可以叠加本机 MLX 模型。',
+                'No quota reselling and no new workflow: reuse the Claude Code, Codex, Gemini CLI, Antigravity and Copilot subscriptions already signed in on your machine, mount local .agents/skills (including the 47 open SOIA skills) and add local MLX models if you like.',
+                '新たな課金やワークフロー変更は不要。ログイン済みの Claude Code / Codex / Gemini CLI / Antigravity / GitHub Copilot をそのまま使い、ローカルの .agents/skills（47 の公開 SOIA スキルを含む）や MLX モデルも組み合わせられます。',
+              )}
+            </p>
+          </div>
+          <div className="dk-arch-diagram">
+            <div className="dk-arch-col">
+              <span className="dk-arch-cap">{t('你用的入口', 'Where you are', '入口')}</span>
+              {[t('桌面应用', 'Desktop app', 'デスクトップアプリ'), t('手机', 'Phone', 'スマートフォン'), t('网页', 'Web', 'Web'), 'CLI'].map((x) => <span className="dk-arch-chip" key={x}>{x}</span>)}
+            </div>
+            <div className="dk-arch-core">
+              <strong>SoiaDeck daemon</strong>
+              <span>{t('跑在你自己的机器上', 'runs on your own machine', 'あなたのマシン上で動作')}</span>
+              <ul>
+                <li>{t('持有对话，可重放', 'owns sessions, replayable', 'セッションを保持・再生')}</li>
+                <li>{t('权限审批与记录', 'approvals and records', '承認と記録')}</li>
+                <li>{t('项目与工作树', 'projects and worktrees', 'プロジェクトと Worktree')}</li>
+              </ul>
+            </div>
+            <div className="dk-arch-col">
+              <span className="dk-arch-cap">{t('它替你驱动的', 'What it drives', '駆動する対象')}</span>
+              {[t('19 个 Coding Agent', '19 coding agents', '19 種の Coding Agent'), 'stream-json · app-server · ACP · pi-rpc · PTY', t('本地 .agents/skills', 'Local .agents/skills', 'ローカル .agents/skills'), t('本机 MLX 模型', 'Local MLX models', 'ローカル MLX モデル')].map((x) => <span className="dk-arch-chip" key={x}>{x}</span>)}
+            </div>
+          </div>
+          <p className="dk-arch-foot">{t('不在同一局域网时，手机经加密中继连回这台机器；中继只转发密文。', 'Away from your LAN, the phone reaches this machine through an encrypted relay that forwards ciphertext only.', '同一 LAN 外では、スマホは暗号化リレー経由でこのマシンに接続します。リレーは暗号文のみを転送します。')}</p>
+        </section>
+
+        {features.map((f, i) => (
+          <section className={`dk-feature${i % 2 ? ' is-flip' : ''}`} id={f.id} key={f.id}>
+            <div className="dk-feature-text">
+              <span className="dk-kicker">{f.kicker}{f.preview ? previewTag : null}</span>
+              <h2>{f.title}</h2>
+              <p>{f.body}</p>
+              <ul>{f.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
+            </div>
+            <ZoomableFigure src={f.img} alt={f.alt} locale={locale} lazy className="dk-shot" />
+          </section>
+        ))}
+
+        <section className="dk-block">
+          <div className="dk-section-head">
+            <span className="dk-kicker">{t('远程与手机', 'Remote & mobile', 'リモートとモバイル')}</span>
+            <h2>{t('离开座位，事情照样往前走', 'Step away from the desk and the work keeps moving', '席を離れても、作業は止まらない')}</h2>
+          </div>
+          <div className="dk-cards">
+            {remoteCards.map((c) => (
+              <article className="dk-card" id={c.id} key={c.id}>
+                <ZoomableFigure src={c.img} alt={c.alt} locale={locale} lazy className="dk-shot" />
+                <h3>{c.title}</h3>
+                <p>{c.body}</p>
+              </article>
             ))}
-          </aside>
-          <div className="missing-article">
-            {sections.map((section) => (
-              <section id={section.id} key={section.id}>
-                <h2>{section.title}</h2>
-                <p>{section.body}</p>
-                {section.id === 'agents' && (
-                  <>
+          </div>
+        </section>
+
+        <section className="dk-block">
+          <div className="dk-section-head">
+            <span className="dk-kicker">{t('本机能力', 'On this machine', 'ローカル機能')}</span>
+            <h2>{t('模型、网络和插件，也归这张桌面管', 'Models, network and plugins live on the same desk', 'モデル・ネットワーク・プラグインも同じデスクで')}</h2>
+          </div>
+          <div className="dk-cards">
+            {machineCards.map((c) => (
+              <article className="dk-card" id={c.id} key={c.id}>
+                <ZoomableFigure src={c.img} alt={c.alt} locale={locale} lazy className="dk-shot" />
+                <h3>{c.title}</h3>
+                <p>{c.body}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="dk-block dk-themes" id="themes">
+          <div className="dk-section-head">
+            <span className="dk-kicker">{t('主题套装', 'Theme packs', 'テーマパック')}{previewTag}</span>
+            <h2>{t('天天对着的界面，可以换一幅景', 'A screen you look at all day can change its scenery', '毎日見る画面だから、景色を変えられる')}</h2>
+            <p>{t('一套主题 = 一组颜色加一幅会动的景，景全部用代码画。下面五套是设计预览，还没进产品；系统开了「减少动效」时不动。', 'A pack is a palette plus one animated scene, drawn entirely in code. These five are design previews and are not in the product yet; they stay still when the system asks for reduced motion.', 'テーマパックは配色と、コードで描いた動く景色のセット。下の五つはデザインプレビューで、まだ製品には入っていません。「視差効果を減らす」設定では静止します。')}</p>
+          </div>
+          <div className="deck-tab-bar" role="tablist">
+            {themes.map((th, idx) => (
+              <button type="button" role="tab" aria-selected={themeIdx === idx} className={themeIdx === idx ? 'is-active' : undefined} key={th.key} onClick={() => setThemeIdx(idx)}>{th.name}</button>
+            ))}
+          </div>
+          <ZoomableFigure src={`${P}soiadeck-theme-${curTheme.key}.webp`} alt={`SoiaDeck · ${curTheme.name}`} locale={locale} lazy className="dk-shot" />
+          <p className="deck-showcase-caption">{curTheme.note}</p>
+        </section>
+
+        <section className="dk-block" id="agents">
+          <div className="dk-section-head">
+            <span className="dk-kicker">{t('接入清单', 'Agent matrix', '対応表')}</span>
+            <h2>{t('19 个 Coding Agent，各到哪一步都写明白', '19 coding agents, each with its real status', '19 種の Coding Agent、それぞれの本当の対応状況')}</h2>
+            <p>{t('以 SoiaDeck 的静态清单（agent-manifest-index.json）为准：正式支持 4 个（stream-json / app-server / ACP / pi-rpc），试验接入 9 个（统一走 ACP stdio），计划接入 6 个。', 'Tracked in SoiaDeck’s agent-manifest-index.json: 4 supported (stream-json, app-server, ACP, pi-rpc), 9 experimental (all over ACP stdio) and 6 planned.', 'SoiaDeck の静的マニフェスト（agent-manifest-index.json）に基づき、正式対応 4（stream-json / app-server / ACP / pi-rpc）、試験接続 9（ACP stdio）、予定 6。')}</p>
+          </div>
+          <ZoomableFigure src={P + 'soiadeck-19-agents.png'} alt={t('SoiaDeck 已接入 19 个 Coding Agent 矩阵', 'SoiaDeck 19 coding agents', 'SoiaDeck 19 Coding Agents')} locale={locale} lazy className="dk-shot" />
+          <div className="dk-agents missing-article">
                     <div className="agent-filter-bar" role="tablist" aria-label={t('按接入状态筛选 Agent', 'Filter agents by status', 'ステータス別に絞り込む')}>
                       {(
                         [
@@ -2281,35 +2442,43 @@ export function SoiaDeckPage({ locale }: { locale: LandingLocaleCode }) {
                           );
                         })}
                     </ol>
-                  </>
-                )}
-                {section.id === 'philosophy' && (
-                  <div className="deck-philosophy-grid">
-                    {philosophyCards.map((card) => (
-                      <div className="deck-philosophy-card" key={card.title}>
-                        <strong>{card.title}</strong>
-                        <p>{card.desc}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {section.image ? (
-                  <ZoomableFigure
-                    src={section.image}
-                    alt={section.alt ?? section.title}
-                    locale={locale}
-                    lazy
-                    marginTop={18}
-                  />
-                ) : null}
-              </section>
-            ))}
-            <div className="missing-cta">
-              <a className="btn btn-primary" href={href('/skills/')}>{t('看开源技能', 'Open skills', '公開スキルを見る')}</a>
-              <a className="btn btn-ghost" href={href('/soia/')}>SOIA Runtime</a>
-            </div>
           </div>
-        </div>
+        </section>
+
+        <section className="dk-block" id="philosophy">
+          <div className="dk-section-head">
+            <span className="dk-kicker">{t('设计底线', 'Principles', '設計原則')}</span>
+            <h2>{t('站在你、代码和密钥之间的工具，必须中立可审查', 'A tool that sits between you, your code and your keys has to stay neutral and auditable', 'あなたとコード、鍵の間に立つツールは、中立で監査可能でなければならない')}</h2>
+          </div>
+          <div className="deck-philosophy-grid">
+            {philosophyCards.map((card) => (
+              <div className="deck-philosophy-card" key={card.title}>
+                <strong>{card.title}</strong>
+                <p>{card.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="dk-block" id="open">
+          <div className="dk-section-head">
+            <span className="dk-kicker">{t('开源进度', 'Open-source status', '公開状況')}</span>
+            <h2>{t('即将开源。到哪一步，说哪一步', 'Coming open source — and we say exactly where it stands', '近日公開予定。現在地をそのまま伝えます')}</h2>
+          </div>
+          <div className="dk-status">
+            {statusCols.map((c) => (
+              <div className="dk-status-col" key={c.h}>
+                <strong>{c.h}</strong>
+                <ul>{c.items.map((it) => <li key={it}>{it}</li>)}</ul>
+              </div>
+            ))}
+          </div>
+          <div className="missing-cta">
+            <a className="btn btn-primary" href={href('/skills/')}>{t('先用上开源技能', 'Start with the open skills', 'まず公開スキルを使う')}</a>
+            <a className="btn btn-ghost" href={href('/soia/')}>SOIA Runtime</a>
+            <a className="btn btn-ghost" href={href('/soiacode/')}>SoiaCode</a>
+          </div>
+        </section>
       </article>
     </SubpageLayout>
   );

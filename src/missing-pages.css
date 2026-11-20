@@ -693,3 +693,68 @@
   .sk-fact:last-child, .skd-meta-cell:last-child { border-bottom: none; }
   .sk-select { max-width: none; width: 100%; }
 }
+
+/* SoiaDeck product page (dk-*): landing-style sections instead of a doc with a side TOC */
+.dk-page { --dk-accent: #0e9bb8; }
+.dk-hero { padding: 6px 0 34px; }
+.dk-hero .display { margin: 12px 0 10px; font-size: clamp(52px, 7vw, 88px); line-height: 1; letter-spacing: -.03em; }
+.dk-tagline { margin: 0 0 14px; font-size: clamp(22px, 2.6vw, 30px); line-height: 1.25; font-weight: 600; color: var(--ink); letter-spacing: -.01em; }
+.dk-hero .lead { margin: 0; max-width: 70ch; font-size: 16.5px; line-height: 1.7; color: var(--ink-soft); }
+.dk-cta { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 0; }
+.dk-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin: 30px 0 0; border: 1px solid var(--line); border-radius: 12px; background: var(--bone); overflow: hidden; }
+.dk-stats > div { padding: 16px 18px; border-left: 1px solid var(--line); }
+.dk-stats > div:first-child { border-left: 0; }
+.dk-stats dt { font: 650 30px/1 var(--mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.dk-stats dd { margin: 8px 0 0; font-size: 13px; line-height: 1.45; color: var(--ink-mute); }
+.dk-nav { position: sticky; top: 64px; z-index: 5; display: flex; gap: 6px; overflow-x: auto; margin: 0 0 40px; padding: 8px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); scrollbar-width: none; }
+.dk-nav::-webkit-scrollbar { display: none; }
+.dk-nav a { flex: none; padding: 7px 14px; border-radius: 999px; font-size: 13.5px; font-weight: 500; color: var(--ink-soft); text-decoration: none; white-space: nowrap; }
+.dk-nav a:hover { background: var(--paper-dark); color: var(--ink); }
+.dk-page section[id], .dk-page article[id] { scroll-margin-top: 130px; }
+.dk-section-head { max-width: 760px; margin: 0 0 22px; }
+.dk-kicker { display: inline-flex; align-items: center; gap: 8px; font: 600 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--dk-accent); }
+.dk-preview-tag { font: 600 11px var(--mono); letter-spacing: .02em; text-transform: none; padding: 2px 8px; border-radius: 999px; border: 1px dashed #c9a24a; color: #8a6412; background: #fdf6e3; }
+.dk-section-head h2, .dk-feature-text h2 { margin: 8px 0 10px; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.22; font-weight: 650; letter-spacing: -.015em; color: var(--ink); }
+.dk-section-head p, .dk-feature-text p { margin: 0; font-size: 15.5px; line-height: 1.7; color: var(--ink-soft); }
+.dk-arch, .dk-block { margin: 0 0 84px; }
+.dk-arch-diagram { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1.2fr); gap: 18px; align-items: stretch; padding: 22px; border: 1px solid var(--line); border-radius: 14px; background: #fbfcf9; }
+.dk-arch-col { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.dk-arch-cap { font: 600 11.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 2px; }
+.dk-arch-chip { padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--bone); font-size: 13.5px; color: var(--ink); overflow-wrap: anywhere; }
+.dk-arch-core { position: relative; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 20px; border-radius: 12px; background: var(--ink); color: var(--paper); }
+.dk-arch-core::before, .dk-arch-core::after { content: ''; position: absolute; top: 50%; width: 18px; border-top: 2px dashed var(--ink-faint); }
+.dk-arch-core::before { left: -18px; } .dk-arch-core::after { right: -18px; }
+.dk-arch-core strong { font: 650 18px var(--mono); }
+.dk-arch-core > span { font-size: 13px; opacity: .72; }
+.dk-arch-core ul { margin: 12px 0 0; padding: 12px 0 0 18px; border-top: 1px solid rgba(255,255,255,.18); font-size: 13.5px; line-height: 1.75; }
+.dk-arch-foot { margin: 12px 2px 0; font-size: 13.5px; color: var(--ink-mute); }
+.dk-feature { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 44px; align-items: center; margin: 0 0 84px; }
+.dk-feature.is-flip .dk-feature-text { order: 2; }
+.dk-feature-text ul { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 9px; }
+.dk-feature-text li { position: relative; padding-left: 22px; font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); }
+.dk-feature-text li::before { content: ''; position: absolute; left: 3px; top: .62em; width: 7px; height: 7px; border-radius: 2px; background: var(--dk-accent); }
+.dk-shot { margin: 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #f1f2ee; box-shadow: 0 18px 40px -28px rgba(20, 30, 40, .45); }
+.dk-shot img { width: 100%; height: auto; display: block; }
+.dk-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+.dk-card h3 { margin: 16px 0 6px; font-size: 18px; font-weight: 650; color: var(--ink); }
+.dk-card p { margin: 0; font-size: 14.5px; line-height: 1.65; color: var(--ink-soft); }
+.dk-themes .deck-tab-bar { margin-bottom: 14px; }
+.dk-themes .deck-showcase-caption { margin-top: 10px; }
+.dk-agents { margin-top: 22px; }
+.dk-status { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.dk-status-col { padding: 18px 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--bone); }
+.dk-status-col strong { display: block; font-size: 15px; font-weight: 650; color: var(--ink); margin-bottom: 10px; }
+.dk-status-col ul { margin: 0; padding-left: 18px; display: grid; gap: 7px; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.dk-page .deck-philosophy-card p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--ink-soft); }
+@media (max-width: 900px) {
+  .dk-feature { grid-template-columns: 1fr; gap: 20px; margin-bottom: 60px; }
+  .dk-feature.is-flip .dk-feature-text { order: 0; }
+  .dk-cards, .dk-status { grid-template-columns: 1fr; }
+  .dk-arch-diagram { grid-template-columns: 1fr; }
+  .dk-arch-core::before, .dk-arch-core::after { display: none; }
+  .dk-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dk-stats > div:nth-child(3) { border-left: 0; }
+  .dk-stats > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .dk-arch, .dk-block { margin-bottom: 60px; }
+  .dk-nav { top: 56px; border-radius: 14px; }
+}

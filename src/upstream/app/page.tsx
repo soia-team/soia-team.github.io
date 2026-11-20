@@ -329,7 +329,7 @@ export default function Page({
   const heroStages = [
     {
       label: tt('AI 作业台 · 多 Agent', 'AI Workbench', 'AI ワークベンチ'),
-      src: '/soia/products/soiadeck-workbench.png',
+      src: '/soia/products/soiadeck-wb-session.webp',
       title: 'SoiaDeck · AI Workbench',
       note: tt(
         '同屏并发调度 Claude Code、Codex、ACP 与 PTY 会话，本机 daemon 持久化持有回合，关窗不断流。',
@@ -375,6 +375,16 @@ export default function Page({
         '危险命令、工作区外写入、外部联网统一收口到可追溯的审批卡；支持逐次放行或本会话允许。',
         'Every out-of-workspace write, shell command, or network access queues cleanly for explicit approval.',
         'ワークスペース外への書き込み・シェル実行・外部通信を明示的な承認キューで制御し記録します。',
+      ),
+    },
+    {
+      label: tt('主题套装 · 设计预览', 'Theme Packs · Preview', 'テーマ · プレビュー'),
+      src: '/soia/products/soiadeck-theme-aurora.webp',
+      title: 'SoiaDeck · Theme Packs (design preview)',
+      note: tt(
+        '设计预览：一套主题是一组颜色加一幅用代码画的、会动的景——极光、星图、像素星夜等，还没进产品。',
+        'Design preview: a theme pack is a palette plus one animated, code-drawn scene — aurora, star chart, pixel night and more. Not in the product yet.',
+        'デザインプレビュー：テーマパックは配色と、コードで描いた動く景色のセット（オーロラ・星図・ピクセルの夜など）。まだ製品には入っていません。',
       ),
     },
   ] as const;
@@ -427,7 +437,7 @@ export default function Page({
         icon: capIcon.grid,
         href: href('/soiadeck/'),
         aria: t.stepTitle3,
-        img: '/soia/products/soiadeck-workbench.png',
+        img: '/soia/products/soiadeck-wb-session.webp',
         desc: t.stepDesc3,
       },
       {
